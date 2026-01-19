@@ -2253,61 +2253,11 @@
                 focus: 'High intensity conditioning',
                 sections: [
                     {
-                        title: 'HIIT Circuit',
-                        isCircuit: true,
+                        title: 'HIIT Option',
+                        isOptions: true,
                         exercises: [
-                            {
-                                name: 'HIIT Exercise 1',
-                                sets: 5,
-                                reps: '30-40s',
-                                rest: '20s',
-                                notes: 'Max effort',
-                                rotations: [
-                                    { name: 'Burpees', notes: 'Full burpee with jump' },
-                                    { name: 'Treadmill Sprint', notes: '8-12 mph, 1-3% incline' },
-                                    { name: 'Assault Bike Sprint', notes: 'Max effort calories' },
-                                    { name: 'Sled Push', notes: 'Heavy, 40m' }
-                                ]
-                            },
-                            {
-                                name: 'HIIT Exercise 2',
-                                sets: 5,
-                                reps: '30-40s',
-                                rest: '20s',
-                                notes: 'Explosive movement',
-                                rotations: [
-                                    { name: 'Jump Squats', notes: 'Explosive, soft landing' },
-                                    { name: 'Mountain Climbers', notes: 'Fast tempo, core tight' },
-                                    { name: 'Box Jumps', notes: '20-24 inch, step down' },
-                                    { name: 'Battle Ropes', notes: 'Alternating waves' }
-                                ]
-                            },
-                            {
-                                name: 'HIIT Exercise 3',
-                                sets: 5,
-                                reps: '30-40s',
-                                rest: '20s',
-                                notes: 'Upper body focus',
-                                rotations: [
-                                    { name: 'Push-Up Variations', notes: 'Standard or explosive' },
-                                    { name: 'KB Swings', notes: 'Hip hinge, explosive' },
-                                    { name: 'Med Ball Slams', notes: 'Full extension, slam hard' },
-                                    { name: 'Rowing Sprint', notes: 'Max effort strokes' }
-                                ]
-                            },
-                            {
-                                name: 'HIIT Exercise 4',
-                                sets: 5,
-                                reps: '30-40s',
-                                rest: '60s',
-                                notes: 'Finisher',
-                                rotations: [
-                                    { name: 'High Knees', notes: 'Fast tempo, drive knees' },
-                                    { name: 'Jumping Lunges', notes: 'Alternate legs, explosive' },
-                                    { name: 'Ski Erg Sprint', notes: 'Max effort pulls' },
-                                    { name: 'Sprawls', notes: 'Burpee without push-up' }
-                                ]
-                            }
+                            { name: 'Circuit A - Bodyweight HIIT', sets: 5, reps: '40s work/20s rest', rest: '2min between rounds', notes: 'Burpees, Jump Squats, Push-Ups, Mountain Climbers, Kettlebell Swings' },
+                            { name: 'Circuit B - Treadmill Sprints', sets: 10, reps: '20-30s sprint', rest: '60-90s walk', notes: '8-12 mph, 1-3% incline. 5 min warm-up, 5 min cool-down' }
                         ]
                     }
                 ]
@@ -2316,6 +2266,16 @@
 
         // Exercise database - comprehensive definitions
         const EXERCISE_DB = {
+            // === HIIT CIRCUITS ===
+            'Circuit A - Bodyweight HIIT': {
+                setup: '40sec work / 20sec rest x 5 rounds. Rest 2 min between rounds. Exercises: Burpees, Jump Squats, Push-Ups, Mountain Climbers, Kettlebell Swings.',
+                execution: 'Perform each exercise for 40 seconds with maximum effort, rest 20 seconds, then move to next exercise. Complete all 5 exercises for 1 round. Rest 2 minutes between rounds. Focus on maintaining form even when fatigued.'
+            },
+            'Circuit B - Treadmill Sprints': {
+                setup: 'WARM-UP: 5 min easy jog/walk on treadmill. SPRINT PROTOCOL: 10-12 rounds of sprints. COOL-DOWN: 5 min easy walk. Alternative: 8 x 500m row with 90 sec rest.',
+                execution: 'Sprint 20-30 seconds at 8-12 mph with 1-3% incline. Recovery 60-90 seconds walking. Adjust speed based on your fitness level. Focus on maximum effort during sprints, full recovery between.'
+            },
+
             // === EXTENSIVE PLYOS ===
             'Pogo Hops': {
                 setup: 'Stand with feet hip-width apart. Arms relaxed at sides. Weight on balls of feet.',
