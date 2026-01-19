@@ -263,7 +263,7 @@
 
         .set-row {
             display: grid;
-            grid-template-columns: 50px 1fr 1fr;
+            grid-template-columns: 40px 1fr 1fr 44px;
             gap: 8px;
             align-items: center;
         }
@@ -272,6 +272,79 @@
             font-size: 15px;
             font-weight: 600;
             color: var(--text-secondary);
+        }
+
+        .set-check {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            border: 2px solid var(--separator);
+            background: var(--surface-elevated);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: transparent;
+            transition: all 0.2s;
+        }
+
+        .set-check.checked {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .set-check.resting {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Rest Timer Overlay */
+        .rest-timer-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .rest-timer-overlay.active {
+            display: flex;
+        }
+
+        .rest-timer-display {
+            font-size: 72px;
+            font-weight: 700;
+            font-family: 'SF Mono', monospace;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .rest-timer-label {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .rest-timer-skip {
+            background: var(--surface-elevated);
+            border: 1px solid var(--separator);
+            color: var(--text);
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
         }
 
         .tracking-select {
@@ -651,21 +724,48 @@
             .workout-title {
                 font-size: 20px;
             }
-            
+
             .set-row {
-                grid-template-columns: 40px 1fr 1fr;
+                grid-template-columns: 36px 1fr 1fr 40px;
             }
+
+            .set-check {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* Workout Sticky Header */
+        .workout-sticky-header {
+            position: sticky;
+            top: 56px;
+            z-index: 90;
+            background: var(--bg);
+            padding-bottom: 16px;
+            margin: 0 -20px;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 8px;
+        }
+
+        .workout-sticky-title {
+            margin-bottom: 12px;
+        }
+
+        .workout-sticky-title .welcome {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .workout-sticky-title .subtitle {
+            margin-bottom: 0;
         }
 
         /* Workout Timer & Controls */
         .workout-controls {
-            position: sticky;
-            top: 70px;
-            z-index: 90;
             background: var(--surface);
             border-radius: 16px;
             padding: 16px;
-            margin: 0 0 20px;
             border: 1px solid var(--separator);
         }
 
@@ -902,6 +1002,13 @@
             <div class="modal-body" id="exerciseInfo"></div>
             <button class="modal-close" onclick="closeModal()">Close</button>
         </div>
+    </div>
+
+    <!-- Rest Timer Overlay -->
+    <div class="rest-timer-overlay" id="restTimerOverlay">
+        <div class="rest-timer-label">Rest Time</div>
+        <div class="rest-timer-display" id="restTimerDisplay">0:00</div>
+        <button class="rest-timer-skip" onclick="skipRestTimer()">Skip</button>
     </div>
 
     <!-- Bottom Navigation -->
@@ -1624,6 +1731,129 @@
             }
         }
 
+        // Rest timer variables
+        let restTimerInterval = null;
+        let restTimeRemaining = 0;
+        let currentRestSetId = null;
+
+        function parseRestTime(restString) {
+            // Parse rest time like "90s", "2 min", "60-90s"
+            const match = restString.match(/(\d+)/);
+            if (match) {
+                const value = parseInt(match[1]);
+                if (restString.includes('min')) {
+                    return value * 60;
+                }
+                return value;
+            }
+            return 60; // default 60 seconds
+        }
+
+        function startRestTimer(setId, restSeconds) {
+            currentRestSetId = setId;
+            restTimeRemaining = restSeconds;
+
+            const overlay = document.getElementById('restTimerOverlay');
+            const display = document.getElementById('restTimerDisplay');
+
+            overlay.classList.add('active');
+            updateRestDisplay();
+
+            // Mark the button as resting
+            const btn = document.getElementById(setId);
+            if (btn) {
+                btn.classList.add('resting');
+            }
+
+            restTimerInterval = setInterval(() => {
+                restTimeRemaining--;
+                updateRestDisplay();
+
+                // Update the button countdown
+                if (btn) {
+                    const mins = Math.floor(restTimeRemaining / 60);
+                    const secs = restTimeRemaining % 60;
+                    btn.textContent = mins > 0 ? `${mins}:${secs.toString().padStart(2, '0')}` : secs;
+                }
+
+                if (restTimeRemaining <= 0) {
+                    endRestTimer(true);
+                }
+            }, 1000);
+        }
+
+        function updateRestDisplay() {
+            const display = document.getElementById('restTimerDisplay');
+            const mins = Math.floor(restTimeRemaining / 60);
+            const secs = restTimeRemaining % 60;
+            display.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function endRestTimer(playAlert) {
+            clearInterval(restTimerInterval);
+            restTimerInterval = null;
+
+            const overlay = document.getElementById('restTimerOverlay');
+            overlay.classList.remove('active');
+
+            // Mark the button as checked (not resting anymore)
+            if (currentRestSetId) {
+                const btn = document.getElementById(currentRestSetId);
+                if (btn) {
+                    btn.classList.remove('resting');
+                    btn.classList.add('checked');
+                    btn.textContent = '✓';
+                }
+            }
+
+            if (playAlert) {
+                // Play alert sound and vibrate
+                if (navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200]);
+                }
+                // Try to play a sound
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.5);
+                } catch (e) {
+                    console.log('Audio not available');
+                }
+            }
+
+            currentRestSetId = null;
+        }
+
+        function skipRestTimer() {
+            endRestTimer(false);
+        }
+
+        function toggleSetComplete(setId, restString) {
+            const btn = document.getElementById(setId);
+            if (!btn) return;
+
+            if (btn.classList.contains('checked') || btn.classList.contains('resting')) {
+                // Already checked or resting, uncheck it
+                if (restTimerInterval && currentRestSetId === setId) {
+                    endRestTimer(false);
+                }
+                btn.classList.remove('checked', 'resting');
+                btn.textContent = '';
+            } else {
+                // Start rest timer
+                const restSeconds = parseRestTime(restString);
+                startRestTimer(setId, restSeconds);
+            }
+        }
+
         function updateDate() {
             const today = new Date();
             const formatted = today.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
@@ -1855,21 +2085,24 @@
             const timerDisplay = isActive ? getElapsedTime() : '0:00';
             
             let html = `
-                <div class="welcome">${workout.title}</div>
-                <div class="subtitle">${workout.focus} • ${workout.duration}</div>
-                
-                <div class="workout-controls">
-                    <div class="timer-display">
-                        <div class="timer-label">Workout Time</div>
-                        <div class="timer-time" id="timerDisplay">${timerDisplay}</div>
+                <div class="workout-sticky-header">
+                    <div class="workout-sticky-title">
+                        <div class="welcome">${workout.title}</div>
+                        <div class="subtitle">${workout.focus} • ${workout.duration}</div>
                     </div>
-                    <div class="control-buttons">
-                        <button class="control-btn start" id="startBtn" onclick="startWorkoutTimer()" ${isActive ? 'disabled' : ''}>
-                            ${isActive ? '✓ Started' : '▶ Start Workout'}
-                        </button>
-                        <button class="control-btn end" id="endBtn" onclick="endWorkoutSession()" ${!isActive ? 'disabled' : ''}>
-                            ⏹ End & Save
-                        </button>
+                    <div class="workout-controls">
+                        <div class="timer-display">
+                            <div class="timer-label">Workout Time</div>
+                            <div class="timer-time" id="timerDisplay">${timerDisplay}</div>
+                        </div>
+                        <div class="control-buttons">
+                            <button class="control-btn start" id="startBtn" onclick="startWorkoutTimer()" ${isActive ? 'disabled' : ''}>
+                                ${isActive ? '✓ Started' : '▶ Start Workout'}
+                            </button>
+                            <button class="control-btn end" id="endBtn" onclick="endWorkoutSession()" ${!isActive ? 'disabled' : ''}>
+                                ⏹ End & Save
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -2125,26 +2358,31 @@
                     <div class="set-tracker">
             `;
 
+            const restTime = ex.rest || '60s';
+            const safeExName = ex.name.replace(/'/g, "\\'");
+
             for (let i = 1; i <= ex.sets; i++) {
                 const logKey = `${today}_${workoutType}_${ex.name}_${i}`;
                 const saved = workoutLog[logKey];
                 const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
                 const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
+                const setId = `set_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
 
                 html += `
                     <div class="set-row">
                         <div class="set-label">${i}</div>
-                        <select class="tracking-select ${saved ? 'filled' : ''}" 
-                                onchange="logSet('${workoutType}', '${ex.name}', ${i}, 'weight', this.value)">
+                        <select class="tracking-select ${saved ? 'filled' : ''}"
+                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'weight', this.value)">
                             <option value="">Weight</option>
                             <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
                             ${generateWeightOptions(defaultWeight)}
                         </select>
-                        <select class="tracking-select ${saved ? 'filled' : ''}" 
-                                onchange="logSet('${workoutType}', '${ex.name}', ${i}, 'reps', this.value)">
+                        <select class="tracking-select ${saved ? 'filled' : ''}"
+                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'reps', this.value)">
                             <option value="">Reps</option>
                             ${generateRepsOptions(defaultReps)}
                         </select>
+                        <button class="set-check" id="${setId}" onclick="toggleSetComplete('${setId}', '${restTime}')"></button>
                     </div>
                 `;
             }
