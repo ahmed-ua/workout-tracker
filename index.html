@@ -3585,6 +3585,19 @@
         }
 
         function startWorkout(workoutType) {
+            // Check if there's an active workout and it's a different workout
+            if (workoutStartTime && currentWorkoutType && currentWorkoutType !== workoutType) {
+                if (!confirm(`You have an active "${currentWorkoutType}" workout. Cancel it and start "${workoutType}"?`)) {
+                    return;
+                }
+                // Cancel the current workout
+                clearInterval(workoutTimer);
+                workoutTimer = null;
+                workoutStartTime = null;
+                document.getElementById('headerTimer').style.display = 'none';
+                hideWorkoutBottomControls();
+            }
+
             currentWorkoutType = workoutType;
 
             // Reset to first section tab when starting a new workout
