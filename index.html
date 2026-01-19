@@ -121,13 +121,7 @@
             flex: 1;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 90px;
-        }
-
-        .container.no-scroll {
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            padding-bottom: 100px;
         }
 
         .welcome {
@@ -344,6 +338,16 @@
             text-overflow: ellipsis;
         }
 
+        /* Workout Fixed Header (header + tabs) */
+        .workout-fixed-header {
+            flex-shrink: 0;
+            background: var(--bg);
+        }
+
+        .workout-fixed-header .header {
+            border-bottom: none;
+        }
+
         /* Workout Section Tabs */
         .workout-tabs {
             display: flex;
@@ -354,7 +358,6 @@
             scrollbar-width: none;
             -ms-overflow-style: none;
             background: var(--bg);
-            flex-shrink: 0;
             border-bottom: 1px solid var(--separator);
         }
 
@@ -391,7 +394,7 @@
             flex: 1;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 160px !important; /* Space for bottom controls and nav */
+            padding-bottom: 170px !important; /* Space for bottom controls and nav */
         }
 
         .workout-section {
@@ -1247,7 +1250,7 @@
             -webkit-overflow-scrolling: touch;
             padding: 20px;
             padding-top: 16px;
-            padding-bottom: 90px;
+            padding-bottom: 100px;
         }
 
         .calendar-day-header {
@@ -1637,18 +1640,19 @@
 
     <!-- Workout Screen -->
     <div class="screen" id="workoutScreen">
-        <div class="header">
-            <div class="header-content">
-                <button class="back-btn" onclick="handleWorkoutBack()">← Back</button>
-                <div class="workout-header-title" id="workoutHeaderTitle"></div>
-                <div class="workout-header-timer" id="headerTimer" style="display: none;">
-                    <div class="timer-dot"></div>
-                    <span id="headerTimerDisplay">0:00</span>
+        <div class="workout-fixed-header">
+            <div class="header">
+                <div class="header-content">
+                    <button class="back-btn" onclick="handleWorkoutBack()">← Back</button>
+                    <div class="workout-header-title" id="workoutHeaderTitle"></div>
+                    <div class="workout-header-timer" id="headerTimer" style="display: none;">
+                        <div class="timer-dot"></div>
+                        <span id="headerTimerDisplay">0:00</span>
+                    </div>
                 </div>
             </div>
+            <div class="workout-tabs" id="workoutTabs"></div>
         </div>
-
-        <div class="workout-tabs" id="workoutTabs"></div>
 
         <div class="container workout-container" id="workoutContent"></div>
     </div>
