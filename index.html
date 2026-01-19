@@ -3742,6 +3742,9 @@
             // Reset to first section tab when starting a new workout
             currentSectionIdx = 0;
 
+            // Reset deload mode for new workout
+            isDeloadWorkout = false;
+
             // Show the workout screen
             showScreen('workout');
 
@@ -3841,8 +3844,7 @@
                 `;
                 document.body.appendChild(bottomControls);
             }
-            // Reset deload state for new workout
-            isDeloadWorkout = false;
+            // Update deload UI to match current state (don't reset here - reset happens in startWorkout)
             updateDeloadUI();
             bottomControls.style.display = 'block';
         }
