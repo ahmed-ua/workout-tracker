@@ -460,44 +460,60 @@
 
         .exercise-header {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            text-align: center;
             margin-bottom: 12px;
         }
 
         .exercise-name {
-            font-size: 17px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
         }
 
         .exercise-name-select {
             background: transparent;
             border: none;
             color: var(--text);
-            font-size: 17px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
             padding-right: 20px;
+            text-align: center;
             background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238e8e93' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0 center;
-            max-width: calc(100% - 40px);
         }
 
         .exercise-name-select:focus {
             outline: none;
         }
 
+        .exercise-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .exercise-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .info-btn {
             background: var(--surface-elevated);
             border: none;
             color: var(--primary);
-            width: 24px;
-            height: 24px;
-            border-radius: 12px;
-            font-size: 14px;
+            width: 22px;
+            height: 22px;
+            border-radius: 11px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
             display: flex;
@@ -506,42 +522,85 @@
         }
 
         .exercise-specs {
-            display: flex;
-            gap: 16px;
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-        }
-
-        .spec-value {
-            color: var(--primary);
-            font-weight: 600;
+            display: none;
         }
 
         .set-tracker {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
+        }
+
+        /* Swipeable set row */
+        .set-row-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .set-row-delete {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 80px;
+            background: #ff453a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
         }
 
         .set-row {
             display: grid;
-            grid-template-columns: 32px 1fr 1fr 48px;
-            gap: 10px;
+            grid-template-columns: 32px 1fr 1fr 44px;
+            gap: 8px;
             align-items: center;
+            background: var(--surface);
+            padding: 8px;
+            border-radius: 10px;
+            position: relative;
+            transition: transform 0.2s ease;
+            touch-action: pan-y;
+        }
+
+        .set-row.swiped {
+            transform: translateX(-80px);
         }
 
         .set-label {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             color: var(--text-secondary);
             text-align: center;
         }
 
-        .set-controls {
+        .add-set-btn {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px;
+            margin-top: 8px;
+            background: var(--surface);
+            border: 1px dashed var(--separator);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-set-btn:active {
+            background: var(--surface-elevated);
+            color: var(--success);
+        }
+
+        .set-controls {
+            display: none;
         }
 
         .set-control-btn {
@@ -3372,6 +3431,7 @@
             const safeExName = ex.name.replace(/'/g, "\\'");
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
             const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : ex.sets;
+            const restTime = ex.rest || '60s';
 
             // Build dropdown options
             let dropdownOptions = '';
@@ -3385,24 +3445,16 @@
                         <select class="exercise-name-select" onchange="selectOption('${workoutType}', ${sectionIdx}, this.value)">
                             ${dropdownOptions}
                         </select>
-                        <button class="info-btn" onclick="showExerciseInfo('${safeExName}')">i</button>
+                        <div class="exercise-meta">
+                            <span class="exercise-meta-item">${ex.reps} reps</span>
+                            <span class="exercise-meta-item">•</span>
+                            <span class="exercise-meta-item">${restTime} rest</span>
+                            <button class="info-btn" onclick="showExerciseInfo('${safeExName}')">i</button>
+                        </div>
                     </div>
-                    <div class="exercise-specs">
-                        <span>Sets: <span class="spec-value">${currentSets}</span></span>
-                        <span>Reps: <span class="spec-value">${ex.reps}</span></span>
-                        <span style="display: flex; align-items: center; gap: 8px;">
-                            Rest: <span class="spec-value">${ex.rest}</span>
-                            <span class="set-controls">
-                                <button class="set-control-btn remove" onclick="removeSet('${workoutType}', '${safeExName}', ${ex.sets})">−</button>
-                                <button class="set-control-btn add" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">+</button>
-                            </span>
-                        </span>
-                    </div>
-                    ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 12px;">${ex.notes}</div>` : ''}
+                    ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 13px; text-align: center; margin-bottom: 12px;">${ex.notes}</div>` : ''}
                     <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
             `;
-
-            const restTime = ex.rest || '60s';
 
             for (let i = 1; i <= currentSets; i++) {
                 const logKey = `${today}_${workoutType}_${ex.name}_${i}`;
@@ -3410,27 +3462,34 @@
                 const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
                 const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
                 const setId = `set_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
+                const rowId = `row_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
 
                 html += `
-                    <div class="set-row">
-                        <div class="set-label">${i}</div>
-                        <select class="tracking-select ${saved ? 'filled' : ''}"
-                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'weight', this.value)">
-                            <option value="">Weight</option>
-                            <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
-                            ${generateWeightOptions(defaultWeight)}
-                        </select>
-                        <select class="tracking-select ${saved ? 'filled' : ''}"
-                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'reps', this.value)">
-                            <option value="">Reps</option>
-                            ${generateRepsOptions(defaultReps)}
-                        </select>
-                        <button class="set-check" id="${setId}" onclick="toggleSetComplete('${setId}', '${restTime}')"></button>
+                    <div class="set-row-container">
+                        <div class="set-row-delete" onclick="deleteSet('${workoutType}', '${safeExName}', ${i}, ${ex.sets})">Delete</div>
+                        <div class="set-row" id="${rowId}" ontouchstart="handleSetTouchStart(event)" ontouchmove="handleSetTouchMove(event, '${rowId}')" ontouchend="handleSetTouchEnd(event, '${rowId}')">
+                            <div class="set-label">${i}</div>
+                            <select class="tracking-select ${saved ? 'filled' : ''}"
+                                    onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'weight', this.value)">
+                                <option value="">Weight</option>
+                                <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
+                                ${generateWeightOptions(defaultWeight)}
+                            </select>
+                            <select class="tracking-select ${saved ? 'filled' : ''}"
+                                    onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'reps', this.value)">
+                                <option value="">Reps</option>
+                                ${generateRepsOptions(defaultReps)}
+                            </select>
+                            <button class="set-check" id="${setId}" onclick="toggleSetComplete('${setId}', '${restTime}')"></button>
+                        </div>
                     </div>
                 `;
             }
 
             html += `
+                        <div class="add-set-btn" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">
+                            + Add Set
+                        </div>
                     </div>
                 </div>
             `;
@@ -3496,6 +3555,7 @@
             const safeExName = ex.name.replace(/'/g, "\\'");
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
             const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : ex.sets;
+            const restTime = ex.rest || '60s';
 
             // Build dropdown options showing first exercise of each superset option
             let dropdownOptions = '';
@@ -3510,24 +3570,16 @@
                         <select class="exercise-name-select" onchange="selectSupersetOption('${workoutType}', ${sectionIdx}, ${supersetIdx}, this.value)">
                             ${dropdownOptions}
                         </select>
-                        <button class="info-btn" onclick="showExerciseInfo('${safeExName}')">i</button>
+                        <div class="exercise-meta">
+                            <span class="exercise-meta-item">${ex.reps} reps</span>
+                            <span class="exercise-meta-item">•</span>
+                            <span class="exercise-meta-item">${restTime} rest</span>
+                            <button class="info-btn" onclick="showExerciseInfo('${safeExName}')">i</button>
+                        </div>
                     </div>
-                    <div class="exercise-specs">
-                        <span>Sets: <span class="spec-value">${currentSets}</span></span>
-                        <span>Reps: <span class="spec-value">${ex.reps}</span></span>
-                        <span style="display: flex; align-items: center; gap: 8px;">
-                            Rest: <span class="spec-value">${ex.rest}</span>
-                            <span class="set-controls">
-                                <button class="set-control-btn remove" onclick="removeSet('${workoutType}', '${safeExName}', ${ex.sets})">−</button>
-                                <button class="set-control-btn add" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">+</button>
-                            </span>
-                        </span>
-                    </div>
-                    ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 12px;">${ex.notes}</div>` : ''}
+                    ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 13px; text-align: center; margin-bottom: 12px;">${ex.notes}</div>` : ''}
                     <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
             `;
-
-            const restTime = ex.rest || '60s';
 
             for (let i = 1; i <= currentSets; i++) {
                 const logKey = `${today}_${workoutType}_${ex.name}_${i}`;
@@ -3535,27 +3587,34 @@
                 const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
                 const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
                 const setId = `set_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
+                const rowId = `row_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
 
                 html += `
-                    <div class="set-row">
-                        <div class="set-label">${i}</div>
-                        <select class="tracking-select ${saved ? 'filled' : ''}"
-                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'weight', this.value)">
-                            <option value="">Weight</option>
-                            <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
-                            ${generateWeightOptions(defaultWeight)}
-                        </select>
-                        <select class="tracking-select ${saved ? 'filled' : ''}"
-                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'reps', this.value)">
-                            <option value="">Reps</option>
-                            ${generateRepsOptions(defaultReps)}
-                        </select>
-                        <button class="set-check" id="${setId}" onclick="toggleSetComplete('${setId}', '${restTime}')"></button>
+                    <div class="set-row-container">
+                        <div class="set-row-delete" onclick="deleteSet('${workoutType}', '${safeExName}', ${i}, ${ex.sets})">Delete</div>
+                        <div class="set-row" id="${rowId}" ontouchstart="handleSetTouchStart(event)" ontouchmove="handleSetTouchMove(event, '${rowId}')" ontouchend="handleSetTouchEnd(event, '${rowId}')">
+                            <div class="set-label">${i}</div>
+                            <select class="tracking-select ${saved ? 'filled' : ''}"
+                                    onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'weight', this.value)">
+                                <option value="">Weight</option>
+                                <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
+                                ${generateWeightOptions(defaultWeight)}
+                            </select>
+                            <select class="tracking-select ${saved ? 'filled' : ''}"
+                                    onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'reps', this.value)">
+                                <option value="">Reps</option>
+                                ${generateRepsOptions(defaultReps)}
+                            </select>
+                            <button class="set-check" id="${setId}" onclick="toggleSetComplete('${setId}', '${restTime}')"></button>
+                        </div>
                     </div>
                 `;
             }
 
             html += `
+                        <div class="add-set-btn" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">
+                            + Add Set
+                        </div>
                     </div>
                 </div>
             `;
@@ -3650,6 +3709,7 @@
             const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : ex.sets;
             const lastLog = getLastLog(workoutType, currentEx.name);
             const baseExerciseName = ex.name;
+            const restTime = ex.rest || '60s';
 
             // Build dropdown options with day counts
             let dropdownOptions = '';
@@ -3665,24 +3725,16 @@
                         <select class="exercise-name-select" onchange="selectRotation('${workoutType}', '${safeBaseExName}', this.value, '${sectionTitle}')">
                             ${dropdownOptions}
                         </select>
-                        <button class="info-btn" onclick="showExerciseInfo('${safeExName}')">i</button>
+                        <div class="exercise-meta">
+                            <span class="exercise-meta-item">${ex.reps} reps</span>
+                            <span class="exercise-meta-item">•</span>
+                            <span class="exercise-meta-item">${restTime} rest</span>
+                            <button class="info-btn" onclick="showExerciseInfo('${safeExName}')">i</button>
+                        </div>
                     </div>
-                    <div class="exercise-specs">
-                        <span>Sets: <span class="spec-value">${currentSets}</span></span>
-                        <span>Reps: <span class="spec-value">${ex.reps}</span></span>
-                        <span style="display: flex; align-items: center; gap: 8px;">
-                            Rest: <span class="spec-value">${ex.rest}</span>
-                            <span class="set-controls">
-                                <button class="set-control-btn remove" onclick="removeSet('${workoutType}', '${safeExName}', ${ex.sets})">−</button>
-                                <button class="set-control-btn add" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">+</button>
-                            </span>
-                        </span>
-                    </div>
-                    ${currentEx.notes ? `<div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 12px;">${currentEx.notes}</div>` : ''}
+                    ${currentEx.notes ? `<div style="color: var(--text-secondary); font-size: 13px; text-align: center; margin-bottom: 12px;">${currentEx.notes}</div>` : ''}
                     <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
             `;
-
-            const restTime = ex.rest || '60s';
 
             for (let i = 1; i <= currentSets; i++) {
                 const logKey = `${today}_${workoutType}_${currentEx.name}_${i}`;
@@ -3690,27 +3742,34 @@
                 const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
                 const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
                 const setId = `set_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
+                const rowId = `row_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
 
                 html += `
-                    <div class="set-row">
-                        <div class="set-label">${i}</div>
-                        <select class="tracking-select ${saved ? 'filled' : ''}"
-                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'weight', this.value)">
-                            <option value="">Weight</option>
-                            <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
-                            ${generateWeightOptions(defaultWeight)}
-                        </select>
-                        <select class="tracking-select ${saved ? 'filled' : ''}"
-                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'reps', this.value)">
-                            <option value="">Reps</option>
-                            ${generateRepsOptions(defaultReps)}
-                        </select>
-                        <button class="set-check" id="${setId}" onclick="toggleSetComplete('${setId}', '${restTime}')"></button>
+                    <div class="set-row-container">
+                        <div class="set-row-delete" onclick="deleteSet('${workoutType}', '${safeExName}', ${i}, ${ex.sets})">Delete</div>
+                        <div class="set-row" id="${rowId}" ontouchstart="handleSetTouchStart(event)" ontouchmove="handleSetTouchMove(event, '${rowId}')" ontouchend="handleSetTouchEnd(event, '${rowId}')">
+                            <div class="set-label">${i}</div>
+                            <select class="tracking-select ${saved ? 'filled' : ''}"
+                                    onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'weight', this.value)">
+                                <option value="">Weight</option>
+                                <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
+                                ${generateWeightOptions(defaultWeight)}
+                            </select>
+                            <select class="tracking-select ${saved ? 'filled' : ''}"
+                                    onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'reps', this.value)">
+                                <option value="">Reps</option>
+                                ${generateRepsOptions(defaultReps)}
+                            </select>
+                            <button class="set-check" id="${setId}" onclick="toggleSetComplete('${setId}', '${restTime}')"></button>
+                        </div>
                     </div>
                 `;
             }
 
             html += `
+                        <div class="add-set-btn" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">
+                            + Add Set
+                        </div>
                     </div>
                 </div>
             `;
@@ -3730,29 +3789,22 @@
             const safeExName = ex.name.replace(/'/g, "\\'");
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
             const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : ex.sets;
+            const restTime = ex.rest || '60s';
 
             let html = `
                 <div class="exercise-card" id="card_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
                     <div class="exercise-header">
                         <div class="exercise-name">${ex.name}</div>
-                        <button class="info-btn" onclick="showExerciseInfo('${safeExName}')">i</button>
+                        <div class="exercise-meta">
+                            <span class="exercise-meta-item">${ex.reps} reps</span>
+                            <span class="exercise-meta-item">•</span>
+                            <span class="exercise-meta-item">${restTime} rest</span>
+                            <button class="info-btn" onclick="showExerciseInfo('${safeExName}')">i</button>
+                        </div>
                     </div>
-                    <div class="exercise-specs">
-                        <span>Sets: <span class="spec-value">${currentSets}</span></span>
-                        <span>Reps: <span class="spec-value">${ex.reps}</span></span>
-                        <span style="display: flex; align-items: center; gap: 8px;">
-                            Rest: <span class="spec-value">${ex.rest}</span>
-                            <span class="set-controls">
-                                <button class="set-control-btn remove" onclick="removeSet('${workoutType}', '${safeExName}', ${ex.sets})">−</button>
-                                <button class="set-control-btn add" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">+</button>
-                            </span>
-                        </span>
-                    </div>
-                    ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 12px;">${ex.notes}</div>` : ''}
+                    ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 13px; text-align: center; margin-bottom: 12px;">${ex.notes}</div>` : ''}
                     <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
             `;
-
-            const restTime = ex.rest || '60s';
 
             for (let i = 1; i <= currentSets; i++) {
                 const logKey = `${today}_${workoutType}_${ex.name}_${i}`;
@@ -3760,27 +3812,35 @@
                 const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
                 const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
                 const setId = `set_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
+                const rowId = `row_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
 
                 html += `
-                    <div class="set-row">
-                        <div class="set-label">${i}</div>
-                        <select class="tracking-select ${saved ? 'filled' : ''}"
-                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'weight', this.value)">
-                            <option value="">Weight</option>
-                            <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
-                            ${generateWeightOptions(defaultWeight)}
-                        </select>
-                        <select class="tracking-select ${saved ? 'filled' : ''}"
-                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'reps', this.value)">
-                            <option value="">Reps</option>
-                            ${generateRepsOptions(defaultReps)}
-                        </select>
-                        <button class="set-check" id="${setId}" onclick="toggleSetComplete('${setId}', '${restTime}')"></button>
+                    <div class="set-row-container">
+                        <div class="set-row-delete" onclick="deleteSet('${workoutType}', '${safeExName}', ${i}, ${ex.sets})">Delete</div>
+                        <div class="set-row" id="${rowId}" ontouchstart="handleSetTouchStart(event)" ontouchmove="handleSetTouchMove(event, '${rowId}')" ontouchend="handleSetTouchEnd(event, '${rowId}')">
+                            <div class="set-label">${i}</div>
+                            <select class="tracking-select ${saved ? 'filled' : ''}"
+                                    onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'weight', this.value)">
+                                <option value="">Weight</option>
+                                <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
+                                ${generateWeightOptions(defaultWeight)}
+                            </select>
+                            <select class="tracking-select ${saved ? 'filled' : ''}"
+                                    onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'reps', this.value)">
+                                <option value="">Reps</option>
+                                ${generateRepsOptions(defaultReps)}
+                            </select>
+                            <button class="set-check" id="${setId}" onclick="toggleSetComplete('${setId}', '${restTime}')"></button>
+                        </div>
                     </div>
                 `;
             }
 
+            // Add set button below all sets
             html += `
+                        <div class="add-set-btn" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">
+                            + Add Set
+                        </div>
                     </div>
                 </div>
             `;
@@ -3834,6 +3894,94 @@
             // Re-render the workout to update the UI
             renderWorkoutContent(workoutType);
         }
+
+        function deleteSet(workoutType, exerciseName, setNum, defaultSets) {
+            const setCountKey = `${workoutType}_${exerciseName}_setCount`;
+            const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : defaultSets;
+
+            if (currentSets <= 1) return; // Don't go below 1 set
+
+            const today = new Date().toISOString().split('T')[0];
+
+            // Shift all sets after the deleted one down by 1
+            for (let i = setNum; i < currentSets; i++) {
+                const currentKey = `${today}_${workoutType}_${exerciseName}_${i + 1}`;
+                const newKey = `${today}_${workoutType}_${exerciseName}_${i}`;
+                if (workoutLog[currentKey]) {
+                    workoutLog[newKey] = workoutLog[currentKey];
+                } else {
+                    delete workoutLog[newKey];
+                }
+            }
+
+            // Remove the last set key
+            const lastSetKey = `${today}_${workoutType}_${exerciseName}_${currentSets}`;
+            delete workoutLog[lastSetKey];
+
+            // Update set count
+            workoutLog[setCountKey] = currentSets - 1;
+            saveData();
+
+            // Re-render the workout to update the UI
+            renderWorkoutContent(workoutType);
+        }
+
+        // Touch handlers for swipe-to-delete
+        let touchStartX = 0;
+        let touchCurrentX = 0;
+        let isSwiping = false;
+
+        function handleSetTouchStart(event) {
+            touchStartX = event.touches[0].clientX;
+            touchCurrentX = touchStartX;
+            isSwiping = true;
+        }
+
+        function handleSetTouchMove(event, rowId) {
+            if (!isSwiping) return;
+            touchCurrentX = event.touches[0].clientX;
+            const diff = touchStartX - touchCurrentX;
+            const row = document.getElementById(rowId);
+
+            if (diff > 0) {
+                // Swiping left
+                const translateX = Math.min(diff, 80);
+                row.style.transform = `translateX(-${translateX}px)`;
+                row.style.transition = 'none';
+            } else {
+                // Swiping right (to close)
+                row.style.transform = 'translateX(0)';
+            }
+        }
+
+        function handleSetTouchEnd(event, rowId) {
+            if (!isSwiping) return;
+            isSwiping = false;
+            const diff = touchStartX - touchCurrentX;
+            const row = document.getElementById(rowId);
+
+            row.style.transition = 'transform 0.2s ease';
+
+            if (diff > 40) {
+                // Swiped enough to show delete
+                row.classList.add('swiped');
+                row.style.transform = 'translateX(-80px)';
+            } else {
+                // Not enough swipe, snap back
+                row.classList.remove('swiped');
+                row.style.transform = 'translateX(0)';
+            }
+        }
+
+        // Close any open swipe actions when tapping elsewhere
+        document.addEventListener('touchstart', function(event) {
+            if (!event.target.closest('.set-row') && !event.target.closest('.set-row-delete')) {
+                document.querySelectorAll('.set-row.swiped').forEach(row => {
+                    row.classList.remove('swiped');
+                    row.style.transform = 'translateX(0)';
+                });
+            }
+        });
 
         function getLastLog(workoutType, exerciseName) {
             const keys = Object.keys(workoutLog).filter(key => 
