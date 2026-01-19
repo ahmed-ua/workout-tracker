@@ -408,7 +408,7 @@
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 130px !important; /* Space for bottom controls and nav */
+            padding-bottom: 115px !important; /* Space for bottom controls and nav */
         }
 
         .workout-section {
@@ -446,10 +446,10 @@
         /* Fixed Bottom Workout Controls */
         .workout-bottom-controls {
             position: fixed;
-            bottom: 70px; /* Position above the bottom nav */
+            bottom: 60px; /* Position above the bottom nav */
             left: 0;
             right: 0;
-            padding: 8px 16px;
+            padding: 6px 12px;
             background: var(--bg);
             border-top: 1px solid var(--separator);
             z-index: 98;
@@ -457,17 +457,17 @@
 
         .workout-bottom-buttons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .bottom-btn {
             flex: 1;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            min-height: 44px;
+            min-height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -3494,6 +3494,11 @@
                     btn.classList.add('active');
                 }
             });
+
+            // Hide workout bottom controls when not on workout screen
+            if (screen !== 'workout') {
+                hideWorkoutBottomControls();
+            }
 
             // Show/hide active workout banner when not on workout screen
             updateActiveWorkoutBanner(screen);
