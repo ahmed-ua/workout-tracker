@@ -3381,7 +3381,7 @@
             if (playAlert) {
                 // Play alert sound and vibrate
                 if (navigator.vibrate) {
-                    navigator.vibrate([200, 100, 200]);
+                    navigator.vibrate([200, 100, 200, 100, 200]);
                 }
                 // Try to play a sound
                 try {
@@ -4945,7 +4945,19 @@
 
         function updateMonthYearSelects() {
             document.getElementById('monthSelect').value = currentMonth;
-            document.getElementById('yearSelect').value = currentYear;
+
+            // Populate year selector if empty
+            const yearSelect = document.getElementById('yearSelect');
+            if (yearSelect.options.length === 0) {
+                const currentYearNow = new Date().getFullYear();
+                for (let y = currentYearNow - 5; y <= currentYearNow + 5; y++) {
+                    const option = document.createElement('option');
+                    option.value = y;
+                    option.textContent = y;
+                    yearSelect.appendChild(option);
+                }
+            }
+            yearSelect.value = currentYear;
         }
 
         function setMonth(month) {
