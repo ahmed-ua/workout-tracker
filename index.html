@@ -612,6 +612,47 @@
             border-color: var(--primary);
         }
 
+        /* Superset Preset Selector - reuses circuit preset styles */
+        .superset-preset-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--surface);
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .superset-preset-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .superset-preset-select {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--separator);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 12px;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+
+        .superset-preset-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
         .exercise-meta {
             display: flex;
             align-items: center;
@@ -3807,6 +3848,36 @@
         function renderSupersets(section, workoutType, sectionIdx) {
             let html = '';
 
+            // Check if any supersets have options
+            const hasOptions = section.supersets.some(s => s.isOptions);
+
+            if (hasOptions) {
+                // Build superset preset dropdown
+                const presetKey = `${workoutType}_supersetPreset_${section.title.replace(/\s+/g, '_')}`;
+                const currentPreset = workoutLog[presetKey] !== undefined ? workoutLog[presetKey] : -1;
+
+                // Get number of options from first superset with options
+                const firstWithOptions = section.supersets.find(s => s.isOptions);
+                const numPresets = firstWithOptions ? firstWithOptions.options.length : 0;
+
+                // Build preset options - name based on first exercise of each option in first superset
+                let presetOptions = '<option value="-1"' + (currentPreset === -1 ? ' selected' : '') + '>Custom</option>';
+                for (let i = 0; i < numPresets; i++) {
+                    const presetName = getSupersetPresetName(section, i);
+                    presetOptions += `<option value="${i}"${currentPreset === i ? ' selected' : ''}>${presetName}</option>`;
+                }
+
+                const safeSectionTitle = section.title.replace(/'/g, "\\'");
+                html += `
+                    <div class="superset-preset-selector">
+                        <label class="superset-preset-label">Superset Preset:</label>
+                        <select class="superset-preset-select" onchange="selectSupersetPreset('${workoutType}', ${sectionIdx}, '${safeSectionTitle}', this.value)">
+                            ${presetOptions}
+                        </select>
+                    </div>
+                `;
+            }
+
             section.supersets.forEach((superset, supersetIdx) => {
                 if (superset.isOptions) {
                     const selectionKey = `${workoutType}_section${sectionIdx}_superset${supersetIdx}`;
@@ -3847,6 +3918,59 @@
 
         function selectSupersetOption(workoutType, sectionIdx, supersetIdx, optionIdx) {
             workoutLog[`${workoutType}_section${sectionIdx}_superset${supersetIdx}`] = parseInt(optionIdx);
+
+            // Set superset preset to Custom (-1) when individual superset is changed
+            const workout = WORKOUTS[workoutType];
+            const section = workout?.sections?.[sectionIdx];
+            if (section?.isSupersets) {
+                const presetKey = `${workoutType}_supersetPreset_${section.title.replace(/\s+/g, '_')}`;
+                workoutLog[presetKey] = -1;
+            }
+
+            saveData();
+            renderWorkoutContent(workoutType);
+        }
+
+        function getSupersetPresetName(section, presetIdx) {
+            // Build a name from the first exercise of each superset at this preset index
+            const names = [];
+            section.supersets.forEach((superset, idx) => {
+                if (superset.isOptions && superset.options[presetIdx]) {
+                    const firstEx = superset.options[presetIdx][0];
+                    if (firstEx) {
+                        // Shorten the name if too long
+                        let name = firstEx.name;
+                        if (name.length > 15) {
+                            name = name.substring(0, 12) + '...';
+                        }
+                        names.push(name);
+                    }
+                }
+            });
+            return names.length > 0 ? `Option ${presetIdx + 1}: ${names.join(' / ')}` : `Option ${presetIdx + 1}`;
+        }
+
+        function selectSupersetPreset(workoutType, sectionIdx, sectionTitle, presetIdx) {
+            presetIdx = parseInt(presetIdx);
+            const presetKey = `${workoutType}_supersetPreset_${sectionTitle.replace(/\s+/g, '_')}`;
+            workoutLog[presetKey] = presetIdx;
+
+            if (presetIdx >= 0) {
+                // Get the workout and section
+                const workout = WORKOUTS[workoutType];
+                const section = workout?.sections?.[sectionIdx];
+
+                if (section && section.supersets) {
+                    // Set all supersets to the preset index
+                    section.supersets.forEach((superset, supersetIdx) => {
+                        if (superset.isOptions && superset.options.length > presetIdx) {
+                            const selectionKey = `${workoutType}_section${sectionIdx}_superset${supersetIdx}`;
+                            workoutLog[selectionKey] = presetIdx;
+                        }
+                    });
+                }
+            }
+
             saveData();
             renderWorkoutContent(workoutType);
         }
