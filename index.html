@@ -445,6 +445,60 @@
             color: white;
         }
 
+        /* Deload toggle */
+        .deload-toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            margin-bottom: 8px;
+        }
+
+        .deload-toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .deload-toggle-label.active {
+            color: var(--warning);
+        }
+
+        .deload-toggle {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            background: var(--surface-elevated);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: 1px solid var(--separator);
+        }
+
+        .deload-toggle.active {
+            background: var(--warning);
+            border-color: var(--warning);
+        }
+
+        .deload-toggle-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .deload-toggle.active .deload-toggle-knob {
+            transform: translateX(22px);
+        }
+
         /* Active workout banner */
         .active-workout-banner {
             position: fixed;
@@ -3149,6 +3203,7 @@
         let workoutStartTime = null;
         let workoutTimer = null;
         let currentWorkoutType = null;
+        let isDeloadWorkout = false;
 
         // Rotation recommendation thresholds (in weeks)
         const ROTATION_THRESHOLDS = {
@@ -3611,6 +3666,7 @@
             const timestamp = workoutStartTime.getTime();
             const sessionKey = `${today}_session_${timestamp}_${currentWorkoutType}`;
             const exercises = {};
+            const setKeysToRemove = [];
 
             Object.keys(workoutLog).forEach(key => {
                 if (key.startsWith(today + '_' + currentWorkoutType)) {
@@ -3623,18 +3679,32 @@
                             exercises[exerciseName] = {};
                         }
                         exercises[exerciseName][`set${setNum}`] = workoutLog[key];
+
+                        // If deload mode, mark this key for removal
+                        if (isDeloadWorkout) {
+                            setKeysToRemove.push(key);
+                        }
                     }
                 }
             });
 
+            // Save session info (for calendar) even in deload mode
             workoutLog[sessionKey] = {
                 workoutType: currentWorkoutType,
                 date: today,
                 startTime: workoutStartTime.toISOString(),
                 endTime: endTime.toISOString(),
                 durationMinutes: durationMinutes,
-                exercises: exercises
+                exercises: exercises,
+                isDeload: isDeloadWorkout
             };
+
+            // If deload mode, remove the individual set logs so they won't pre-fill next workout
+            if (isDeloadWorkout) {
+                setKeysToRemove.forEach(key => {
+                    delete workoutLog[key];
+                });
+            }
 
             saveData();
 
@@ -3645,9 +3715,11 @@
             hideWorkoutBottomControls();
 
             const exerciseCount = Object.keys(exercises).length;
-            alert(`Workout Complete!\n\n${currentWorkoutType}\nDuration: ${durationMinutes} minutes\nExercises logged: ${exerciseCount}\n\nGreat work!`);
+            const deloadMsg = isDeloadWorkout ? '\n(Deload - weights not saved for next session)' : '';
+            alert(`Workout Complete!\n\n${currentWorkoutType}\nDuration: ${durationMinutes} minutes\nExercises logged: ${exerciseCount}${deloadMsg}\n\nGreat work!`);
 
             currentWorkoutType = null;
+            isDeloadWorkout = false;
             goHome();
         }
 
@@ -3740,6 +3812,14 @@
                 bottomControls.id = 'workoutBottomControls';
                 bottomControls.className = 'workout-bottom-controls';
                 bottomControls.innerHTML = `
+                    <div class="deload-toggle-container">
+                        <span class="deload-toggle-label" id="deloadLabel">
+                            <span>⚡</span> Deload Mode
+                        </span>
+                        <div class="deload-toggle" id="deloadToggle" onclick="toggleDeload()">
+                            <div class="deload-toggle-knob"></div>
+                        </div>
+                    </div>
                     <div class="workout-bottom-buttons">
                         <button class="bottom-btn cancel" onclick="cancelWorkout()">Cancel</button>
                         <button class="bottom-btn save" onclick="endWorkoutSession()">End & Save</button>
@@ -3747,6 +3827,9 @@
                 `;
                 document.body.appendChild(bottomControls);
             }
+            // Reset deload state for new workout
+            isDeloadWorkout = false;
+            updateDeloadUI();
             bottomControls.style.display = 'block';
         }
 
@@ -3777,9 +3860,24 @@
             workoutTimer = null;
             workoutStartTime = null;
             currentWorkoutType = null;
+            isDeloadWorkout = false;
             document.getElementById('headerTimer').style.display = 'none';
             hideWorkoutBottomControls();
             goHome();
+        }
+
+        function toggleDeload() {
+            isDeloadWorkout = !isDeloadWorkout;
+            updateDeloadUI();
+        }
+
+        function updateDeloadUI() {
+            const toggle = document.getElementById('deloadToggle');
+            const label = document.getElementById('deloadLabel');
+            if (toggle && label) {
+                toggle.classList.toggle('active', isDeloadWorkout);
+                label.classList.toggle('active', isDeloadWorkout);
+            }
         }
 
         function handleWorkoutBack() {
