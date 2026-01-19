@@ -3725,30 +3725,12 @@
         }
 
         function renderCircuit(section, workoutType, sectionIdx) {
-            const circuitId = `circuit_${workoutType}_${sectionIdx}`;
-            let html = `
-                <div class="circuit-container">
-                    <div class="circuit-header" onclick="toggleCircuit('${circuitId}')">
-                        <div class="circuit-title">⟳ ${section.title}</div>
-                        <div class="circuit-arrow" id="arrow_${circuitId}">▼</div>
-                    </div>
-                    <div class="circuit-exercises" id="${circuitId}">
-            `;
+            // Render circuit exercises individually (no collapsible container)
+            let html = '';
             section.exercises.forEach(ex => {
                 html += renderExercise(ex, workoutType, section.title);
             });
-            html += `
-                    </div>
-                </div>
-            `;
             return html;
-        }
-
-        function toggleCircuit(circuitId) {
-            const exercises = document.getElementById(circuitId);
-            const arrow = document.getElementById('arrow_' + circuitId);
-            exercises.classList.toggle('open');
-            arrow.classList.toggle('open');
         }
 
         function renderExercise(ex, workoutType, sectionTitle = '') {
