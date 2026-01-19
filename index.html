@@ -1028,7 +1028,7 @@
     // Workout data structure (same as before but referenced by workout type, not week)
         const WORKOUTS = {
             'Lower Body': {
-                title: 'Lower Body Power & Strength',
+                title: 'Lower Body',
                 duration: '75-90 min',
                 focus: 'Squats, jumps, posterior',
                 sections: [
@@ -1148,7 +1148,7 @@
                 ]
             },
             'Upper Body': {
-                title: 'Upper Body Power & Strength',
+                title: 'Upper Body',
                 duration: '75-85 min',
                 focus: 'Press, pull, shoulders',
                 sections: [
@@ -1293,7 +1293,7 @@
             },
 
         'Full Body': {
-                title: 'Full Body Strength',
+                title: 'Full Body',
                 duration: '75-90 min',
                 focus: 'Deadlifts, carries, metabolic',
                 sections: [
@@ -1394,7 +1394,7 @@
                 ]
             },
             'Upper Volume': {
-                title: 'Upper Body Volume',
+                title: 'Upper Volume',
                 duration: '65-75 min',
                 focus: 'Hypertrophy, abs, arms',
                 sections: [
@@ -1524,7 +1524,7 @@
                 ]
             },
             'Recovery': {
-                title: 'Zone 2 Cardio + Mobility',
+                title: 'Recovery',
                 duration: '40 min',
                 focus: 'Recovery cardio & mobility',
                 sections: [
@@ -1563,7 +1563,7 @@
                 ]
             },
             'Sport & HIIT': {
-                title: 'Sport Play / HIIT',
+                title: 'Sport & HIIT',
                 duration: '30-60 min',
                 focus: 'Sports or conditioning',
                 sections: [
@@ -1590,7 +1590,7 @@
                 ]
             },
             'Zone 2 Cardio': {
-                title: 'Zone 2 Cardio Day',
+                title: 'Zone 2 Cardio',
                 duration: '40 min',
                 focus: 'Recovery & calorie burn',
                 sections: [
@@ -1949,27 +1949,43 @@
             return 'accessories';
         }
 
-        function shouldRecommendRotation(workoutType, exerciseName, exerciseType) {
+        function getExerciseDaysSinceReset(workoutType, exerciseName, baseExerciseName) {
+            // Get the reset date for this exercise (when another variant completed a cycle)
+            const resetKey = `${workoutType}_${baseExerciseName}_resetDate`;
+            const resetDate = rotationTracking[resetKey] ? new Date(rotationTracking[resetKey]) : null;
+
             const workoutDays = Object.keys(workoutLog).filter(key => {
-                return key.includes(workoutType) && key.includes(exerciseName) && key.includes('_1');
+                if (!key.includes(workoutType) || !key.includes(exerciseName) || !key.includes('_1')) {
+                    return false;
+                }
+                // Only count days after the reset date
+                if (resetDate) {
+                    const dayDate = new Date(key.split('_')[0]);
+                    return dayDate >= resetDate;
+                }
+                return true;
             });
-            
-            const uniqueDays = new Set(workoutDays.map(key => key.split('_')[0])).size;
-            
+
+            return new Set(workoutDays.map(key => key.split('_')[0])).size;
+        }
+
+        function shouldRecommendRotation(workoutType, exerciseName, exerciseType, baseExerciseName) {
+            const uniqueDays = getExerciseDaysSinceReset(workoutType, exerciseName, baseExerciseName);
+
             const threshold = ROTATION_THRESHOLDS[exerciseType] || 8;
             const daysThreshold = threshold * 2;
-            
+
             const trackingKey = `${workoutType}_${exerciseName}`;
             if (rotationTracking[trackingKey] && rotationTracking[trackingKey].lastRecommendation) {
                 const lastRecDate = new Date(rotationTracking[trackingKey].lastRecommendation);
                 const now = new Date();
                 const daysSinceRec = Math.floor((now - lastRecDate) / (24 * 60 * 60 * 1000));
-                
+
                 if (daysSinceRec < (daysThreshold * 3.5)) {
                     return false;
                 }
             }
-            
+
             return uniqueDays >= daysThreshold;
         }
 
@@ -1979,6 +1995,13 @@
                 rotationTracking[trackingKey] = {};
             }
             rotationTracking[trackingKey].lastRecommendation = new Date().toISOString();
+            saveData();
+        }
+
+        function markCycleCompleted(workoutType, baseExerciseName) {
+            // When an exercise completes a full cycle (24 days), reset the counter for all variants
+            const resetKey = `${workoutType}_${baseExerciseName}_resetDate`;
+            rotationTracking[resetKey] = new Date().toISOString();
             saveData();
         }
 
@@ -1992,7 +2015,7 @@
             const endBtn = document.getElementById('endBtn');
             if (startBtn) {
                 startBtn.disabled = true;
-                startBtn.textContent = '✓ Started';
+                startBtn.textContent = 'Started';
             }
             if (endBtn) {
                 endBtn.disabled = false;
@@ -2097,10 +2120,10 @@
                         </div>
                         <div class="control-buttons">
                             <button class="control-btn start" id="startBtn" onclick="startWorkoutTimer()" ${isActive ? 'disabled' : ''}>
-                                ${isActive ? '✓ Started' : '▶ Start Workout'}
+                                ${isActive ? 'Started' : 'Start Workout'}
                             </button>
                             <button class="control-btn end" id="endBtn" onclick="endWorkoutSession()" ${!isActive ? 'disabled' : ''}>
-                                ⏹ End & Save
+                                End & Save
                             </button>
                         </div>
                     </div>
@@ -2253,30 +2276,32 @@
 
         function renderExercise(ex, workoutType, sectionTitle = '') {
             const today = new Date().toISOString().split('T')[0];
-            
+            const baseExerciseName = ex.name; // The base exercise name for tracking rotation cycles
+
             if (ex.rotations && ex.rotations.length > 1) {
                 const rotationKey = `${workoutType}_rotation_${ex.name}`;
                 const selectedRotation = workoutLog[rotationKey] || 0;
                 const currentEx = ex.rotations[selectedRotation];
-                
-                const workoutDays = Object.keys(workoutLog).filter(key => {
-                    return key.includes(workoutType) && key.includes(currentEx.name) && key.includes('_1');
-                });
-                const uniqueDays = new Set(workoutDays.map(key => key.split('_')[0])).size;
-                
+
                 const exerciseType = getExerciseType(sectionTitle);
-                const shouldRotate = shouldRecommendRotation(workoutType, currentEx.name, exerciseType);
+                const uniqueDays = getExerciseDaysSinceReset(workoutType, currentEx.name, baseExerciseName);
+                const shouldRotate = shouldRecommendRotation(workoutType, currentEx.name, exerciseType, baseExerciseName);
                 const threshold = ROTATION_THRESHOLDS[exerciseType];
                 const daysThreshold = threshold * 2;
-                
+
+                // Check if this exercise just completed a cycle (hit 24 days)
+                if (uniqueDays >= daysThreshold) {
+                    markCycleCompleted(workoutType, baseExerciseName);
+                }
+
                 let html = '<div style="margin-bottom: 12px;">';
-                
+
                 if (shouldRotate) {
                     html += `
-                        <div style="background: linear-gradient(135deg, #ff9f0a 0%, #ff6b35 100%); 
-                                    color: white; 
-                                    padding: 12px 16px; 
-                                    border-radius: 12px; 
+                        <div style="background: linear-gradient(135deg, #ff9f0a 0%, #ff6b35 100%);
+                                    color: white;
+                                    padding: 12px 16px;
+                                    border-radius: 12px;
                                     margin-bottom: 12px;
                                     font-size: 14px;
                                     font-weight: 600;">
@@ -2291,16 +2316,13 @@
                     `;
                     markRotationRecommended(workoutType, currentEx.name);
                 }
-                
+
                 html += '<div class="option-pills">';
                 ex.rotations.forEach((rotation, idx) => {
                     const shortName = rotation.name.split(' ').slice(0, 2).join(' ');
                     const isCurrent = idx === selectedRotation;
-                    
-                    const variantDays = Object.keys(workoutLog).filter(key => {
-                        return key.includes(workoutType) && key.includes(rotation.name) && key.includes('_1');
-                    });
-                    const variantUniqueDays = new Set(variantDays.map(key => key.split('_')[0])).size;
+
+                    const variantUniqueDays = getExerciseDaysSinceReset(workoutType, rotation.name, baseExerciseName);
                     
                     html += `
                         <div class="option-pill ${isCurrent ? 'selected' : ''}" 
