@@ -4007,16 +4007,17 @@
         function getLastLog(workoutType, exerciseName) {
             const today = new Date().toISOString().split('T')[0];
             // Filter for set logs (format: date_workoutType_exerciseName_setNum)
+            // Must match exact workout type to be workout-specific
             const keys = Object.keys(workoutLog).filter(key => {
-                const parts = key.split('_');
-                // Must have at least 4 parts and the last part should be a number (set number)
-                if (parts.length < 4) return false;
-                const setNum = parseInt(parts[parts.length - 1]);
-                if (isNaN(setNum)) return false;
-                // Check it matches the workout type and exercise name
-                return key.includes(`_${workoutType}_`) && key.includes(`_${exerciseName}_`);
-            }).filter(key => !key.startsWith(today)) // Exclude today's entries
-            .sort().reverse();
+                // Check if key starts with a date pattern and matches the exact format
+                const dateMatch = key.match(/^(\d{4}-\d{2}-\d{2})_(.+)_(\d+)$/);
+                if (!dateMatch) return false;
+
+                const [, date, middle, setNum] = dateMatch;
+                // The middle part should be "workoutType_exerciseName"
+                const expectedPrefix = `${workoutType}_${exerciseName}`;
+                return middle === expectedPrefix && date !== today;
+            }).sort().reverse();
 
             if (keys.length === 0) return null;
 
