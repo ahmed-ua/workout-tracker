@@ -3770,19 +3770,33 @@
             const container = document.getElementById('workoutContent');
             const tabsContainer = document.getElementById('workoutTabs');
 
-            // Set workout name in header
-            document.getElementById('workoutHeaderTitle').textContent = workout.title;
+            // Set workout name in header (add deload indicator)
+            const deloadIndicator = isDeloadWorkout ? ' (Deload)' : '';
+            document.getElementById('workoutHeaderTitle').textContent = workout.title + deloadIndicator;
+
+            // Filter sections - skip Finisher in deload mode
+            const filteredSections = workout.sections.filter(section => {
+                if (isDeloadWorkout && section.title.toLowerCase() === 'finisher') {
+                    return false;
+                }
+                return true;
+            });
+
+            // Adjust currentSectionIdx if it's out of bounds
+            if (currentSectionIdx >= filteredSections.length) {
+                currentSectionIdx = 0;
+            }
 
             // Build tabs (in separate fixed container)
             let tabsHtml = '';
-            workout.sections.forEach((section, sectionIdx) => {
+            filteredSections.forEach((section, sectionIdx) => {
                 tabsHtml += `<button class="workout-tab ${sectionIdx === currentSectionIdx ? 'active' : ''}" onclick="switchWorkoutSection('${workoutType}', ${sectionIdx})">${section.title}</button>`;
             });
             tabsContainer.innerHTML = tabsHtml;
 
             // Build section content
             let sectionsHtml = '';
-            workout.sections.forEach((section, sectionIdx) => {
+            filteredSections.forEach((section, sectionIdx) => {
                 sectionsHtml += `<div class="workout-section ${sectionIdx === currentSectionIdx ? 'active' : ''}" id="workoutSection_${sectionIdx}">`;
 
                 if (section.isOptions) {
@@ -3869,6 +3883,10 @@
         function toggleDeload() {
             isDeloadWorkout = !isDeloadWorkout;
             updateDeloadUI();
+            // Re-render workout to apply deload modifications
+            if (currentWorkoutType) {
+                renderWorkoutContent(currentWorkoutType);
+            }
         }
 
         function updateDeloadUI() {
@@ -3878,6 +3896,20 @@
                 toggle.classList.toggle('active', isDeloadWorkout);
                 label.classList.toggle('active', isDeloadWorkout);
             }
+        }
+
+        function getDeloadSets(originalSets) {
+            // Reduce by 1 set, minimum 1
+            return isDeloadWorkout ? Math.max(1, originalSets - 1) : originalSets;
+        }
+
+        function getDeloadWeight(weight) {
+            // Apply 75% and round to nearest 5
+            if (!isDeloadWorkout || !weight || weight === 'BW' || weight === '') return weight;
+            const numWeight = parseFloat(weight);
+            if (isNaN(numWeight)) return weight;
+            const deloadWeight = Math.round((numWeight * 0.75) / 5) * 5;
+            return Math.max(5, deloadWeight); // Minimum 5 lbs
         }
 
         function handleWorkoutBack() {
@@ -3901,9 +3933,11 @@
             const safeExName = ex.name.replace(/'/g, "\\'");
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
             // Use current session's set count, or last workout's set count, or default
-            const currentSets = workoutLog[setCountKey] !== undefined
+            let baseSets = workoutLog[setCountKey] !== undefined
                 ? workoutLog[setCountKey]
                 : (lastLog && lastLog.setCount ? lastLog.setCount : ex.sets);
+            // Apply deload reduction
+            const currentSets = getDeloadSets(baseSets);
             const restTime = ex.rest || '60s';
 
             // Build dropdown options
@@ -3932,7 +3966,9 @@
             for (let i = 1; i <= currentSets; i++) {
                 const logKey = `${today}_${workoutType}_${ex.name}_${i}`;
                 const saved = workoutLog[logKey];
-                const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
+                let defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
+                // Apply deload weight reduction
+                defaultWeight = getDeloadWeight(defaultWeight);
                 const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
                 const setId = `set_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
                 const rowId = `row_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
@@ -4111,9 +4147,11 @@
             const safeExName = ex.name.replace(/'/g, "\\'");
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
             // Use current session's set count, or last workout's set count, or default
-            const currentSets = workoutLog[setCountKey] !== undefined
+            let baseSets = workoutLog[setCountKey] !== undefined
                 ? workoutLog[setCountKey]
                 : (lastLog && lastLog.setCount ? lastLog.setCount : ex.sets);
+            // Apply deload reduction
+            const currentSets = getDeloadSets(baseSets);
             const restTime = ex.rest || '60s';
 
             // Build dropdown options showing first exercise of each superset option
@@ -4143,7 +4181,9 @@
             for (let i = 1; i <= currentSets; i++) {
                 const logKey = `${today}_${workoutType}_${ex.name}_${i}`;
                 const saved = workoutLog[logKey];
-                const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
+                let defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
+                // Apply deload weight reduction
+                defaultWeight = getDeloadWeight(defaultWeight);
                 const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
                 const setId = `set_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
                 const rowId = `row_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
@@ -4308,9 +4348,11 @@
             const lastLog = getLastLog(workoutType, currentEx.name);
             const setCountKey = `${workoutType}_${currentEx.name}_setCount`;
             // Use current session's set count, or last workout's set count, or default
-            const currentSets = workoutLog[setCountKey] !== undefined
+            let baseSets = workoutLog[setCountKey] !== undefined
                 ? workoutLog[setCountKey]
                 : (lastLog && lastLog.setCount ? lastLog.setCount : ex.sets);
+            // Apply deload reduction
+            const currentSets = getDeloadSets(baseSets);
             const baseExerciseName = ex.name;
             const restTime = ex.rest || '60s';
 
@@ -4342,7 +4384,9 @@
             for (let i = 1; i <= currentSets; i++) {
                 const logKey = `${today}_${workoutType}_${currentEx.name}_${i}`;
                 const saved = workoutLog[logKey];
-                const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
+                let defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
+                // Apply deload weight reduction
+                defaultWeight = getDeloadWeight(defaultWeight);
                 const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
                 const setId = `set_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
                 const rowId = `row_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
@@ -4401,9 +4445,11 @@
             const safeExName = ex.name.replace(/'/g, "\\'");
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
             // Use current session's set count, or last workout's set count, or default
-            const currentSets = workoutLog[setCountKey] !== undefined
+            let baseSets = workoutLog[setCountKey] !== undefined
                 ? workoutLog[setCountKey]
                 : (lastLog && lastLog.setCount ? lastLog.setCount : ex.sets);
+            // Apply deload reduction
+            const currentSets = getDeloadSets(baseSets);
             const restTime = ex.rest || '60s';
 
             let html = `
@@ -4424,7 +4470,9 @@
             for (let i = 1; i <= currentSets; i++) {
                 const logKey = `${today}_${workoutType}_${ex.name}_${i}`;
                 const saved = workoutLog[logKey];
-                const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
+                let defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
+                // Apply deload weight reduction
+                defaultWeight = getDeloadWeight(defaultWeight);
                 const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
                 const setId = `set_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
                 const rowId = `row_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
