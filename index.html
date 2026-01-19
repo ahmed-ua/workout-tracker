@@ -328,13 +328,17 @@
             50% { opacity: 0.5; }
         }
 
-        /* Bottom Workout Controls */
+        /* Fixed Bottom Workout Controls */
         .workout-bottom-controls {
-            padding: 20px;
-            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 20px;
+            padding-bottom: calc(16px + env(safe-area-inset-bottom));
             background: var(--bg);
             border-top: 1px solid var(--separator);
-            margin-top: 32px;
+            z-index: 100;
         }
 
         .workout-bottom-buttons {
@@ -365,6 +369,16 @@
         .bottom-btn.save {
             background: var(--success);
             color: white;
+        }
+
+        /* Hide bottom nav when in workout */
+        .workout-active .bottom-nav {
+            display: none;
+        }
+
+        /* Add padding to workout content for fixed bottom buttons */
+        .workout-content-padding {
+            padding-bottom: 100px;
         }
 
         .bottom-btn:active {
@@ -1236,15 +1250,6 @@
         <div class="container" id="workoutContent"></div>
     </div>
 
-    <!-- Start Workout Overlay -->
-    <div id="startWorkoutOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.95); z-index: 200; align-items: center; justify-content: center; flex-direction: column; padding: 20px;">
-        <div class="start-workout-content">
-            <div class="start-workout-title" id="overlayWorkoutTitle"></div>
-            <div class="start-workout-subtitle" id="overlayWorkoutSubtitle"></div>
-            <button class="start-workout-btn" onclick="beginWorkoutSession()">Start Workout</button>
-            <button class="cancel-start-btn" onclick="cancelWorkoutStart()">Cancel</button>
-        </div>
-    </div>
 
     <!-- Calendar Screen -->
     <div class="screen" id="calendarScreen">
@@ -2904,8 +2909,22 @@
         function showScreen(screen) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screen + 'Screen').classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.closest('.nav-btn').classList.add('active');
+
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach((btn, idx) => {
+                btn.classList.remove('active');
+                if ((screen === 'home' && idx === 0) || (screen === 'calendar' && idx === 1)) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Handle workout mode - hide/show bottom nav
+            if (screen === 'workout') {
+                document.body.classList.add('workout-active');
+            } else {
+                document.body.classList.remove('workout-active');
+            }
+
             currentView = screen;
 
             if (screen === 'calendar') {
@@ -2918,8 +2937,17 @@
             document.getElementById('homeScreen').classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector('.nav-btn').classList.add('active');
+            document.body.classList.remove('workout-active');
+            hideWorkoutBottomControls();
             currentView = 'home';
             updateHomeScreen();
+        }
+
+        function hideWorkoutBottomControls() {
+            const bottomControls = document.getElementById('workoutBottomControls');
+            if (bottomControls) {
+                bottomControls.style.display = 'none';
+            }
         }
 
         function getExerciseType(sectionTitle) {
@@ -3075,6 +3103,7 @@
             workoutTimer = null;
             workoutStartTime = null;
             document.getElementById('headerTimer').style.display = 'none';
+            hideWorkoutBottomControls();
 
             const exerciseCount = Object.keys(exercises).length;
             alert(`Workout Complete!\n\n${currentWorkoutType}\nDuration: ${durationMinutes} minutes\nExercises logged: ${exerciseCount}\n\nGreat work!`);
@@ -3085,28 +3114,25 @@
 
         function startWorkout(workoutType) {
             currentWorkoutType = workoutType;
-            const workout = WORKOUTS[workoutType];
-            const isActive = workoutStartTime !== null;
 
             // Show the workout screen
             showScreen('workout');
 
-            // If workout not started yet, show overlay
-            if (!isActive) {
-                document.getElementById('overlayWorkoutTitle').textContent = workout.title;
-                document.getElementById('overlayWorkoutSubtitle').textContent = `${workout.focus} • ${workout.duration}`;
-                document.getElementById('startWorkoutOverlay').style.display = 'flex';
-                document.getElementById('headerTimer').style.display = 'none';
-                renderWorkoutContent(workoutType);
-            } else {
-                // Workout already active, just render content
-                document.getElementById('startWorkoutOverlay').style.display = 'none';
-                document.getElementById('headerTimer').style.display = 'flex';
-                document.getElementById('headerTimerDisplay').textContent = getElapsedTime();
-                renderWorkoutContent(workoutType);
-                if (!workoutTimer) {
-                    startTimerUpdate();
-                }
+            // Auto-start the workout timer if not already active
+            if (!workoutStartTime) {
+                startWorkoutTimer();
+            }
+
+            // Show timer in header
+            document.getElementById('headerTimer').style.display = 'flex';
+            document.getElementById('headerTimerDisplay').textContent = getElapsedTime();
+
+            // Render workout content
+            renderWorkoutContent(workoutType);
+
+            // Ensure timer is running
+            if (!workoutTimer) {
+                startTimerUpdate();
             }
         }
 
@@ -3139,29 +3165,26 @@
                 }
             });
 
-            // Add bottom controls
-            html += `
-                <div class="workout-bottom-controls">
+            // Add spacer for fixed bottom buttons
+            html += '<div style="height: 100px;"></div>';
+
+            container.innerHTML = html;
+
+            // Add fixed bottom controls (outside scrollable content)
+            let bottomControls = document.getElementById('workoutBottomControls');
+            if (!bottomControls) {
+                bottomControls = document.createElement('div');
+                bottomControls.id = 'workoutBottomControls';
+                bottomControls.className = 'workout-bottom-controls';
+                bottomControls.innerHTML = `
                     <div class="workout-bottom-buttons">
                         <button class="bottom-btn cancel" onclick="cancelWorkout()">Cancel</button>
                         <button class="bottom-btn save" onclick="endWorkoutSession()">End & Save</button>
                     </div>
-                </div>
-            `;
-
-            container.innerHTML = html;
-        }
-
-        function beginWorkoutSession() {
-            document.getElementById('startWorkoutOverlay').style.display = 'none';
-            document.getElementById('headerTimer').style.display = 'flex';
-            startWorkoutTimer();
-        }
-
-        function cancelWorkoutStart() {
-            document.getElementById('startWorkoutOverlay').style.display = 'none';
-            currentWorkoutType = null;
-            goHome();
+                `;
+                document.body.appendChild(bottomControls);
+            }
+            bottomControls.style.display = 'block';
         }
 
         function cancelWorkout() {
@@ -3175,6 +3198,7 @@
             workoutStartTime = null;
             currentWorkoutType = null;
             document.getElementById('headerTimer').style.display = 'none';
+            hideWorkoutBottomControls();
             goHome();
         }
 
@@ -3189,6 +3213,7 @@
                 document.getElementById('headerTimer').style.display = 'none';
             }
             currentWorkoutType = null;
+            hideWorkoutBottomControls();
             goHome();
         }
 
