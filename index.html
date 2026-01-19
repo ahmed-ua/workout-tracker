@@ -127,10 +127,11 @@
         .workout-card {
             background: var(--surface);
             border-radius: 16px;
-            padding: 20px;
+            padding: 18px;
             cursor: pointer;
             transition: all 0.2s;
             border: 1px solid var(--separator);
+            min-height: 80px;
         }
 
         .workout-card:active {
@@ -141,8 +142,8 @@
         .workout-card-header {
             display: flex;
             align-items: center;
-            gap: 14px;
-            margin-bottom: 8px;
+            gap: 12px;
+            margin-bottom: 6px;
         }
 
         .workout-icon {
@@ -151,22 +152,32 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
+
+        .workout-icon svg {
+            width: 28px;
+            height: 28px;
         }
 
         .workout-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
+            line-height: 1.2;
         }
 
         .workout-meta {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-secondary);
+            margin-left: 48px;
         }
 
         .last-workout {
             font-size: 13px;
-            color: var(--text-secondary);
-            margin-top: 8px;
+            color: var(--success);
+            margin-top: 6px;
+            margin-left: 48px;
         }
 
         .section-header {
@@ -178,7 +189,7 @@
 
         .option-pills {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
             margin-bottom: 16px;
         }
@@ -186,12 +197,19 @@
         .option-pill {
             background: var(--surface-elevated);
             border: 1px solid var(--separator);
-            border-radius: 20px;
-            padding: 8px 16px;
+            border-radius: 12px;
+            padding: 12px 18px;
             font-size: 15px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-pill:active {
+            transform: scale(0.97);
         }
 
         .option-pill.selected {
@@ -258,48 +276,51 @@
         .set-tracker {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
         }
 
         .set-row {
             display: grid;
-            grid-template-columns: 40px 1fr 1fr 44px;
-            gap: 8px;
+            grid-template-columns: 32px 1fr 1fr 48px;
+            gap: 10px;
             align-items: center;
         }
 
         .set-label {
-            font-size: 15px;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 700;
             color: var(--text-secondary);
+            text-align: center;
         }
 
         .set-controls {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            margin-top: 12px;
-            padding-top: 12px;
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 16px;
             border-top: 1px solid var(--separator);
         }
 
         .set-control-btn {
             background: var(--surface-elevated);
             border: 1px solid var(--separator);
-            border-radius: 8px;
+            border-radius: 10px;
             color: var(--text);
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
-            padding: 8px 16px;
+            padding: 12px 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 6px;
             transition: all 0.2s;
+            min-height: 48px;
         }
 
         .set-control-btn:active {
             background: var(--surface);
+            transform: scale(0.97);
         }
 
         .set-control-btn.remove {
@@ -311,18 +332,22 @@
         }
 
         .set-check {
-            width: 44px;
-            height: 44px;
-            border-radius: 22px;
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
             border: 2px solid var(--separator);
             background: var(--surface-elevated);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             color: transparent;
             transition: all 0.2s;
+        }
+
+        .set-check:active {
+            transform: scale(0.95);
         }
 
         .set-check.checked {
@@ -335,8 +360,8 @@
             background: var(--primary);
             border-color: var(--primary);
             color: white;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 700;
         }
 
         /* Rest Timer Overlay */
@@ -359,45 +384,55 @@
         }
 
         .rest-timer-display {
-            font-size: 72px;
+            font-size: 96px;
             font-weight: 700;
             font-family: 'SF Mono', monospace;
             color: var(--primary);
-            margin-bottom: 16px;
+            margin-bottom: 8px;
         }
 
         .rest-timer-label {
-            font-size: 18px;
+            font-size: 20px;
             color: var(--text-secondary);
-            margin-bottom: 32px;
+            margin-bottom: 48px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .rest-timer-skip {
             background: var(--surface-elevated);
             border: 1px solid var(--separator);
             color: var(--text);
-            padding: 14px 32px;
-            border-radius: 12px;
-            font-size: 17px;
+            padding: 18px 48px;
+            border-radius: 14px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
+            min-height: 56px;
+        }
+
+        .rest-timer-skip:active {
+            background: var(--surface);
+            transform: scale(0.97);
         }
 
         .tracking-select {
             background: var(--surface-elevated);
             border: 1px solid var(--separator);
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: 10px;
+            padding: 14px 12px;
             color: var(--text);
-            font-size: 15px;
-            font-weight: 500;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%238e8e93' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 10px center;
+            background-position: right 12px center;
             padding-right: 32px;
+            min-height: 48px;
+            text-align: center;
         }
 
         .tracking-select:focus {
@@ -408,6 +443,7 @@
         .tracking-select.filled {
             border-color: var(--success);
             color: var(--success);
+            background-color: rgba(48, 209, 88, 0.1);
         }
 
         .superset-container {
@@ -756,18 +792,64 @@
             to { opacity: 1; }
         }
 
-        @media (max-width: 375px) {
+        @media (max-width: 430px) {
+            .container {
+                padding: 16px;
+            }
+
             .workout-title {
-                font-size: 20px;
+                font-size: 18px;
+            }
+
+            .exercise-card {
+                padding: 14px;
+            }
+
+            .exercise-name {
+                font-size: 16px;
+            }
+
+            .exercise-specs {
+                flex-wrap: wrap;
+                gap: 8px;
             }
 
             .set-row {
-                grid-template-columns: 36px 1fr 1fr 40px;
+                grid-template-columns: 28px 1fr 1fr 44px;
+                gap: 8px;
+            }
+
+            .set-label {
+                font-size: 14px;
+            }
+
+            .tracking-select {
+                padding: 12px 8px;
+                font-size: 14px;
+                min-height: 44px;
+                padding-right: 28px;
             }
 
             .set-check {
-                width: 40px;
-                height: 40px;
+                width: 44px;
+                height: 44px;
+            }
+
+            .set-control-btn {
+                padding: 10px 14px;
+                font-size: 14px;
+                min-height: 44px;
+            }
+
+            .workout-sticky-header {
+                margin: 0 -16px;
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .option-pill {
+                padding: 10px 14px;
+                font-size: 14px;
             }
         }
 
@@ -828,19 +910,23 @@
         .control-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
         }
 
         .control-btn {
             background: var(--surface-elevated);
             border: 2px solid var(--separator);
             border-radius: 12px;
-            padding: 14px;
-            font-size: 17px;
-            font-weight: 600;
+            padding: 16px 12px;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             color: var(--text);
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .control-btn.start {
@@ -860,7 +946,7 @@
         }
 
         .control-btn:disabled {
-            opacity: 0.4;
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
