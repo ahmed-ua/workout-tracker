@@ -122,7 +122,7 @@
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 80px;
+            padding-bottom: 10px;
             box-sizing: border-box;
             width: 100%;
         }
@@ -398,7 +398,7 @@
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 150px !important; /* Space for bottom controls and nav */
+            padding-bottom: 130px !important; /* Space for bottom controls and nav */
         }
 
         .workout-section {
@@ -679,11 +679,12 @@
 
         .circuit-preset-select {
             flex: 1;
+            min-width: 0;
             background: var(--bg);
             border: 1px solid var(--separator);
             border-radius: 8px;
             color: var(--text);
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             padding: 8px 10px;
             cursor: pointer;
@@ -691,8 +692,11 @@
             -webkit-appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238e8e93' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 10px center;
-            padding-right: 28px;
+            background-position: right 8px center;
+            padding-right: 24px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .circuit-preset-select:focus {
@@ -720,11 +724,12 @@
 
         .superset-preset-select {
             flex: 1;
+            min-width: 0;
             background: var(--bg);
             border: 1px solid var(--separator);
             border-radius: 8px;
             color: var(--text);
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             padding: 8px 10px;
             cursor: pointer;
@@ -732,8 +737,11 @@
             -webkit-appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 10px center;
-            padding-right: 28px;
+            background-position: right 8px center;
+            padding-right: 24px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .superset-preset-select:focus {
@@ -1259,7 +1267,7 @@
             -webkit-overflow-scrolling: touch;
             padding: 10px;
             padding-top: 16px;
-            padding-bottom: 80px;
+            padding-bottom: 10px;
         }
 
         .calendar-day-header {
