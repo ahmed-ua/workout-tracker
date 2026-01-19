@@ -488,16 +488,40 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            gap: 12px;
         }
 
-        .month-title {
-            font-size: 24px;
-            font-weight: 700;
+        .month-selectors {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .month-select, .year-select {
+            background: var(--surface-elevated);
+            border: 1px solid var(--separator);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 16px;
+            font-weight: 600;
+            padding: 8px 12px;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238e8e93' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 28px;
+        }
+
+        .month-select:focus, .year-select:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
         .month-nav {
             display: flex;
-            gap: 12px;
+            gap: 8px;
         }
 
         .month-nav-btn {
@@ -512,6 +536,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .month-nav-btn:active {
+            background: var(--surface);
         }
 
         .calendar-grid {
@@ -822,7 +850,23 @@
         
         <div class="container">
             <div class="month-header">
-                <div class="month-title" id="monthTitle"></div>
+                <div class="month-selectors">
+                    <select class="month-select" id="monthSelect" onchange="setMonth(this.value)">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                    <select class="year-select" id="yearSelect" onchange="setYear(this.value)"></select>
+                </div>
                 <div class="month-nav">
                     <button class="month-nav-btn" onclick="changeMonth(-1)">←</button>
                     <button class="month-nav-btn" onclick="changeMonth(1)">→</button>
@@ -1534,6 +1578,7 @@
             await loadData();
             updateHomeScreen();
             updateDate();
+            initYearSelect();
             renderCalendar();
         }
 
@@ -2280,16 +2325,40 @@
             }, 2000);
         }
 
+        function initYearSelect() {
+            const yearSelect = document.getElementById('yearSelect');
+            const currentYearNow = new Date().getFullYear();
+            let html = '';
+            for (let year = currentYearNow - 5; year <= currentYearNow + 5; year++) {
+                html += `<option value="${year}">${year}</option>`;
+            }
+            yearSelect.innerHTML = html;
+        }
+
+        function updateMonthYearSelects() {
+            document.getElementById('monthSelect').value = currentMonth;
+            document.getElementById('yearSelect').value = currentYear;
+        }
+
+        function setMonth(month) {
+            currentMonth = parseInt(month);
+            renderCalendar();
+        }
+
+        function setYear(year) {
+            currentYear = parseInt(year);
+            renderCalendar();
+        }
+
         function renderCalendar() {
             const grid = document.getElementById('calendarGrid');
-            const monthTitle = document.getElementById('monthTitle');
-            
+
             const firstDay = new Date(currentYear, currentMonth, 1);
             const lastDay = new Date(currentYear, currentMonth + 1, 0);
             const daysInMonth = lastDay.getDate();
             const startingDayOfWeek = firstDay.getDay();
 
-            monthTitle.textContent = firstDay.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            updateMonthYearSelects();
 
             let html = '';
             ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
