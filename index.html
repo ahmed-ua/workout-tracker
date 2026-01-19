@@ -3430,7 +3430,10 @@
             const lastLog = getLastLog(workoutType, ex.name);
             const safeExName = ex.name.replace(/'/g, "\\'");
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
-            const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : ex.sets;
+            // Use current session's set count, or last workout's set count, or default
+            const currentSets = workoutLog[setCountKey] !== undefined
+                ? workoutLog[setCountKey]
+                : (lastLog && lastLog.setCount ? lastLog.setCount : ex.sets);
             const restTime = ex.rest || '60s';
 
             // Build dropdown options
@@ -3554,7 +3557,10 @@
             const lastLog = getLastLog(workoutType, ex.name);
             const safeExName = ex.name.replace(/'/g, "\\'");
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
-            const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : ex.sets;
+            // Use current session's set count, or last workout's set count, or default
+            const currentSets = workoutLog[setCountKey] !== undefined
+                ? workoutLog[setCountKey]
+                : (lastLog && lastLog.setCount ? lastLog.setCount : ex.sets);
             const restTime = ex.rest || '60s';
 
             // Build dropdown options showing first exercise of each superset option
@@ -3705,9 +3711,12 @@
             const currentEx = ex.rotations[selectedRotation];
             const safeExName = currentEx.name.replace(/'/g, "\\'");
             const safeBaseExName = ex.name.replace(/'/g, "\\'");
-            const setCountKey = `${workoutType}_${currentEx.name}_setCount`;
-            const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : ex.sets;
             const lastLog = getLastLog(workoutType, currentEx.name);
+            const setCountKey = `${workoutType}_${currentEx.name}_setCount`;
+            // Use current session's set count, or last workout's set count, or default
+            const currentSets = workoutLog[setCountKey] !== undefined
+                ? workoutLog[setCountKey]
+                : (lastLog && lastLog.setCount ? lastLog.setCount : ex.sets);
             const baseExerciseName = ex.name;
             const restTime = ex.rest || '60s';
 
@@ -3788,7 +3797,10 @@
             const lastLog = getLastLog(workoutType, ex.name);
             const safeExName = ex.name.replace(/'/g, "\\'");
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
-            const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : ex.sets;
+            // Use current session's set count, or last workout's set count, or default
+            const currentSets = workoutLog[setCountKey] !== undefined
+                ? workoutLog[setCountKey]
+                : (lastLog && lastLog.setCount ? lastLog.setCount : ex.sets);
             const restTime = ex.rest || '60s';
 
             let html = `
@@ -3984,22 +3996,36 @@
         });
 
         function getLastLog(workoutType, exerciseName) {
-            const keys = Object.keys(workoutLog).filter(key => 
-                key.includes(workoutType) && key.includes(exerciseName) && !key.includes('_session_')
-            ).sort().reverse();
+            const today = new Date().toISOString().split('T')[0];
+            // Filter for set logs (format: date_workoutType_exerciseName_setNum)
+            const keys = Object.keys(workoutLog).filter(key => {
+                const parts = key.split('_');
+                // Must have at least 4 parts and the last part should be a number (set number)
+                if (parts.length < 4) return false;
+                const setNum = parseInt(parts[parts.length - 1]);
+                if (isNaN(setNum)) return false;
+                // Check it matches the workout type and exercise name
+                return key.includes(`_${workoutType}_`) && key.includes(`_${exerciseName}_`);
+            }).filter(key => !key.startsWith(today)) // Exclude today's entries
+            .sort().reverse();
 
             if (keys.length === 0) return null;
 
             const lastDate = keys[0].split('_')[0];
             const lastSets = {};
-            
+            let maxSetNum = 0;
+
             keys.forEach(key => {
                 if (key.startsWith(lastDate)) {
-                    const setNum = key.split('_').pop();
-                    lastSets[`set${setNum}`] = workoutLog[key];
+                    const setNum = parseInt(key.split('_').pop());
+                    if (!isNaN(setNum)) {
+                        lastSets[`set${setNum}`] = workoutLog[key];
+                        if (setNum > maxSetNum) maxSetNum = setNum;
+                    }
                 }
             });
 
+            lastSets.setCount = maxSetNum;
             return lastSets;
         }
 
