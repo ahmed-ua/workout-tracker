@@ -571,6 +571,47 @@
             outline: none;
         }
 
+        /* Circuit Preset Selector */
+        .circuit-preset-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--surface);
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .circuit-preset-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .circuit-preset-select {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--separator);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 12px;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238e8e93' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+
+        .circuit-preset-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
         .exercise-meta {
             display: flex;
             align-items: center;
@@ -3933,12 +3974,71 @@
         }
 
         function renderCircuit(section, workoutType, sectionIdx) {
-            // Render circuit exercises individually (no collapsible container)
-            let html = '';
+            // Build circuit presets based on rotation indices
+            const circuitKey = `${workoutType}_circuit_${section.title.replace(/\s+/g, '_')}`;
+            const currentPreset = workoutLog[circuitKey] !== undefined ? workoutLog[circuitKey] : -1; // -1 means custom
+
+            // Get the number of rotation options (assume all exercises have same number)
+            const numPresets = section.exercises[0]?.rotations?.length || 0;
+
+            // Build preset names from first exercise of each rotation index
+            let presetOptions = '<option value="-1"' + (currentPreset === -1 ? ' selected' : '') + '>Custom</option>';
+            for (let i = 0; i < numPresets; i++) {
+                const shortName = getCircuitPresetName(section, i);
+                presetOptions += `<option value="${i}"${currentPreset === i ? ' selected' : ''}>${shortName}</option>`;
+            }
+
+            const safeSectionTitle = section.title.replace(/'/g, "\\'");
+
+            let html = `
+                <div class="circuit-preset-selector">
+                    <label class="circuit-preset-label">Circuit Preset:</label>
+                    <select class="circuit-preset-select" onchange="selectCircuitPreset('${workoutType}', '${safeSectionTitle}', this.value)">
+                        ${presetOptions}
+                    </select>
+                </div>
+            `;
+
+            // Render circuit exercises individually
             section.exercises.forEach(ex => {
                 html += renderExercise(ex, workoutType, section.title);
             });
             return html;
+        }
+
+        function getCircuitPresetName(section, presetIdx) {
+            // Create a short descriptive name for the preset
+            const names = section.exercises.map(ex => {
+                const name = ex.rotations?.[presetIdx]?.name || '';
+                // Shorten common words
+                return name.replace(' Carry', '').replace(' Hold', '').replace(' Crunches', '').replace('Bicycle', 'Bike').replace('Russian ', 'Rus. ');
+            });
+            return names.join(', ');
+        }
+
+        function selectCircuitPreset(workoutType, sectionTitle, presetIdx) {
+            presetIdx = parseInt(presetIdx);
+            const circuitKey = `${workoutType}_circuit_${sectionTitle.replace(/\s+/g, '_')}`;
+            workoutLog[circuitKey] = presetIdx;
+
+            if (presetIdx >= 0) {
+                // Get the workout and section
+                const workout = WORKOUTS[workoutType];
+                const section = workout.sections.find(s => s.title === sectionTitle);
+
+                if (section) {
+                    // Set all exercise rotations to the preset index
+                    section.exercises.forEach(ex => {
+                        if (ex.rotations && ex.rotations.length > presetIdx) {
+                            const rotationKey = `${workoutType}_rotation_${ex.name}`;
+                            workoutLog[rotationKey] = presetIdx;
+                        }
+                    });
+                }
+            }
+
+            saveData();
+            renderWorkoutContent(workoutType);
         }
 
         function renderExercise(ex, workoutType, sectionTitle = '') {
@@ -4075,6 +4175,15 @@
         function selectRotation(workoutType, exerciseName, rotationIdx, sectionTitle) {
             const rotationKey = `${workoutType}_rotation_${exerciseName}`;
             workoutLog[rotationKey] = parseInt(rotationIdx);
+
+            // If this is a circuit section, set preset to Custom (-1)
+            const workout = WORKOUTS[workoutType];
+            const section = workout?.sections?.find(s => s.title === sectionTitle);
+            if (section?.isCircuit) {
+                const circuitKey = `${workoutType}_circuit_${sectionTitle.replace(/\s+/g, '_')}`;
+                workoutLog[circuitKey] = -1; // Custom
+            }
+
             saveData();
             renderWorkoutContent(workoutType);
         }
