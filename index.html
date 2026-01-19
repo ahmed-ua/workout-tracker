@@ -1,0 +1,2554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Workout Tracker</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRiNlnVbNKBjbJFNlwOsm2UqGIOaZppY0",
+            authDomain: "workout-app-f4e51.firebaseapp.com",
+            projectId: "workout-app-f4e51",
+            storageBucket: "workout-app-f4e51.firebasestorage.app",
+            messagingSenderId: "354947611339",
+            appId: "1:354947611339:web:713c013c83d25e6827794e",
+            measurementId: "G-X2DZ2WGVQN"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg: #000000;
+            --surface: #1c1c1e;
+            --surface-elevated: #2c2c2e;
+            --card-bg: #1c1c1e;
+            --text: #ffffff;
+            --text-secondary: #8e8e93;
+            --primary: #0a84ff;
+            --success: #30d158;
+            --separator: #38383a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 0.5px solid var(--separator);
+            padding: 0 20px;
+            padding-top: env(safe-area-inset-top);
+        }
+
+        .header-content {
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 17px;
+            font-weight: 400;
+            cursor: pointer;
+            padding: 8px 0;
+        }
+
+        .header-date {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .welcome {
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 17px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .workout-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .workout-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--separator);
+        }
+
+        .workout-card:active {
+            transform: scale(0.98);
+            background: var(--surface-elevated);
+        }
+
+        .workout-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .workout-emoji {
+            font-size: 32px;
+        }
+
+        .workout-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .workout-meta {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .last-workout {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .section-header {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 32px 0 16px;
+            color: var(--text);
+        }
+
+        .option-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .option-pill {
+            background: var(--surface-elevated);
+            border: 1px solid var(--separator);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-pill.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .option-content {
+            display: none;
+        }
+
+        .option-content.active {
+            display: block;
+        }
+
+        .exercise-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .exercise-name {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .info-btn {
+            background: var(--surface-elevated);
+            border: none;
+            color: var(--primary);
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .exercise-specs {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .spec-value {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .set-tracker {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .set-row {
+            display: grid;
+            grid-template-columns: 50px 1fr 1fr;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .set-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .tracking-select {
+            background: var(--surface-elevated);
+            border: 1px solid var(--separator);
+            border-radius: 8px;
+            padding: 10px;
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%238e8e93' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 32px;
+        }
+
+        .tracking-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .tracking-select.filled {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .superset-container {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--separator);
+        }
+
+        .superset-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .superset-arrow {
+            text-align: center;
+            font-size: 24px;
+            color: var(--primary);
+            margin: 8px 0;
+        }
+
+        .circuit-container {
+            background: var(--surface);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 1px solid var(--separator);
+            overflow: hidden;
+        }
+
+        .circuit-header {
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: var(--surface-elevated);
+        }
+
+        .circuit-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .circuit-arrow {
+            font-size: 18px;
+            transition: transform 0.3s;
+        }
+
+        .circuit-arrow.open {
+            transform: rotate(180deg);
+        }
+
+        .circuit-exercises {
+            padding: 16px;
+            display: none;
+        }
+
+        .circuit-exercises.open {
+            display: block;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 0.5px solid var(--separator);
+            padding: 8px 0;
+            padding-bottom: calc(8px + env(safe-area-inset-bottom));
+            display: flex;
+            justify-content: space-around;
+            z-index: 99;
+        }
+
+        .nav-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            padding: 8px;
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-btn.active {
+            color: var(--primary);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .modal-body {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .complete-btn {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            right: 20px;
+            background: var(--success);
+            border: none;
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(48, 209, 88, 0.3);
+            z-index: 50;
+        }
+
+        .complete-btn:active {
+            transform: scale(0.98);
+        }
+
+        .month-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .month-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .month-nav {
+            display: flex;
+            gap: 12px;
+        }
+
+        .month-nav-btn {
+            background: var(--surface-elevated);
+            border: 1px solid var(--separator);
+            color: var(--text);
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 8px 0;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--separator);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .calendar-day.today {
+            background: rgba(10, 132, 255, 0.2);
+            border-color: var(--primary);
+        }
+
+        .calendar-day.has-workout .calendar-dot {
+            display: block;
+        }
+
+        .calendar-day.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .calendar-day.selected .calendar-day-number {
+            color: white;
+            font-weight: 700;
+        }
+
+        .calendar-day.selected .calendar-dot {
+            background: white;
+        }
+
+        .calendar-day-number {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .calendar-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--success);
+            border-radius: 2px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .workout-history-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .history-date {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .history-workout {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .history-stats {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 375px) {
+            .workout-title {
+                font-size: 20px;
+            }
+            
+            .set-row {
+                grid-template-columns: 40px 1fr 1fr;
+            }
+        }
+
+        /* Workout Timer & Controls */
+        .workout-controls {
+            position: sticky;
+            top: 70px;
+            z-index: 90;
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 16px;
+            margin: 0 0 20px;
+            border: 1px solid var(--separator);
+        }
+
+        .timer-display {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .timer-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .timer-time {
+            font-size: 36px;
+            font-weight: 700;
+            font-family: 'SF Mono', monospace;
+            color: var(--primary);
+        }
+
+        .control-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .control-btn {
+            background: var(--surface-elevated);
+            border: 2px solid var(--separator);
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        .control-btn.start {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .control-btn.end {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .control-btn:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Workout Detail Modal */
+        .workout-detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .workout-detail-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .workout-detail-content {
+            background: var(--surface);
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        .workout-detail-header {
+            position: sticky;
+            top: 0;
+            background: var(--surface);
+            padding: 20px;
+            border-bottom: 1px solid var(--separator);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .workout-detail-close {
+            background: var(--surface-elevated);
+            border: none;
+            color: var(--text);
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .workout-detail-body {
+            padding: 20px;
+        }
+
+        .workout-summary-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--separator);
+        }
+
+        .workout-summary-card:hover {
+            background: var(--surface-elevated);
+            border-color: var(--primary);
+        }
+
+        .workout-summary-card:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Home Screen -->
+    <div class="screen active" id="homeScreen">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">Workouts</div>
+                <div class="header-date" id="currentDate"></div>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="welcome">Choose Your Workout</div>
+            <div class="subtitle">Select a workout to begin</div>
+            
+            <div class="workout-grid" id="workoutGrid"></div>
+        </div>
+    </div>
+
+    <!-- Workout Screen -->
+    <div class="screen" id="workoutScreen">
+        <div class="header">
+            <div class="header-content">
+                <button class="back-btn" onclick="goHome()">← Back</button>
+                <div class="header-date" id="workoutDate"></div>
+            </div>
+        </div>
+        
+        <div class="container" id="workoutContent"></div>
+    </div>
+
+    <!-- Calendar Screen -->
+    <div class="screen" id="calendarScreen">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">Calendar</div>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="month-header">
+                <div class="month-title" id="monthTitle"></div>
+                <div class="month-nav">
+                    <button class="month-nav-btn" onclick="changeMonth(-1)">←</button>
+                    <button class="month-nav-btn" onclick="changeMonth(1)">→</button>
+                </div>
+            </div>
+            
+            <div class="calendar-grid" id="calendarGrid"></div>
+            
+            <div id="dayWorkouts" style="margin-top: 24px;"></div>
+        </div>
+    </div>
+
+    <!-- Workout Detail Modal -->
+    <div class="workout-detail-modal" id="workoutDetailModal">
+        <div class="workout-detail-content">
+            <div class="workout-detail-header">
+                <div>
+                    <div style="font-size: 24px; font-weight: 700;" id="modalWorkoutType"></div>
+                    <div style="font-size: 15px; color: var(--text-secondary); margin-top: 4px;" id="modalWorkoutDate"></div>
+                </div>
+                <button class="workout-detail-close" onclick="closeWorkoutDetailModal()">✕</button>
+            </div>
+            <div class="workout-detail-body" id="workoutDetailBody">
+                <!-- Content populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Exercise Info Modal -->
+    <div class="modal" id="exerciseModal">
+        <div class="modal-content">
+            <div class="modal-header" id="exerciseName"></div>
+            <div class="modal-body" id="exerciseInfo"></div>
+            <button class="modal-close" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-btn active" onclick="showScreen('home')">
+            <span>🏠</span>
+            <span class="nav-label">Home</span>
+        </button>
+        <button class="nav-btn" onclick="showScreen('calendar')">
+            <span>📅</span>
+            <span class="nav-label">History</span>
+        </button>
+    </div>
+
+    <script>
+
+    // Workout data structure (same as before but referenced by workout type, not week)
+        const WORKOUTS = {
+            'Lower Body': {
+                title: 'Lower Body Power & Strength',
+                duration: '75-90 min',
+                focus: 'Squats, jumps, posterior',
+                sections: [
+                    {
+                        title: 'Extensive Plyo',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Pogo Hops', sets: 3, reps: '30', rest: '60s', notes: 'Low amplitude, rhythm' },
+                            { name: 'Lateral Line Hops', sets: 3, reps: '20/side', rest: '60s', notes: 'Side-to-side' },
+                            { name: 'Single-Leg Hops', sets: 3, reps: '15/leg', rest: '60s', notes: 'In place' },
+                            { name: 'Banded Lateral Hops', sets: 3, reps: '12/side', rest: '60s', notes: 'Band around ankles, explosive' },
+                            { name: 'A-Skips', sets: 3, reps: '20m', rest: '60s', notes: 'Sprint mechanics drill' }
+                        ]
+                    },
+                    {
+                        title: 'Intensive Plyo',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Box Jumps', sets: 3, reps: '5', rest: '2min', notes: 'Step down, max height' },
+                            { name: 'Depth Jumps', sets: 3, reps: '5', rest: '2min', notes: '12-18 inch box, jump max' },
+                            { name: 'Hurdle Hops', sets: 3, reps: '5', rest: '2min', notes: 'Continuous, max height' },
+                            { name: 'Banded Lateral Jumps', sets: 3, reps: '5/side', rest: '2min', notes: 'Heavy band, max distance' },
+                            { name: 'Single-Leg Box Jumps', sets: 3, reps: '4/leg', rest: '2min', notes: 'Advanced, balance focus' }
+                        ]
+                    },
+                    {
+                        title: 'Main Lifts',
+                        exercises: [
+                            { 
+                                name: 'High Bar Back Squat', 
+                                sets: 4, 
+                                reps: '6-8', 
+                                rest: '3min', 
+                                notes: 'Add 5 lbs at 4x8',
+                                rotations: [
+                                    { name: 'High Bar Back Squat', notes: 'Add 5 lbs at 4x8' },
+                                    { name: 'Front Squat (Heavy)', notes: 'More quad/core focus' },
+                                    { name: 'Safety Bar Squat', notes: 'Upper back friendly' }
+                                ]
+                            },
+                            { 
+                                name: 'Romanian Deadlift', 
+                                sets: 3, 
+                                reps: '8-10', 
+                                rest: '2min', 
+                                notes: '3s eccentric',
+                                rotations: [
+                                    { name: 'Romanian Deadlift', notes: '3s eccentric' },
+                                    { name: 'Snatch Grip RDL', notes: 'Upper back emphasis' },
+                                    { name: 'Single-Leg RDL', notes: 'Balance + unilateral' }
+                                ]
+                            },
+                            { 
+                                name: 'Bulgarian Split Squats', 
+                                sets: 3, 
+                                reps: '8-10/leg', 
+                                rest: '90s', 
+                                notes: 'DBs or barbell',
+                                rotations: [
+                                    { name: 'Bulgarian Split Squats', notes: 'DBs or barbell' },
+                                    { name: 'Skater Squats', notes: 'Single leg athletic' },
+                                    { name: 'Deficit Reverse Lunges', notes: 'Glute focus' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Accessories',
+                        isSupersets: true,
+                        supersets: [
+                            {
+                                isOptions: true,
+                                options: [
+                                    [
+                                        { name: 'Leg Extensions', sets: 3, reps: '12-15', rest: '0s', notes: 'Squeeze at top' },
+                                        { name: 'Leg Curls', sets: 3, reps: '12-15', rest: '90s', notes: 'Control negative' }
+                                    ],
+                                    [
+                                        { name: 'Leg Press', sets: 3, reps: '12-15', rest: '0s', notes: 'Deep ROM' },
+                                        { name: 'Good Mornings', sets: 3, reps: '12-15', rest: '90s', notes: 'Hamstring focus' }
+                                    ],
+                                    [
+                                        { name: 'Walking Lunges (Light)', sets: 3, reps: '12/leg', rest: '0s', notes: 'Burnout sets' },
+                                        { name: 'Glute-Ham Raises', sets: 3, reps: '8-12', rest: '90s', notes: 'Eccentric control' }
+                                    ]
+                                ]
+                            },
+                            {
+                                isOptions: true,
+                                options: [
+                                    [
+                                        { name: 'Standing Calf Raises', sets: 3, reps: '15-20', rest: '0s', notes: 'Full ROM' },
+                                        { name: 'Tibialis Raises', sets: 3, reps: '20', rest: '60s', notes: 'Shin health' }
+                                    ],
+                                    [
+                                        { name: 'Seated Calf Raises', sets: 3, reps: '15-20', rest: '0s', notes: 'Soleus focus' },
+                                        { name: 'Calf Press on Leg Press', sets: 3, reps: '20', rest: '60s', notes: 'Heavy load' }
+                                    ],
+                                    [
+                                        { name: 'Single-Leg Calf Raise', sets: 3, reps: '12/leg', rest: '0s', notes: 'Balance challenge' },
+                                        { name: 'Tibialis Raises', sets: 3, reps: '20', rest: '60s', notes: 'Shin health' }
+                                    ]
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Core Work (Pick One Circuit)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Anti-Extension Circuit', sets: 3, reps: '3 exercises', rest: '60s', notes: 'Plank 45s, side plank 30s/side, dead bugs 12/side' },
+                            { name: 'Loaded Carries', sets: 3, reps: '40m each', rest: '90s', notes: 'Farmer carry, overhead carry, suitcase carry' },
+                            { name: 'Rotational Core', sets: 3, reps: '10/side each', rest: '60s', notes: 'Russian twists, bicycle crunches, oblique crunches' },
+                            { name: 'Compression Circuit', sets: 3, reps: '10-15 each', rest: '60s', notes: 'Leg raises, V-ups, hollow holds 20s' }
+                        ]
+                    }
+                ]
+            },
+            'Upper Body': {
+                title: 'Upper Body Power & Strength',
+                duration: '75-85 min',
+                focus: 'Press, pull, shoulders',
+                sections: [
+                    {
+                        title: 'Extensive Plyo',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Med Ball Chest Pass', sets: 3, reps: '8-10', rest: '60s', notes: 'Against wall, quick' },
+                            { name: 'Med Ball Overhead Throws', sets: 3, reps: '8-10', rest: '60s', notes: 'Throw-in style' },
+                            { name: 'Light DB Punch', sets: 3, reps: '10/arm', rest: '60s', notes: '5-10lb, explosive' },
+                            { name: 'Med Ball Rotational Throws', sets: 3, reps: '8/side', rest: '60s', notes: 'Against wall, core rotation' },
+                            { name: 'Band Speed Punches', sets: 3, reps: '15/arm', rest: '60s', notes: 'Resistance band, fast tempo' }
+                        ]
+                    },
+                    {
+                        title: 'Intensive Plyo',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Plyo Push-Ups', sets: 3, reps: '5', rest: '2min', notes: 'Hands leave ground' },
+                            { name: 'Med Ball Slams', sets: 3, reps: '6', rest: '2min', notes: 'Heavy ball' },
+                            { name: 'Depth Push-Ups', sets: 3, reps: '5', rest: '2min', notes: 'Hands on plates' },
+                            { name: 'Med Ball Rotational Slams', sets: 3, reps: '5/side', rest: '2min', notes: 'Overhead to side, explosive' },
+                            { name: 'Clapping Pull-Ups', sets: 3, reps: '3-5', rest: '2min', notes: 'Advanced, explosive pull' }
+                        ]
+                    },
+                    {
+                        title: 'Main Lifts',
+                        exercises: [
+                            { 
+                                name: 'Barbell Bench Press', 
+                                sets: 4, 
+                                reps: '6-8', 
+                                rest: '3min', 
+                                notes: 'Control descent',
+                                rotations: [
+                                    { name: 'Barbell Bench Press', notes: 'Control descent' },
+                                    { name: 'Close Grip Bench', notes: 'Tricep emphasis' },
+                                    { name: 'Pause Bench Press', notes: '2s pause on chest' }
+                                ]
+                            },
+                            { 
+                                name: 'Pull-Ups', 
+                                sets: 4, 
+                                reps: '6-10', 
+                                rest: '2min', 
+                                notes: 'Add weight if possible',
+                                rotations: [
+                                    { name: 'Pull-Ups', notes: 'Add weight if possible' },
+                                    { name: 'Chin-Ups', notes: 'Bicep emphasis' },
+                                    { name: 'Wide Grip Pull-Ups', notes: 'Lat width' }
+                                ]
+                            },
+                            { 
+                                name: 'Overhead Press', 
+                                sets: 4, 
+                                reps: '6-8', 
+                                rest: '2min', 
+                                notes: 'Standing, strict form',
+                                rotations: [
+                                    { name: 'Overhead Press', notes: 'Standing, strict form' },
+                                    { name: 'Landmine Press', notes: 'Shoulder-friendly angle' },
+                                    { name: 'DB Overhead Press', notes: 'More ROM, balance' }
+                                ]
+                            },
+                            { 
+                                name: 'Barbell Rows', 
+                                sets: 3, 
+                                reps: '8-10', 
+                                rest: '2min', 
+                                notes: 'Pull to sternum',
+                                rotations: [
+                                    { name: 'Barbell Rows', notes: 'Pull to sternum' },
+                                    { name: 'Pendlay Rows', notes: 'Explosive from floor' },
+                                    { name: 'Meadows Row', notes: 'Landmine, single arm' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Accessories',
+                        isSupersets: true,
+                        supersets: [
+                            {
+                                isOptions: true,
+                                options: [
+                                    [
+                                        { name: 'Incline DB Press', sets: 3, reps: '10-12', rest: '0s', notes: 'Upper chest' },
+                                        { name: 'Face Pulls', sets: 3, reps: '15-20', rest: '90s', notes: 'External rotation' }
+                                    ],
+                                    [
+                                        { name: 'Cable Flyes', sets: 3, reps: '12-15', rest: '0s', notes: 'Squeeze at peak' },
+                                        { name: 'Rear Delt Flyes', sets: 3, reps: '15-20', rest: '90s', notes: 'Light weight' }
+                                    ],
+                                    [
+                                        { name: 'Push-Ups', sets: 3, reps: '15-20', rest: '0s', notes: 'To failure' },
+                                        { name: 'Band Pull-Aparts', sets: 3, reps: '20', rest: '90s', notes: 'Rear delts' }
+                                    ]
+                                ]
+                            },
+                            {
+                                isOptions: true,
+                                options: [
+                                    [
+                                        { name: 'Hammer Curls', sets: 3, reps: '10-12', rest: '0s', notes: 'Brachialis focus' },
+                                        { name: 'Overhead Tricep Extension', sets: 3, reps: '12-15', rest: '90s', notes: 'Stretch at bottom' }
+                                    ],
+                                    [
+                                        { name: 'Barbell Curls', sets: 3, reps: '10-12', rest: '0s', notes: 'Strict form' },
+                                        { name: 'Skull Crushers', sets: 3, reps: '12-15', rest: '90s', notes: 'Control eccentric' }
+                                    ],
+                                    [
+                                        { name: 'Cable Curls', sets: 3, reps: '12-15', rest: '0s', notes: 'Constant tension' },
+                                        { name: 'Rope Pushdowns', sets: 3, reps: '15-20', rest: '90s', notes: 'Full extension' }
+                                    ]
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Extensive Plyo (Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Lateral Skater Hops', sets: 3, reps: '10/side', rest: '60s', notes: 'Stick landings' },
+                            { name: 'Lateral Bounds', sets: 3, reps: '10/side', rest: '60s', notes: 'Push off hard' },
+                            { name: 'Cone Shuffles', sets: 3, reps: '30s', rest: '60s', notes: 'Quick lateral feet' },
+                            { name: 'Carioca Drill', sets: 3, reps: '20 yds', rest: '60s', notes: 'Hip mobility, footwork' },
+                            { name: 'Diagonal Bounds', sets: 3, reps: '8/direction', rest: '60s', notes: '45° angles, multi-planar' }
+                        ]
+                    },
+                    {
+                        title: 'Intensive Plyo (Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Broad Jumps', sets: 3, reps: '5', rest: '2min', notes: 'Max distance, stick 3s' },
+                            { name: 'Single-Leg Broad Jump', sets: 3, reps: '4/leg', rest: '2min', notes: 'Balance on landing' },
+                            { name: 'Box Jump (Forward)', sets: 3, reps: '5', rest: '2min', notes: 'Jump onto box' },
+                            { name: '180° Box Jumps', sets: 3, reps: '5', rest: '2min', notes: 'Jump, rotate mid-air, land' },
+                            { name: 'Banded Broad Jumps', sets: 3, reps: '5', rest: '2min', notes: 'Resistance band for power' }
+                        ]
+                    }
+                ]
+            },
+
+        'Full Body': {
+                title: 'Full Body Strength',
+                duration: '75-90 min',
+                focus: 'Deadlifts, carries, metabolic',
+                sections: [
+                    {
+                        title: 'Extensive Plyo (Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Pogo Hops', sets: 3, reps: '30', rest: '60s', notes: 'Low amplitude, rhythm' },
+                            { name: 'Lateral Line Hops', sets: 3, reps: '20/side', rest: '60s', notes: 'Side-to-side' },
+                            { name: 'A-Skips', sets: 3, reps: '20m', rest: '60s', notes: 'Sprint mechanics' }
+                        ]
+                    },
+                    {
+                        title: 'Main Lifts',
+                        exercises: [
+                            { 
+                                name: 'Trap Bar Deadlift', 
+                                sets: 4, 
+                                reps: '5', 
+                                rest: '3min', 
+                                notes: 'Explosive',
+                                rotations: [
+                                    { name: 'Trap Bar Deadlift', notes: 'Explosive' },
+                                    { name: 'Conventional Deadlift', notes: 'More posterior chain' },
+                                    { name: 'Sumo Deadlift', notes: 'Quad emphasis' }
+                                ]
+                            },
+                            { 
+                                name: 'Front Squat', 
+                                sets: 3, 
+                                reps: '6-8', 
+                                rest: '2min', 
+                                notes: 'Upright torso',
+                                rotations: [
+                                    { name: 'Front Squat', notes: 'Upright torso' },
+                                    { name: 'Goblet Squat (Heavy)', notes: 'Core bracing' },
+                                    { name: 'Zercher Squat', notes: 'Unique stimulus' }
+                                ]
+                            },
+                            { 
+                                name: 'Single-Arm DB Row', 
+                                sets: 3, 
+                                reps: '10/arm', 
+                                rest: '90s', 
+                                notes: 'Anti-rotation',
+                                rotations: [
+                                    { name: 'Single-Arm DB Row', notes: 'Anti-rotation' },
+                                    { name: 'Chest-Supported Row', notes: 'Remove lower back' },
+                                    { name: 'T-Bar Row', notes: 'Heavy loading' }
+                                ]
+                            },
+                            { 
+                                name: 'Walking Lunges', 
+                                sets: 3, 
+                                reps: '10/leg', 
+                                rest: '90s', 
+                                notes: 'DBs or barbell',
+                                rotations: [
+                                    { name: 'Walking Lunges', notes: 'DBs or barbell' },
+                                    { name: 'Reverse Lunges', notes: 'More glute focus' },
+                                    { name: 'Step-Ups (Heavy)', notes: 'Explosive, knee height box' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Power Movement (Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Power Clean', sets: 4, reps: '3', rest: '2min', notes: 'Explosive from floor' },
+                            { name: 'Hang Clean', sets: 4, reps: '3', rest: '2min', notes: 'From above knee' },
+                            { name: 'Clean Pull', sets: 4, reps: '5', rest: '2min', notes: 'Deadlift to shrug jump' },
+                            { name: 'Kettlebell Swings (Heavy)', sets: 4, reps: '10', rest: '2min', notes: 'Hip hinge power' },
+                            { name: 'Snatch Grip High Pull', sets: 4, reps: '5', rest: '2min', notes: 'Wide grip, explosive pull' }
+                        ]
+                    },
+                    {
+                        title: 'Loaded Carries (Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Farmer Carries', sets: 3, reps: '40m', rest: '90s', notes: 'Heavy DBs, tight core' },
+                            { name: 'Suitcase Carries', sets: 3, reps: '30m/side', rest: '90s', notes: 'One hand, anti-lateral flexion' },
+                            { name: 'Overhead Carries', sets: 3, reps: '30m/arm', rest: '90s', notes: 'KB or DB overhead' },
+                            { name: 'Zercher Carries', sets: 3, reps: '40m', rest: '90s', notes: 'Barbell in elbow crooks' },
+                            { name: 'Turkish Get-Up', sets: 3, reps: '3/side', rest: '90s', notes: 'Full body stability' }
+                        ]
+                    },
+                    {
+                        title: 'Core Finisher (Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Heavy Carries + Plank', sets: 3, reps: '', rest: '90s', notes: 'Farmer carry 20m + weighted plank 30s' },
+                            { name: 'Anti-Rotation Complex', sets: 3, reps: '10/side', rest: '60s', notes: 'Pallof press, bird dogs, side plank' },
+                            { name: 'Explosive Core', sets: 3, reps: '10-15', rest: '60s', notes: 'Med ball slams, mountain climbers, v-ups' },
+                            { name: 'Isometric Hold Circuit', sets: 3, reps: '', rest: '60s', notes: 'Hollow hold 20s, plank 30s, dead bug hold 20s/side' }
+                        ]
+                    }
+                ]
+            },
+            'Upper Volume': {
+                title: 'Upper Body Volume',
+                duration: '65-75 min',
+                focus: 'Hypertrophy, abs, arms',
+                sections: [
+                    {
+                        title: 'Main Lifts',
+                        exercises: [
+                            { 
+                                name: 'Push Press', 
+                                sets: 4, 
+                                reps: '6-8', 
+                                rest: '2min', 
+                                notes: 'Use leg drive',
+                                rotations: [
+                                    { name: 'Push Press', notes: 'Use leg drive' },
+                                    { name: 'Jerk Press', notes: 'More explosive, drop under' },
+                                    { name: 'Viking Press (Landmine)', notes: 'Neutral grip, shoulder-friendly' }
+                                ]
+                            },
+                            { 
+                                name: 'Weighted Dips', 
+                                sets: 3, 
+                                reps: '8-10', 
+                                rest: '2min', 
+                                notes: 'Chest lean',
+                                rotations: [
+                                    { name: 'Weighted Dips', notes: 'Chest lean' },
+                                    { name: 'Ring Dips', notes: 'More stabilization' },
+                                    { name: 'Decline Bench', notes: 'Lower chest emphasis' }
+                                ]
+                            },
+                            { 
+                                name: 'Chest-Supported Rows', 
+                                sets: 4, 
+                                reps: '10-12', 
+                                rest: '90s', 
+                                notes: 'No momentum',
+                                rotations: [
+                                    { name: 'Chest-Supported Rows', notes: 'No momentum' },
+                                    { name: 'Seal Rows', notes: 'Isolate back' },
+                                    { name: 'Inverted Rows', notes: 'Bodyweight variation' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Volume Work',
+                        isSupersets: true,
+                        supersets: [
+                            {
+                                isOptions: true,
+                                options: [
+                                    [
+                                        { name: 'Incline DB Press', sets: 3, reps: '12-15', rest: '0s', notes: 'Upper chest focus' },
+                                        { name: 'Cable Rows', sets: 3, reps: '12-15', rest: '90s', notes: 'Mid-back' }
+                                    ],
+                                    [
+                                        { name: 'Machine Chest Press', sets: 3, reps: '12-15', rest: '0s', notes: 'Constant tension' },
+                                        { name: 'Lat Pulldown', sets: 3, reps: '12-15', rest: '90s', notes: 'Wide grip' }
+                                    ],
+                                    [
+                                        { name: 'Decline Push-Ups', sets: 3, reps: '15-20', rest: '0s', notes: 'Feet elevated' },
+                                        { name: 'Single-Arm Cable Row', sets: 3, reps: '12/arm', rest: '90s', notes: 'Anti-rotation' }
+                                    ]
+                                ]
+                            },
+                            {
+                                isOptions: true,
+                                options: [
+                                    [
+                                        { name: 'Lateral Raises', sets: 3, reps: '15-20', rest: '0s', notes: 'Light, controlled' },
+                                        { name: 'Band Pull-Aparts', sets: 3, reps: '20', rest: '60s', notes: 'Rear delts' }
+                                    ],
+                                    [
+                                        { name: 'Cable Upright Rows', sets: 3, reps: '12-15', rest: '0s', notes: 'Wide grip' },
+                                        { name: 'Reverse Flyes', sets: 3, reps: '15-20', rest: '60s', notes: 'Rear delts' }
+                                    ],
+                                    [
+                                        { name: 'Front Raises', sets: 3, reps: '12-15', rest: '0s', notes: 'Plate or DBs' },
+                                        { name: 'Face Pulls', sets: 3, reps: '15-20', rest: '60s', notes: 'External rotation' }
+                                    ]
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Core Circuit',
+                        isCircuit: true,
+                        exercises: [
+                            { 
+                                name: 'Ab Wheel Rollouts', 
+                                sets: 3, 
+                                reps: '10-12', 
+                                rest: '0s', 
+                                notes: 'Slow eccentric',
+                                rotations: [
+                                    { name: 'Ab Wheel Rollouts', notes: 'Slow eccentric' },
+                                    { name: 'Dead Bugs', notes: 'Opposite arm/leg' },
+                                    { name: 'Toes to Bar', notes: 'Explosive hip flexion' }
+                                ]
+                            },
+                            { 
+                                name: 'Pallof Press', 
+                                sets: 3, 
+                                reps: '12/side', 
+                                rest: '0s', 
+                                notes: 'Anti-rotation',
+                                rotations: [
+                                    { name: 'Pallof Press', notes: 'Anti-rotation' },
+                                    { name: 'Landmine Rotations', notes: 'Explosive rotation' },
+                                    { name: 'Cable Woodchops', notes: 'High to low rotation' }
+                                ]
+                            },
+                            { 
+                                name: 'Hanging Leg Raises', 
+                                sets: 3, 
+                                reps: '10-15', 
+                                rest: '60s', 
+                                notes: 'Control swing',
+                                rotations: [
+                                    { name: 'Hanging Leg Raises', notes: 'Control swing' },
+                                    { name: 'Decline Sit-Ups', notes: 'Weighted for progression' },
+                                    { name: 'Dragon Flags', notes: 'Advanced, full body tension' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            'Recovery': {
+                title: 'Zone 2 Cardio + Mobility',
+                duration: '40 min',
+                focus: 'Recovery cardio & mobility',
+                sections: [
+                    {
+                        title: 'Zone 2 Cardio (30 min - Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Incline Treadmill Walk', sets: 1, reps: '30 min', rest: '', notes: '15% incline, 3.0 mph' },
+                            { name: 'Stationary Bike', sets: 1, reps: '30 min', rest: '', notes: 'Easy pace, conversational' },
+                            { name: 'Easy Jog', sets: 1, reps: '30 min', rest: '', notes: 'Nose breathing only' },
+                            { name: 'Elliptical', sets: 1, reps: '30 min', rest: '', notes: 'Low resistance, steady' },
+                            { name: 'Rowing (Easy Pace)', sets: 1, reps: '30 min', rest: '', notes: 'Focus on form, not speed' },
+                            { name: 'Swimming', sets: 1, reps: '30 min', rest: '', notes: 'Easy laps, any stroke' }
+                        ]
+                    },
+                    {
+                        title: 'Mobility Work (10 min - Pick One Routine)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Lower Body Flow', sets: 1, reps: '10 min', rest: '', notes: 'Hip circles, leg swings, 90/90, pigeon, deep squat hold' },
+                            { name: 'Upper Body Flow', sets: 1, reps: '10 min', rest: '', notes: 'Shoulder dislocations, wall slides, thoracic rotations, cat-cow' },
+                            { name: 'Full Body Yoga Flow', sets: 1, reps: '10 min', rest: '', notes: 'Sun salutations, downward dog, warrior poses, child pose' },
+                            { name: 'Foam Rolling Session', sets: 1, reps: '10 min', rest: '', notes: 'Calves, quads, IT band, glutes, upper back' }
+                        ]
+                    },
+                    {
+                        title: 'Core Stability (Optional - Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Plank Variations', sets: 3, reps: '30-60s', rest: '30s', notes: 'Standard, side, reach-through' },
+                            { name: 'Bird Dogs', sets: 3, reps: '10/side', rest: '30s', notes: 'Slow, controlled, no rotation' },
+                            { name: 'Dead Bugs', sets: 3, reps: '12/side', rest: '30s', notes: 'Lower back flat on ground' },
+                            { name: 'Skip Core Today', sets: 0, reps: '', rest: '', notes: 'Just stretch and recover' }
+                        ]
+                    }
+                ]
+            },
+            'Sport & HIIT': {
+                title: 'Sport Play / HIIT',
+                duration: '30-60 min',
+                focus: 'Sports or conditioning',
+                sections: [
+                    {
+                        title: 'Option 1: Sport Play (Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Pickup Soccer', sets: 1, reps: '30-60 min', rest: '', notes: 'Small-sided games' },
+                            { name: 'Tennis', sets: 1, reps: '30-60 min', rest: '', notes: 'Singles or doubles' },
+                            { name: 'MMA Training', sets: 1, reps: '30-60 min', rest: '', notes: 'Bag work, shadowbox' },
+                            { name: 'Basketball', sets: 1, reps: '30-60 min', rest: '', notes: 'Pickup games' }
+                        ]
+                    },
+                    {
+                        title: 'Option 2: HIIT Circuit (Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Bodyweight Circuit', sets: 5, reps: '40s/20s', rest: '', notes: 'Burpees, jumps, push-ups, climbers, KB swings' },
+                            { name: 'Treadmill Sprints', sets: 10, reps: '20-30s', rest: '60-90s', notes: '8-12 mph, 1-3% incline' },
+                            { name: 'Sled Work', sets: 8, reps: '40m', rest: '2min', notes: 'Heavy sled push' },
+                            { name: 'Assault Bike', sets: 10, reps: '30s/30s', rest: '', notes: 'Max effort on, easy off' }
+                        ]
+                    }
+                ]
+            },
+            'Zone 2 Cardio': {
+                title: 'Zone 2 Cardio Day',
+                duration: '40 min',
+                focus: 'Recovery & calorie burn',
+                sections: [
+                    {
+                        title: 'Zone 2 Cardio (40 min - Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Incline Treadmill Walk (40min)', sets: 1, reps: '40 min', rest: '', notes: '15% incline, 3.0 mph (~275-325 cals)' },
+                            { name: 'Outdoor Walk', sets: 1, reps: '40 min', rest: '', notes: 'Hilly terrain preferred' },
+                            { name: 'Stationary Bike (40min)', sets: 1, reps: '40 min', rest: '', notes: 'Easy pace (~250-300 cals)' },
+                            { name: 'Easy Jog (40min)', sets: 1, reps: '40 min', rest: '', notes: 'Conversational (~300-350 cals)' },
+                            { name: 'Swim', sets: 1, reps: '40 min', rest: '', notes: 'Easy laps' },
+                            { name: 'Elliptical (40min)', sets: 1, reps: '40 min', rest: '', notes: 'Low resistance, steady' },
+                            { name: 'Rowing Machine (Easy)', sets: 1, reps: '40 min', rest: '', notes: 'Sustainable pace, good form' },
+                            { name: 'Stair Climber', sets: 1, reps: '40 min', rest: '', notes: 'Moderate pace, glute focus' }
+                        ]
+                    },
+                    {
+                        title: 'Stretching/Mobility (10 min - Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Lower Body Stretching', sets: 1, reps: '10 min', rest: '', notes: 'Hip flexors, hamstrings, glutes, calves' },
+                            { name: 'Upper Body Stretching', sets: 1, reps: '10 min', rest: '', notes: 'Shoulders, chest, lats, triceps' },
+                            { name: 'Yoga Flow', sets: 1, reps: '10 min', rest: '', notes: 'Sun salutations, gentle holds' },
+                            { name: 'Dynamic Mobility', sets: 1, reps: '10 min', rest: '', notes: 'Leg swings, arm circles, hip circles, world greatest stretch' }
+                        ]
+                    },
+                    {
+                        title: 'Optional Core Work (Pick One)',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Plank Circuit', sets: 3, reps: '45s each', rest: '30s', notes: 'Front, left side, right side' },
+                            { name: 'Anti-Rotation Circuit', sets: 3, reps: '10/side', rest: '30s', notes: 'Pallof press, bird dogs, dead bugs' },
+                            { name: 'Hanging Core', sets: 3, reps: '10-15', rest: '60s', notes: 'Hanging knee raises or leg raises' },
+                            { name: 'Skip Core', sets: 0, reps: '', rest: '', notes: 'Full recovery day' }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // Exercise database (abbreviated)
+        const EXERCISE_DB = {
+            'Pogo Hops': {
+                setup: 'Stand with feet hip-width apart. Arms at sides.',
+                execution: 'Bounce continuously on balls of feet with minimal knee bend. Use ankles like springs. Focus on rhythm, not height.',
+                category: 'Extensive Plyo'
+            },
+            'Box Jumps': {
+                setup: 'Face box 12-24" high. Feet hip-width. Arms back.',
+                execution: 'Swing arms forward and jump onto box. Land softly. Step down. Focus on max height.',
+                category: 'Intensive Plyo'
+            },
+            'High Bar Back Squat': {
+                setup: 'Bar on upper traps. Feet shoulder-width. Toes slightly out.',
+                execution: 'Brace core. Descend with control. Chest up. Hit depth. Drive through whole foot.',
+                category: 'Main Lift'
+            },
+            'Barbell Bench Press': {
+                setup: 'Lie on bench. Eyes under bar. Feet flat. Slight arch.',
+                execution: 'Lower to mid-chest. Elbows 45°. Touch chest. Press up. Lock out.',
+                category: 'Main Lift'
+            },
+            'Trap Bar Deadlift': {
+                setup: 'Stand in center of trap bar. Feet hip-width. Grab handles.',
+                execution: 'Brace core. Drive through feet. Hips and shoulders rise together. Stand tall.',
+                category: 'Main Lift'
+            }
+        };
+
+        let workoutLog = {};
+        let rotationTracking = {};
+        let currentView = 'home';
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let selectedCalendarDate = null;
+        
+        // Workout timer variables
+        let workoutStartTime = null;
+        let workoutTimer = null;
+        let currentWorkoutType = null;
+
+        // Rotation recommendation thresholds (in weeks)
+        const ROTATION_THRESHOLDS = {
+            plyos: 4,
+            mainLifts: 12,
+            accessories: 8,
+            core: 6
+        };
+
+        async function init() {
+            await loadData();
+            updateHomeScreen();
+            updateDate();
+            renderCalendar();
+        }
+
+        const USER_ID = 'default_user'; // You can add authentication later for multiple users
+
+        async function loadData() {
+            try {
+                const doc = await db.collection('users').doc(USER_ID).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    workoutLog = data.workoutLog || {};
+                    rotationTracking = data.rotationTracking || {};
+                    console.log('Data loaded from Firebase');
+                    return;
+                }
+            } catch (e) {
+                console.log('Firebase not available, falling back to localStorage:', e);
+            }
+            // Fallback to localStorage
+            const saved = localStorage.getItem('workoutLog');
+            if (saved) {
+                workoutLog = JSON.parse(saved);
+            }
+            const savedRotations = localStorage.getItem('rotationTracking');
+            if (savedRotations) {
+                rotationTracking = JSON.parse(savedRotations);
+            }
+        }
+
+        async function saveData() {
+            try {
+                await db.collection('users').doc(USER_ID).set({
+                    workoutLog,
+                    rotationTracking,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log('Data saved to Firebase');
+            } catch (e) {
+                console.log('Firebase not available, falling back to localStorage:', e);
+                // Fallback to localStorage
+                localStorage.setItem('workoutLog', JSON.stringify(workoutLog));
+                localStorage.setItem('rotationTracking', JSON.stringify(rotationTracking));
+            }
+        }
+
+        function updateDate() {
+            const today = new Date();
+            const formatted = today.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            document.getElementById('currentDate').textContent = formatted;
+            document.getElementById('workoutDate').textContent = formatted;
+        }
+
+        function updateHomeScreen() {
+            const grid = document.getElementById('workoutGrid');
+            const workoutTypes = [
+                { key: 'Lower Body', emoji: '🦵' },
+                { key: 'Upper Body', emoji: '💪' },
+                { key: 'Recovery', emoji: '🧘' },
+                { key: 'Full Body', emoji: '🏋️' },
+                { key: 'Upper Volume', emoji: '💯' },
+                { key: 'Sport & HIIT', emoji: '⚽' },
+                { key: 'Zone 2 Cardio', emoji: '🚴' }
+            ];
+
+            let html = '';
+            workoutTypes.forEach(({ key, emoji }) => {
+                const workout = WORKOUTS[key];
+                const lastWorkout = getLastWorkoutDate(key);
+                html += `
+                    <div class="workout-card" onclick="startWorkout('${key}')">
+                        <div class="workout-card-header">
+                            <div class="workout-emoji">${emoji}</div>
+                        </div>
+                        <div class="workout-title">${workout.title}</div>
+                        <div class="workout-meta">${workout.duration} • ${workout.focus}</div>
+                        ${lastWorkout ? `<div class="last-workout">Last: ${lastWorkout}</div>` : ''}
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        function getLastWorkoutDate(workoutType) {
+            const sessions = Object.keys(workoutLog).filter(key => 
+                key.includes('_session_') && key.includes(workoutType)
+            );
+            if (sessions.length === 0) return null;
+
+            const dates = sessions.map(key => key.split('_')[0]);
+            const latestDate = new Date(Math.max(...dates.map(d => new Date(d))));
+            const today = new Date();
+            const diffDays = Math.floor((today - latestDate) / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) return 'Today';
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays}d ago`;
+            return latestDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function showScreen(screen) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screen + 'Screen').classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.nav-btn').classList.add('active');
+            currentView = screen;
+
+            if (screen === 'calendar') {
+                renderCalendar();
+            }
+        }
+
+        function goHome() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('homeScreen').classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.nav-btn').classList.add('active');
+            currentView = 'home';
+            updateHomeScreen();
+        }
+
+        function getExerciseType(sectionTitle) {
+            const title = sectionTitle.toLowerCase();
+            if (title.includes('plyo')) return 'plyos';
+            if (title.includes('main lift')) return 'mainLifts';
+            if (title.includes('core') || title.includes('abs')) return 'core';
+            if (title.includes('accessor') || title.includes('volume') || title.includes('superset')) return 'accessories';
+            return 'accessories';
+        }
+
+        function shouldRecommendRotation(workoutType, exerciseName, exerciseType) {
+            const workoutDays = Object.keys(workoutLog).filter(key => {
+                return key.includes(workoutType) && key.includes(exerciseName) && key.includes('_1');
+            });
+            
+            const uniqueDays = new Set(workoutDays.map(key => key.split('_')[0])).size;
+            
+            const threshold = ROTATION_THRESHOLDS[exerciseType] || 8;
+            const daysThreshold = threshold * 2;
+            
+            const trackingKey = `${workoutType}_${exerciseName}`;
+            if (rotationTracking[trackingKey] && rotationTracking[trackingKey].lastRecommendation) {
+                const lastRecDate = new Date(rotationTracking[trackingKey].lastRecommendation);
+                const now = new Date();
+                const daysSinceRec = Math.floor((now - lastRecDate) / (24 * 60 * 60 * 1000));
+                
+                if (daysSinceRec < (daysThreshold * 3.5)) {
+                    return false;
+                }
+            }
+            
+            return uniqueDays >= daysThreshold;
+        }
+
+        function markRotationRecommended(workoutType, exerciseName) {
+            const trackingKey = `${workoutType}_${exerciseName}`;
+            if (!rotationTracking[trackingKey]) {
+                rotationTracking[trackingKey] = {};
+            }
+            rotationTracking[trackingKey].lastRecommendation = new Date().toISOString();
+            saveData();
+        }
+
+        function startWorkoutTimer() {
+            if (workoutStartTime) return;
+            
+            workoutStartTime = new Date();
+            startTimerUpdate();
+            
+            const startBtn = document.getElementById('startBtn');
+            const endBtn = document.getElementById('endBtn');
+            if (startBtn) {
+                startBtn.disabled = true;
+                startBtn.textContent = '✓ Started';
+            }
+            if (endBtn) {
+                endBtn.disabled = false;
+            }
+        }
+
+        function startTimerUpdate() {
+            if (workoutTimer) clearInterval(workoutTimer);
+            
+            workoutTimer = setInterval(() => {
+                if (!workoutStartTime) {
+                    clearInterval(workoutTimer);
+                    workoutTimer = null;
+                    return;
+                }
+                
+                const timerDisplay = document.getElementById('timerDisplay');
+                if (timerDisplay) {
+                    timerDisplay.textContent = getElapsedTime();
+                }
+            }, 1000);
+        }
+
+        function getElapsedTime() {
+            if (!workoutStartTime) return '0:00';
+            
+            const now = new Date();
+            const elapsed = Math.floor((now - workoutStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function endWorkoutSession() {
+            if (!workoutStartTime || !currentWorkoutType) return;
+            
+            const endTime = new Date();
+            const durationMs = endTime - workoutStartTime;
+            const durationMinutes = Math.round(durationMs / 60000);
+            const today = new Date().toISOString().split('T')[0];
+            
+            const timestamp = workoutStartTime.getTime();
+            const sessionKey = `${today}_session_${timestamp}_${currentWorkoutType}`;
+            const exercises = {};
+            
+            Object.keys(workoutLog).forEach(key => {
+                if (key.startsWith(today + '_' + currentWorkoutType)) {
+                    const parts = key.split('_');
+                    if (parts.length >= 4 && !key.includes('_session_')) {
+                        const exerciseName = parts.slice(2, -1).join('_');
+                        const setNum = parts[parts.length - 1];
+                        
+                        if (!exercises[exerciseName]) {
+                            exercises[exerciseName] = {};
+                        }
+                        exercises[exerciseName][`set${setNum}`] = workoutLog[key];
+                    }
+                }
+            });
+            
+            workoutLog[sessionKey] = {
+                workoutType: currentWorkoutType,
+                date: today,
+                startTime: workoutStartTime.toISOString(),
+                endTime: endTime.toISOString(),
+                durationMinutes: durationMinutes,
+                exercises: exercises
+            };
+            
+            saveData();
+            
+            clearInterval(workoutTimer);
+            workoutTimer = null;
+            workoutStartTime = null;
+            
+            const exerciseCount = Object.keys(exercises).length;
+            alert(`🎉 Workout Complete!\n\n${currentWorkoutType}\nDuration: ${durationMinutes} minutes\nExercises logged: ${exerciseCount}\n\nGreat work!`);
+            
+            currentWorkoutType = null;
+            goHome();
+        }
+
+        function startWorkout(workoutType) {
+            currentWorkoutType = workoutType;
+            const workout = WORKOUTS[workoutType];
+            const container = document.getElementById('workoutContent');
+            
+            const isActive = workoutStartTime !== null;
+            const timerDisplay = isActive ? getElapsedTime() : '0:00';
+            
+            let html = `
+                <div class="welcome">${workout.title}</div>
+                <div class="subtitle">${workout.focus} • ${workout.duration}</div>
+                
+                <div class="workout-controls">
+                    <div class="timer-display">
+                        <div class="timer-label">Workout Time</div>
+                        <div class="timer-time" id="timerDisplay">${timerDisplay}</div>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="control-btn start" id="startBtn" onclick="startWorkoutTimer()" ${isActive ? 'disabled' : ''}>
+                            ${isActive ? '✓ Started' : '▶ Start Workout'}
+                        </button>
+                        <button class="control-btn end" id="endBtn" onclick="endWorkoutSession()" ${!isActive ? 'disabled' : ''}>
+                            ⏹ End & Save
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            workout.sections.forEach((section, sectionIdx) => {
+                html += `<div class="section-header">${section.title}</div>`;
+
+                if (section.isOptions) {
+                    html += renderOptions(section, workoutType, sectionIdx);
+                } else if (section.isSupersets) {
+                    html += renderSupersets(section, workoutType, sectionIdx);
+                } else if (section.isCircuit) {
+                    html += renderCircuit(section, workoutType, sectionIdx);
+                } else {
+                    section.exercises.forEach(ex => {
+                        html += renderExercise(ex, workoutType, section.title);
+                    });
+                }
+            });
+
+            container.innerHTML = html;
+            showScreen('workout');
+            
+            if (isActive && !workoutTimer) {
+                startTimerUpdate();
+            }
+        }
+
+        function renderOptions(section, workoutType, sectionIdx) {
+            const selectionKey = `${workoutType}_section${sectionIdx}`;
+            const selected = workoutLog[selectionKey] || 0;
+
+            let html = '<div class="option-pills">';
+            section.exercises.forEach((ex, idx) => {
+                html += `
+                    <div class="option-pill ${idx === selected ? 'selected' : ''}" 
+                         onclick="selectOption('${workoutType}', ${sectionIdx}, ${idx})">
+                        ${ex.name}
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            section.exercises.forEach((ex, idx) => {
+                html += `
+                    <div class="option-content ${idx === selected ? 'active' : ''}" 
+                         data-option="${sectionIdx}-${idx}">
+                        ${renderExercise(ex, workoutType, section.title)}
+                    </div>
+                `;
+            });
+
+            return html;
+        }
+
+        function selectOption(workoutType, sectionIdx, optionIdx) {
+            workoutLog[`${workoutType}_section${sectionIdx}`] = optionIdx;
+            saveData();
+            startWorkout(workoutType);
+        }
+
+        function renderSupersets(section, workoutType, sectionIdx) {
+            let html = '';
+            
+            section.supersets.forEach((superset, supersetIdx) => {
+                if (superset.isOptions) {
+                    const selectionKey = `${workoutType}_section${sectionIdx}_superset${supersetIdx}`;
+                    const selected = workoutLog[selectionKey] || 0;
+                    
+                    html += `
+                        <div class="superset-container">
+                            <div class="superset-badge">SUPERSET ${supersetIdx + 1}</div>
+                            <div class="option-pills" style="margin-bottom: 12px;">
+                    `;
+                    
+                    superset.options.forEach((option, optIdx) => {
+                        html += `
+                            <div class="option-pill ${optIdx === selected ? 'selected' : ''}" 
+                                 onclick="selectSupersetOption('${workoutType}', ${sectionIdx}, ${supersetIdx}, ${optIdx})">
+                                Option ${optIdx + 1}
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    
+                    superset.options.forEach((optionPair, optIdx) => {
+                        html += `<div class="option-content ${optIdx === selected ? 'active' : ''}" data-superset-option="${sectionIdx}-${supersetIdx}-${optIdx}">`;
+                        optionPair.forEach((ex, exIdx) => {
+                            html += renderExercise(ex, workoutType, section.title);
+                            if (exIdx < optionPair.length - 1) {
+                                html += '<div class="superset-arrow">⬇️</div>';
+                            }
+                        });
+                        html += '</div>';
+                    });
+                    
+                    html += '</div>';
+                } else {
+                    html += `
+                        <div class="superset-container">
+                            <div class="superset-badge">SUPERSET ${supersetIdx + 1}</div>
+                    `;
+                    superset.forEach((ex, exIdx) => {
+                        html += renderExercise(ex, workoutType, section.title);
+                        if (exIdx < superset.length - 1) {
+                            html += '<div class="superset-arrow">⬇️</div>';
+                        }
+                    });
+                    html += '</div>';
+                }
+            });
+            
+            return html;
+        }
+
+        function selectSupersetOption(workoutType, sectionIdx, supersetIdx, optionIdx) {
+            workoutLog[`${workoutType}_section${sectionIdx}_superset${supersetIdx}`] = optionIdx;
+            saveData();
+            startWorkout(workoutType);
+        }
+
+        function renderCircuit(section, workoutType, sectionIdx) {
+            const circuitId = `circuit_${workoutType}_${sectionIdx}`;
+            let html = `
+                <div class="circuit-container">
+                    <div class="circuit-header" onclick="toggleCircuit('${circuitId}')">
+                        <div class="circuit-title">🔄 ${section.title}</div>
+                        <div class="circuit-arrow" id="arrow_${circuitId}">▼</div>
+                    </div>
+                    <div class="circuit-exercises" id="${circuitId}">
+            `;
+            section.exercises.forEach(ex => {
+                html += renderExercise(ex, workoutType, section.title);
+            });
+            html += `
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        function toggleCircuit(circuitId) {
+            const exercises = document.getElementById(circuitId);
+            const arrow = document.getElementById('arrow_' + circuitId);
+            exercises.classList.toggle('open');
+            arrow.classList.toggle('open');
+        }
+
+        function renderExercise(ex, workoutType, sectionTitle = '') {
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (ex.rotations && ex.rotations.length > 1) {
+                const rotationKey = `${workoutType}_rotation_${ex.name}`;
+                const selectedRotation = workoutLog[rotationKey] || 0;
+                const currentEx = ex.rotations[selectedRotation];
+                
+                const workoutDays = Object.keys(workoutLog).filter(key => {
+                    return key.includes(workoutType) && key.includes(currentEx.name) && key.includes('_1');
+                });
+                const uniqueDays = new Set(workoutDays.map(key => key.split('_')[0])).size;
+                
+                const exerciseType = getExerciseType(sectionTitle);
+                const shouldRotate = shouldRecommendRotation(workoutType, currentEx.name, exerciseType);
+                const threshold = ROTATION_THRESHOLDS[exerciseType];
+                const daysThreshold = threshold * 2;
+                
+                let html = '<div style="margin-bottom: 12px;">';
+                
+                if (shouldRotate) {
+                    html += `
+                        <div style="background: linear-gradient(135deg, #ff9f0a 0%, #ff6b35 100%); 
+                                    color: white; 
+                                    padding: 12px 16px; 
+                                    border-radius: 12px; 
+                                    margin-bottom: 12px;
+                                    font-size: 14px;
+                                    font-weight: 600;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                <span style="font-size: 20px;">🔄</span>
+                                <span>Time to Switch It Up!</span>
+                            </div>
+                            <div style="font-size: 13px; font-weight: 400; opacity: 0.95;">
+                                You've done ${currentEx.name} for ${uniqueDays} workout days (${daysThreshold}+ recommended). Try a different variation below!
+                            </div>
+                        </div>
+                    `;
+                    markRotationRecommended(workoutType, currentEx.name);
+                }
+                
+                html += '<div class="option-pills">';
+                ex.rotations.forEach((rotation, idx) => {
+                    const shortName = rotation.name.split(' ').slice(0, 2).join(' ');
+                    const isCurrent = idx === selectedRotation;
+                    
+                    const variantDays = Object.keys(workoutLog).filter(key => {
+                        return key.includes(workoutType) && key.includes(rotation.name) && key.includes('_1');
+                    });
+                    const variantUniqueDays = new Set(variantDays.map(key => key.split('_')[0])).size;
+                    
+                    html += `
+                        <div class="option-pill ${isCurrent ? 'selected' : ''}" 
+                             onclick="selectRotation('${workoutType}', '${ex.name}', ${idx}, '${sectionTitle}')"
+                             style="position: relative;">
+                            ${shortName}
+                            ${variantUniqueDays > 0 ? `<div style="position: absolute; top: -6px; right: -6px; background: var(--success); color: white; border-radius: 10px; padding: 2px 6px; font-size: 10px; font-weight: 700;">${variantUniqueDays}</div>` : ''}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                
+                const exerciseData = {
+                    name: currentEx.name,
+                    sets: ex.sets,
+                    reps: ex.reps,
+                    rest: ex.rest,
+                    notes: currentEx.notes
+                };
+                html += renderSingleExercise(exerciseData, workoutType);
+                html += '</div>';
+                
+                return html;
+            } else {
+                return renderSingleExercise(ex, workoutType);
+            }
+        }
+
+        function selectRotation(workoutType, exerciseName, rotationIdx, sectionTitle) {
+            const rotationKey = `${workoutType}_rotation_${exerciseName}`;
+            const oldSelection = workoutLog[rotationKey] || 0;
+            
+            workoutLog[rotationKey] = rotationIdx;
+            saveData();
+            
+            startWorkout(workoutType);
+        }
+
+        function renderSingleExercise(ex, workoutType) {
+            const today = new Date().toISOString().split('T')[0];
+            const lastLog = getLastLog(workoutType, ex.name);
+
+            let html = `
+                <div class="exercise-card">
+                    <div class="exercise-header">
+                        <div class="exercise-name">${ex.name}</div>
+                        <button class="info-btn" onclick="showExerciseInfo('${ex.name}')">i</button>
+                    </div>
+                    <div class="exercise-specs">
+                        <span>Sets: <span class="spec-value">${ex.sets}</span></span>
+                        <span>Reps: <span class="spec-value">${ex.reps}</span></span>
+                        <span>Rest: <span class="spec-value">${ex.rest}</span></span>
+                    </div>
+                    ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 15px; margin-top: 8px;">${ex.notes}</div>` : ''}
+                    <div class="set-tracker">
+            `;
+
+            for (let i = 1; i <= ex.sets; i++) {
+                const logKey = `${today}_${workoutType}_${ex.name}_${i}`;
+                const saved = workoutLog[logKey];
+                const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
+                const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
+
+                html += `
+                    <div class="set-row">
+                        <div class="set-label">${i}</div>
+                        <select class="tracking-select ${saved ? 'filled' : ''}" 
+                                onchange="logSet('${workoutType}', '${ex.name}', ${i}, 'weight', this.value)">
+                            <option value="">Weight</option>
+                            <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
+                            ${generateWeightOptions(defaultWeight)}
+                        </select>
+                        <select class="tracking-select ${saved ? 'filled' : ''}" 
+                                onchange="logSet('${workoutType}', '${ex.name}', ${i}, 'reps', this.value)">
+                            <option value="">Reps</option>
+                            ${generateRepsOptions(defaultReps)}
+                        </select>
+                    </div>
+                `;
+            }
+
+            html += `
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        function generateWeightOptions(defaultValue) {
+            let options = '';
+            for (let w = 5; w <= 500; w += 5) {
+                options += `<option value="${w}" ${w == defaultValue ? 'selected' : ''}>${w} lbs</option>`;
+            }
+            return options;
+        }
+
+        function generateRepsOptions(defaultValue) {
+            let options = '';
+            for (let r = 1; r <= 50; r++) {
+                options += `<option value="${r}" ${r == defaultValue ? 'selected' : ''}>${r}</option>`;
+            }
+            return options;
+        }
+
+        function getLastLog(workoutType, exerciseName) {
+            const keys = Object.keys(workoutLog).filter(key => 
+                key.includes(workoutType) && key.includes(exerciseName) && !key.includes('_session_')
+            ).sort().reverse();
+
+            if (keys.length === 0) return null;
+
+            const lastDate = keys[0].split('_')[0];
+            const lastSets = {};
+            
+            keys.forEach(key => {
+                if (key.startsWith(lastDate)) {
+                    const setNum = key.split('_').pop();
+                    lastSets[`set${setNum}`] = workoutLog[key];
+                }
+            });
+
+            return lastSets;
+        }
+
+        function logSet(workoutType, exerciseName, setNum, field, value) {
+            const today = new Date().toISOString().split('T')[0];
+            const logKey = `${today}_${workoutType}_${exerciseName}_${setNum}`;
+            
+            if (!workoutLog[logKey]) {
+                workoutLog[logKey] = { weight: '', reps: '' };
+            }
+            workoutLog[logKey][field] = value;
+            
+            const historyKey = `${today}_${workoutType}`;
+            if (!workoutLog[historyKey]) {
+                workoutLog[historyKey] = { date: today, type: workoutType, exercises: {} };
+            }
+            if (!workoutLog[historyKey].exercises[exerciseName]) {
+                workoutLog[historyKey].exercises[exerciseName] = {};
+            }
+            workoutLog[historyKey].exercises[exerciseName][`set${setNum}`] = workoutLog[logKey];
+
+            saveData();
+
+            const selects = document.querySelectorAll('.tracking-select');
+            selects.forEach(s => {
+                if (s.value) s.classList.add('filled');
+            });
+        }
+
+        function showExerciseInfo(exerciseName) {
+            const info = EXERCISE_DB[exerciseName];
+            if (info) {
+                document.getElementById('exerciseName').textContent = exerciseName;
+                document.getElementById('exerciseInfo').innerHTML = `
+                    <p><strong>Setup:</strong> ${info.setup}</p>
+                    <p><strong>Execution:</strong> ${info.execution}</p>
+                `;
+                document.getElementById('exerciseModal').classList.add('active');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('exerciseModal').classList.remove('active');
+        }
+
+        let deleteClickCount = 0;
+        let deleteClickTimer = null;
+        
+        window.deleteCurrentWorkout = function() {
+            console.log('Delete button clicked!');
+            const container = document.getElementById('dayWorkouts');
+            const dateStr = container.getAttribute('data-current-date');
+            const sessionKey = container.getAttribute('data-current-session');
+            
+            if (!dateStr || !sessionKey) {
+                alert('Error: Cannot find workout to delete.');
+                return;
+            }
+            
+            deleteClickCount++;
+            
+            if (deleteClickCount === 1) {
+                const btn = event.target;
+                btn.textContent = '⚠️ Click Again to Confirm';
+                btn.style.background = '#ff3b30';
+                btn.style.color = 'white';
+                
+                deleteClickTimer = setTimeout(() => {
+                    btn.textContent = '🗑️ Delete';
+                    btn.style.background = 'rgba(255, 59, 48, 0.15)';
+                    btn.style.color = '#ff3b30';
+                    deleteClickCount = 0;
+                }, 3000);
+            } else if (deleteClickCount === 2) {
+                clearTimeout(deleteClickTimer);
+                deleteClickCount = 0;
+                console.log('Deleting workout...');
+                deleteWorkout(dateStr, sessionKey);
+            }
+        };
+
+        function clearAllData() {
+            if (confirm('⚠️ DELETE ALL WORKOUTS?\n\nThis will permanently delete:\n- All workout sessions\n- All exercise logs\n- All rotation tracking\n\nThis CANNOT be undone!\n\nAre you absolutely sure?')) {
+                localStorage.clear();
+                workoutLog = {};
+                rotationTracking = {};
+                workoutSessions = {};
+                currentSession = null;
+                workoutStartTime = null;
+                currentWorkoutType = null;
+                alert('✓ All workout data has been deleted.');
+                location.reload();
+            }
+        }
+
+        // Data clearing code removed - using server-based storage now
+
+        function deleteWorkout(dateStr, sessionKey) {
+            console.log('deleteWorkout called with:', dateStr, sessionKey);
+            
+            const session = workoutLog[sessionKey];
+            console.log('Session data:', session);
+            
+            if (!session) {
+                alert('Workout not found');
+                console.log('Session not found in workoutLog');
+                return;
+            }
+            
+            const workoutType = session.workoutType;
+            console.log('Workout type:', workoutType);
+            
+            const keysToDelete = Object.keys(workoutLog).filter(key => 
+                key.startsWith(dateStr + '_')
+            );
+            console.log('Deleting ALL keys for date:', keysToDelete);
+            keysToDelete.forEach(key => delete workoutLog[key]);
+            
+            saveData();
+            console.log('Data saved');
+            
+            const remainingKeys = Object.keys(workoutLog).filter(key => 
+                key.startsWith(dateStr + '_')
+            );
+            console.log('Remaining keys for date (should be empty):', remainingKeys);
+            
+            selectedCalendarDate = null;
+            
+            renderCalendar();
+            document.getElementById('dayWorkouts').innerHTML = '<div style="color: var(--success); text-align: center; padding: 20px; font-size: 18px; font-weight: 600;">✓ Workout Deleted</div>';
+            
+            setTimeout(() => {
+                document.getElementById('dayWorkouts').innerHTML = '';
+            }, 2000);
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const monthTitle = document.getElementById('monthTitle');
+            
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+
+            monthTitle.textContent = firstDay.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            let html = '';
+            ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
+                html += `<div class="calendar-day-header">${day}</div>`;
+            });
+
+            for (let i = 0; i < startingDayOfWeek; i++) {
+                html += '<div></div>';
+            }
+
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(currentYear, currentMonth, day);
+                const dateStr = date.toISOString().split('T')[0];
+                const hasWorkout = Object.keys(workoutLog).some(key => key.startsWith(dateStr + '_'));
+                const isToday = date.toDateString() === today.toDateString();
+                const isSelected = selectedCalendarDate === dateStr;
+
+                html += `
+                    <div class="calendar-day ${hasWorkout ? 'has-workout' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}"
+                         onclick="selectCalendarDay('${dateStr}')">
+                        <div class="calendar-day-number">${day}</div>
+                        ${hasWorkout ? '<div class="calendar-dot"></div>' : ''}
+                    </div>
+                `;
+            }
+
+            grid.innerHTML = html;
+        }
+
+        function selectCalendarDay(dateStr) {
+            selectedCalendarDate = dateStr;
+            renderCalendar();
+            showDayWorkouts(dateStr);
+        }
+
+        function changeMonth(delta) {
+            currentMonth += delta;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        }
+
+        function showDayWorkouts(dateStr) {
+            const container = document.getElementById('dayWorkouts');
+            
+            const sessionKeys = Object.keys(workoutLog).filter(key => 
+                key.startsWith(dateStr + '_session_')
+            );
+            
+            if (sessionKeys.length === 0) {
+                container.innerHTML = '<div style="color: var(--text-secondary); text-align: center; padding: 20px;">No workouts on this day</div>';
+                return;
+            }
+            
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const date = new Date(year, month - 1, day);
+            const formatted = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            
+            let html = `<div class="section-header">Workouts on ${formatted}</div>`;
+            
+            sessionKeys.sort((a, b) => {
+                const timeA = parseInt(a.split('_session_')[1].split('_')[0]);
+                const timeB = parseInt(b.split('_session_')[1].split('_')[0]);
+                return timeB - timeA;
+            });
+            
+            sessionKeys.forEach((sessionKey, index) => {
+                const session = workoutLog[sessionKey];
+                if (!session) return;
+                
+                const exerciseCount = Object.keys(session.exercises || {}).length;
+                const startTime = new Date(session.startTime);
+                const timeStr = startTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                
+                html += `
+                    <div class="workout-summary-card" onclick="openWorkoutDetailModal('${dateStr}', '${sessionKey}')" style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div style="flex: 1;">
+                                <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">${session.workoutType}</div>
+                                <div style="font-size: 14px; color: var(--text-secondary);">
+                                    ${timeStr} • ${exerciseCount} exercises • ${session.durationMinutes}m
+                                </div>
+                            </div>
+                            <div style="font-size: 24px; color: var(--text-secondary);">→</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                <button onclick="deleteAllWorkoutsForDay('${dateStr}'); event.stopPropagation();"
+                        style="width: 100%; 
+                               margin-top: 8px;
+                               background: rgba(255, 59, 48, 0.15); 
+                               border: 1px solid #ff3b30; 
+                               color: #ff3b30; 
+                               border-radius: 12px; 
+                               padding: 14px; 
+                               font-size: 15px; 
+                               font-weight: 600; 
+                               cursor: pointer;">
+                    🗑️ Delete All Workouts (${sessionKeys.length})
+                </button>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function deleteAllWorkoutsForDay(dateStr) {
+            deleteClickCount++;
+            
+            if (deleteClickCount === 1) {
+                event.target.textContent = '⚠️ Click Again to Confirm';
+                event.target.style.background = '#ff3b30';
+                event.target.style.color = 'white';
+                
+                deleteClickTimer = setTimeout(() => {
+                    event.target.textContent = '🗑️ Delete All Workouts';
+                    event.target.style.background = 'rgba(255, 59, 48, 0.15)';
+                    event.target.style.color = '#ff3b30';
+                    deleteClickCount = 0;
+                }, 3000);
+            } else if (deleteClickCount === 2) {
+                clearTimeout(deleteClickTimer);
+                deleteClickCount = 0;
+                
+                const keysToDelete = Object.keys(workoutLog).filter(key => 
+                    key.startsWith(dateStr + '_')
+                );
+                console.log('Deleting ALL keys for date:', keysToDelete);
+                keysToDelete.forEach(key => delete workoutLog[key]);
+                
+                saveData();
+                
+                selectedCalendarDate = null;
+                
+                renderCalendar();
+                document.getElementById('dayWorkouts').innerHTML = '<div style="color: var(--success); text-align: center; padding: 20px; font-size: 18px; font-weight: 600;">✓ All Workouts Deleted</div>';
+                
+                setTimeout(() => {
+                    document.getElementById('dayWorkouts').innerHTML = '';
+                }, 2000);
+            }
+        }
+
+        function openWorkoutDetailModal(dateStr, sessionKey) {
+            const session = workoutLog[sessionKey];
+            if (!session) return;
+            
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const date = new Date(year, month - 1, day);
+            const formatted = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            
+            const startTime = new Date(session.startTime);
+            const timeStr = startTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+            
+            document.getElementById('modalWorkoutType').textContent = session.workoutType;
+            document.getElementById('modalWorkoutDate').textContent = formatted + ' • ' + timeStr + ' • ' + session.durationMinutes + 'm';
+            
+            let html = '';
+            const exercises = session.exercises || {};
+            
+            if (Object.keys(exercises).length > 0) {
+                Object.entries(exercises).forEach(([exerciseName, sets]) => {
+                    html += `
+                        <div style="margin-bottom: 24px; background: var(--card-bg); border-radius: 12px; padding: 16px;">
+                            <div style="font-weight: 600; font-size: 17px; margin-bottom: 12px;">${exerciseName}</div>
+                    `;
+                    
+                    Object.entries(sets).forEach(([setKey, data]) => {
+                        if (data && data.weight && data.reps) {
+                            const setNum = setKey.replace('set', '');
+                            html += `
+                                <div style="display: flex; gap: 12px; font-size: 15px; color: var(--text-secondary); margin-bottom: 8px;">
+                                    <span style="width: 60px; color: var(--text);">Set ${setNum}</span>
+                                    <span style="color: var(--primary); font-weight: 600;">${data.weight}${data.weight === 'BW' ? '' : ' lbs'}</span>
+                                    <span>×</span>
+                                    <span style="color: var(--primary); font-weight: 600;">${data.reps} reps</span>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    html += '</div>';
+                });
+                
+                html += `
+                    <button onclick="deleteSingleWorkout('${dateStr}', '${sessionKey}')"
+                            style="width: 100%; 
+                                   background: rgba(255, 59, 48, 0.15); 
+                                   border: 1px solid #ff3b30; 
+                                   color: #ff3b30; 
+                                   border-radius: 12px; 
+                                   padding: 14px; 
+                                   font-size: 15px; 
+                                   font-weight: 600; 
+                                   cursor: pointer;
+                                   margin-top: 8px;">
+                        🗑️ Delete This Workout
+                    </button>
+                `;
+            } else {
+                html = '<div style="color: var(--text-secondary); text-align: center; padding: 40px;">No exercise data logged</div>';
+            }
+            
+            document.getElementById('workoutDetailBody').innerHTML = html;
+            
+            document.getElementById('workoutDetailModal').classList.add('active');
+        }
+
+        function deleteSingleWorkout(dateStr, sessionKey) {
+            deleteClickCount++;
+            
+            if (deleteClickCount === 1) {
+                event.target.textContent = '⚠️ Click Again to Confirm';
+                event.target.style.background = '#ff3b30';
+                event.target.style.color = 'white';
+                
+                deleteClickTimer = setTimeout(() => {
+                    event.target.textContent = '🗑️ Delete This Workout';
+                    event.target.style.background = 'rgba(255, 59, 48, 0.15)';
+                    event.target.style.color = '#ff3b30';
+                    deleteClickCount = 0;
+                }, 3000);
+            } else if (deleteClickCount === 2) {
+                clearTimeout(deleteClickTimer);
+                deleteClickCount = 0;
+                
+                const session = workoutLog[sessionKey];
+                if (!session) return;
+                
+                const workoutType = session.workoutType;
+                
+                const keysToDelete = Object.keys(workoutLog).filter(key => 
+                    key.startsWith(dateStr + '_' + workoutType + '_') && !key.includes('_session_')
+                );
+                keysToDelete.forEach(key => delete workoutLog[key]);
+                
+                delete workoutLog[sessionKey];
+                
+                saveData();
+                
+                closeWorkoutDetailModal();
+                
+                showDayWorkouts(dateStr);
+                
+                renderCalendar();
+            }
+        }
+
+        function closeWorkoutDetailModal() {
+            document.getElementById('workoutDetailModal').classList.remove('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('workoutDetailModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeWorkoutDetailModal();
+                }
+            });
+        });
+
+        document.getElementById('exerciseModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        init();
+    </script>
+</body>
+</html>
