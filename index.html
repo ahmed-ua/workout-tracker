@@ -1938,32 +1938,708 @@
             }
         };
 
-        // Exercise database (abbreviated)
+        // Exercise database - comprehensive definitions
         const EXERCISE_DB = {
+            // === EXTENSIVE PLYOS ===
             'Pogo Hops': {
-                setup: 'Stand with feet hip-width apart. Arms at sides.',
-                execution: 'Bounce continuously on balls of feet with minimal knee bend. Use ankles like springs. Focus on rhythm, not height.',
-                category: 'Extensive Plyo'
+                setup: 'Stand with feet hip-width apart. Arms relaxed at sides. Weight on balls of feet.',
+                execution: 'Bounce continuously using ankle stiffness with minimal knee bend. Focus on quick ground contact and rhythm, not height. Keep core tight.'
             },
+            'Lateral Line Hops': {
+                setup: 'Stand on one side of a line or crack. Feet together, knees soft.',
+                execution: 'Hop side-to-side over the line quickly. Stay on balls of feet. Minimize ground contact time. Keep hips square.'
+            },
+            'Single-Leg Hops': {
+                setup: 'Stand on one leg. Other leg bent behind you. Arms ready for balance.',
+                execution: 'Hop in place on one foot using ankle spring. Land softly, immediately rebound. Keep knee slightly bent throughout.'
+            },
+            'Banded Lateral Hops': {
+                setup: 'Place mini band around ankles. Athletic stance with tension on band.',
+                execution: 'Explosively hop laterally against band resistance. Land softly and immediately hop back. Maintain band tension throughout.'
+            },
+            'A-Skips': {
+                setup: 'Stand tall, arms at 90 degrees. One leg ready to drive.',
+                execution: 'Skip forward driving knee high (thigh parallel). Opposite arm drives up. Land on ball of foot. Alternate legs with rhythm.'
+            },
+            'Lateral Skater Hops': {
+                setup: 'Stand on one leg. Other leg behind, arms ready.',
+                execution: 'Bound laterally, landing on opposite foot. Swing arms for momentum. Stick landing briefly before bounding back.'
+            },
+            'Lateral Bounds': {
+                setup: 'Athletic stance on one leg. Arms ready to drive.',
+                execution: 'Push off explosively sideways. Cover max distance. Land softly on opposite foot. Stabilize, then bound back.'
+            },
+            'Cone Shuffles': {
+                setup: 'Set cones 5-10 feet apart. Athletic stance between them.',
+                execution: 'Shuffle quickly side to side, touching each cone. Stay low in athletic position. Quick feet, don\'t cross legs.'
+            },
+            'Carioca Drill': {
+                setup: 'Stand sideways to direction of travel. Arms out for balance.',
+                execution: 'Move laterally: trail leg crosses in front, then behind (grapevine pattern). Rotate hips with each step. Stay on balls of feet.'
+            },
+            'Diagonal Bounds': {
+                setup: 'Stand on one leg at 45-degree angle to travel direction.',
+                execution: 'Bound diagonally forward, landing on opposite leg. Cover distance and height. Alternate legs in zigzag pattern.'
+            },
+            'Med Ball Chest Pass': {
+                setup: 'Hold med ball at chest. Stand 6-8 feet from wall. Athletic stance.',
+                execution: 'Explosively push ball from chest into wall. Catch rebound and immediately repeat. Generate power from chest and arms.'
+            },
+            'Med Ball Overhead Throws': {
+                setup: 'Hold med ball overhead. Face wall or open space. Feet shoulder-width.',
+                execution: 'Throw ball overhead like a soccer throw-in. Use core and arms. Follow through completely. Catch and repeat.'
+            },
+            'Light DB Punch': {
+                setup: 'Stand in boxing stance. Light dumbbell (5-10 lbs) in each hand at chin.',
+                execution: 'Throw fast punches alternating arms. Rotate torso with each punch. Keep core tight. Speed over power.'
+            },
+            'Med Ball Rotational Throws': {
+                setup: 'Stand sideways to wall. Hold med ball at hip. Feet wider than shoulders.',
+                execution: 'Rotate explosively, throwing ball into wall. Generate power from hips and core. Catch and repeat same side, then switch.'
+            },
+            'Band Speed Punches': {
+                setup: 'Anchor resistance band behind you. Hold handles at chest in boxing stance.',
+                execution: 'Throw rapid alternating punches against band resistance. Full arm extension. Keep core engaged. Maximum speed.'
+            },
+
+            // === INTENSIVE PLYOS ===
             'Box Jumps': {
-                setup: 'Face box 12-24" high. Feet hip-width. Arms back.',
-                execution: 'Swing arms forward and jump onto box. Land softly. Step down. Focus on max height.',
-                category: 'Intensive Plyo'
+                setup: 'Face box 12-24" high. Feet hip-width. Arms back ready to swing.',
+                execution: 'Swing arms forward and jump onto box explosively. Land softly with bent knees. Step down (don\'t jump). Focus on max height.'
             },
+            'Depth Jumps': {
+                setup: 'Stand on 12-18" box. Step off (don\'t jump off) edge.',
+                execution: 'Land with both feet, immediately jump max height. Minimize ground contact time. This is reactive strength training.'
+            },
+            'Hurdle Hops': {
+                setup: 'Set 3-5 hurdles 3-4 feet apart. Face first hurdle.',
+                execution: 'Jump over each hurdle continuously. Land and immediately take off. Drive arms up. Focus on height and quick contacts.'
+            },
+            'Banded Lateral Jumps': {
+                setup: 'Heavy band around waist, anchored to side. Athletic stance.',
+                execution: 'Jump laterally against band for max distance. Stick landing. Reset and repeat. Fight the band resistance.'
+            },
+            'Single-Leg Box Jumps': {
+                setup: 'Stand on one leg facing appropriate height box.',
+                execution: 'Jump onto box using single leg takeoff. Land on both feet or same leg. Step down. Requires balance and power.'
+            },
+            'Plyo Push-Ups': {
+                setup: 'Push-up position. Hands slightly wider than shoulders.',
+                execution: 'Lower into push-up, then explode up so hands leave ground. Land softly and immediately descend into next rep.'
+            },
+            'Med Ball Slams': {
+                setup: 'Hold heavy med ball overhead. Feet shoulder-width. Core tight.',
+                execution: 'Slam ball into ground with full force. Use entire body - arms, core, hips. Catch bounce and repeat.'
+            },
+            'Depth Push-Ups': {
+                setup: 'Hands on low plates or blocks. Push-up position.',
+                execution: 'Drop hands to floor between plates, immediately push up explosively back onto plates. Reactive upper body power.'
+            },
+            'Med Ball Rotational Slams': {
+                setup: 'Hold med ball overhead, standing with feet wide.',
+                execution: 'Slam ball diagonally to outside of foot. Rotate entire torso. Generate power from hips. Alternate sides.'
+            },
+            'Clapping Pull-Ups': {
+                setup: 'Hang from pull-up bar. Overhand grip slightly wider than shoulders.',
+                execution: 'Pull explosively, release bar at top, clap, re-grip. Land in controlled hang. Advanced movement - build up slowly.'
+            },
+            'Broad Jumps': {
+                setup: 'Athletic stance. Arms back. Knees bent.',
+                execution: 'Swing arms and jump forward for maximum distance. Land softly with bent knees. Stick landing for 3 seconds.'
+            },
+            'Single-Leg Broad Jump': {
+                setup: 'Stand on one leg. Arms ready.',
+                execution: 'Jump forward for distance off single leg. Land on both feet or same leg. Stick the landing. Control is key.'
+            },
+            'Box Jump (Forward)': {
+                setup: 'Face box at appropriate height. Athletic stance.',
+                execution: 'Jump forward onto box. Land softly in athletic position. Step down. Focus on distance and height combination.'
+            },
+            '180° Box Jumps': {
+                setup: 'Stand sideways to box. Athletic position.',
+                execution: 'Jump, rotate 180° mid-air, land facing opposite direction on box. Step down. Requires coordination and power.'
+            },
+            'Banded Broad Jumps': {
+                setup: 'Resistance band around waist, anchored behind. Athletic stance.',
+                execution: 'Jump forward against band resistance for max distance. Stick landing. Walk back and repeat.'
+            },
+
+            // === MAIN LIFTS - SQUATS ===
             'High Bar Back Squat': {
-                setup: 'Bar on upper traps. Feet shoulder-width. Toes slightly out.',
-                execution: 'Brace core. Descend with control. Chest up. Hit depth. Drive through whole foot.',
-                category: 'Main Lift'
+                setup: 'Bar on upper traps. Feet shoulder-width, toes slightly out. Chest up.',
+                execution: 'Brace core hard. Descend by breaking at hips and knees together. Keep chest up, hit below parallel. Drive through whole foot.'
             },
-            'Barbell Bench Press': {
-                setup: 'Lie on bench. Eyes under bar. Feet flat. Slight arch.',
-                execution: 'Lower to mid-chest. Elbows 45°. Touch chest. Press up. Lock out.',
-                category: 'Main Lift'
+            'Front Squat (Heavy)': {
+                setup: 'Bar in front rack position on shoulders. Elbows high. Feet shoulder-width.',
+                execution: 'Descend keeping torso very upright. Elbows stay high. Hit depth. Drive up through midfoot. More quad and core intensive.'
             },
+            'Front Squat': {
+                setup: 'Bar in front rack position on shoulders. Elbows high. Feet shoulder-width.',
+                execution: 'Descend keeping torso very upright. Elbows stay high. Hit depth. Drive up through midfoot. More quad and core intensive.'
+            },
+            'Safety Bar Squat': {
+                setup: 'Safety squat bar on traps with handles forward. Feet shoulder-width.',
+                execution: 'Brace and descend. Bar wants to pitch you forward - fight to stay upright. Great for upper back and easier on shoulders.'
+            },
+            'Goblet Squat (Heavy)': {
+                setup: 'Hold heavy dumbbell or kettlebell at chest. Elbows tight. Feet shoulder-width.',
+                execution: 'Squat deep, keeping weight at chest. Elbows can touch inside of knees at bottom. Drive up. Great for core bracing practice.'
+            },
+            'Zercher Squat': {
+                setup: 'Bar in crook of elbows, arms crossed. Feet shoulder-width or wider.',
+                execution: 'Brace core extremely tight. Squat down keeping bar secure. Unique loading position challenges core differently.'
+            },
+
+            // === MAIN LIFTS - DEADLIFTS & HINGES ===
             'Trap Bar Deadlift': {
-                setup: 'Stand in center of trap bar. Feet hip-width. Grab handles.',
-                execution: 'Brace core. Drive through feet. Hips and shoulders rise together. Stand tall.',
-                category: 'Main Lift'
+                setup: 'Stand in center of trap bar. Feet hip-width. Grab handles. Chest up.',
+                execution: 'Brace core. Drive through feet. Hips and shoulders rise together. Stand tall and squeeze glutes at top.'
+            },
+            'Conventional Deadlift': {
+                setup: 'Bar over mid-foot. Feet hip-width. Grip just outside legs. Chest up, back flat.',
+                execution: 'Brace, push floor away. Bar stays close to legs. Hips and shoulders rise together. Lock out with glutes.'
+            },
+            'Sumo Deadlift': {
+                setup: 'Wide stance, toes out. Grip inside legs. Chest up, hips close to bar.',
+                execution: 'Push knees out, drive through floor. More quad involvement. Keep chest up. Hips come through at top.'
+            },
+            'Romanian Deadlift': {
+                setup: 'Hold bar at hips. Feet hip-width. Slight knee bend.',
+                execution: 'Push hips back, lowering bar along legs. Feel hamstring stretch. Keep back flat. Return by driving hips forward.'
+            },
+            'Snatch Grip RDL': {
+                setup: 'Wide grip on bar (snatch width). Feet hip-width. Slight knee bend.',
+                execution: 'Same as RDL but wide grip increases upper back demand. Feel stretch in hamstrings. Keep lats engaged.'
+            },
+            'Single-Leg RDL': {
+                setup: 'Stand on one leg. Light weight in opposite hand or both hands.',
+                execution: 'Hinge at hip, free leg extends behind for balance. Lower until hamstring stretch. Return to standing. Great for balance.'
+            },
+            'Good Mornings': {
+                setup: 'Bar on upper back like squat. Feet hip-width. Slight knee bend.',
+                execution: 'Hinge at hips, pushing them back. Lower torso until parallel. Keep back flat. Return by driving hips forward.'
+            },
+
+            // === MAIN LIFTS - LUNGES & SPLIT STANCE ===
+            'Bulgarian Split Squats': {
+                setup: 'Rear foot elevated on bench. Front foot 2-3 feet ahead. Dumbbells or barbell.',
+                execution: 'Lower until rear knee nearly touches ground. Front knee tracks over toes. Drive through front foot to stand.'
+            },
+            'Skater Squats': {
+                setup: 'Stand on one leg. Other leg behind, not touching ground.',
+                execution: 'Squat down on single leg, reaching rear leg back for counterbalance. Touch rear knee to pad if needed. Stand back up.'
+            },
+            'Deficit Reverse Lunges': {
+                setup: 'Stand on 2-4" platform. Dumbbells at sides or barbell.',
+                execution: 'Step back into lunge, rear foot goes to floor below platform. Extra depth increases glute stretch. Drive up through front leg.'
+            },
+            'Walking Lunges': {
+                setup: 'Stand with dumbbells at sides or barbell on back.',
+                execution: 'Step forward into lunge, back knee nearly touches ground. Push through front foot to bring rear leg forward into next lunge.'
+            },
+            'Walking Lunges (Light)': {
+                setup: 'Light or no weight. Hands at sides or on hips.',
+                execution: 'Walk forward in continuous lunge pattern. Focus on form and stretch. Good for burnout sets and conditioning.'
+            },
+            'Reverse Lunges': {
+                setup: 'Stand with weight. Feet hip-width.',
+                execution: 'Step backward into lunge. Lower until rear knee nearly touches ground. Drive through front foot to return. More glute emphasis than forward.'
+            },
+            'Step-Ups (Heavy)': {
+                setup: 'Face knee-height box. Hold heavy dumbbells or barbell.',
+                execution: 'Step up driving through front leg only - don\'t push off back foot. Stand tall on box. Step down with control.'
+            },
+
+            // === MAIN LIFTS - PRESSING ===
+            'Barbell Bench Press': {
+                setup: 'Lie on bench. Eyes under bar. Feet flat. Slight back arch. Grip slightly wider than shoulders.',
+                execution: 'Unrack and lower to mid-chest with control. Elbows at 45°. Touch chest. Press up in slight arc to lockout.'
+            },
+            'Close Grip Bench': {
+                setup: 'Same as bench press but hands shoulder-width apart.',
+                execution: 'Lower bar to lower chest/sternum. Elbows stay closer to body. More tricep emphasis. Full lockout.'
+            },
+            'Pause Bench Press': {
+                setup: 'Same as regular bench press setup.',
+                execution: 'Lower bar to chest, pause 2-3 seconds with bar touching (no bounce). Press up explosively. Builds strength off chest.'
+            },
+            'Overhead Press': {
+                setup: 'Bar at shoulders, grip just outside shoulder-width. Feet hip-width. Squeeze glutes.',
+                execution: 'Press bar straight up, moving head back then forward as bar passes. Lock out overhead. Lower with control.'
+            },
+            'Landmine Press': {
+                setup: 'Hold end of barbell at shoulder. Other end in landmine or corner. Staggered stance.',
+                execution: 'Press bar up and forward in arc. Shoulder-friendly angle. Full extension. Lower with control.'
+            },
+            'DB Overhead Press': {
+                setup: 'Dumbbells at shoulders, palms forward or neutral. Seated or standing.',
+                execution: 'Press both dumbbells overhead. Greater range of motion than barbell. Control the descent.'
+            },
+            'Incline DB Press': {
+                setup: 'Bench at 30-45°. Dumbbells at chest level. Feet flat.',
+                execution: 'Press dumbbells up, bringing them slightly together at top. Lower with control to chest stretch. Upper chest focus.'
+            },
+            'Push Press': {
+                setup: 'Bar at shoulders like overhead press. Feet hip-width.',
+                execution: 'Dip slightly at knees, then explosively drive bar overhead using leg power. Lock out. Lower to shoulders.'
+            },
+            'Jerk Press': {
+                setup: 'Bar at shoulders. Feet hip-width.',
+                execution: 'Dip and drive bar up, then quickly drop under bar into split or squat. Catch with locked arms. Stand up.'
+            },
+            'Viking Press (Landmine)': {
+                setup: 'Landmine attachment with handles. Stand facing handles at shoulder height.',
+                execution: 'Press handles overhead using leg drive if desired. Neutral grip is shoulder-friendly. Full extension.'
+            },
+            'Weighted Dips': {
+                setup: 'On dip bars, weight belt with plates or dumbbell between legs.',
+                execution: 'Lower with slight forward lean (chest emphasis) or upright (tricep emphasis). Go until upper arms parallel. Press up to lockout.'
+            },
+            'Ring Dips': {
+                setup: 'Support yourself on gymnastic rings. Arms locked.',
+                execution: 'Lower with control - rings want to move out. Requires more stabilization. Press up, turning rings out at top.'
+            },
+            'Decline Bench': {
+                setup: 'On decline bench, feet secured. Bar at lower chest level.',
+                execution: 'Lower bar to lower chest. Press up. Emphasizes lower chest. Generally can lift more than flat bench.'
+            },
+            'Machine Chest Press': {
+                setup: 'Adjust seat so handles are at mid-chest. Feet flat.',
+                execution: 'Press handles forward to full extension. Control the return. Constant tension throughout range.'
+            },
+            'Push-Ups': {
+                setup: 'Hands slightly wider than shoulders. Body in straight line from head to heels.',
+                execution: 'Lower chest to floor, elbows at 45°. Push back up to full extension. Keep core tight throughout.'
+            },
+            'Decline Push-Ups': {
+                setup: 'Feet elevated on bench or box. Hands on floor slightly wider than shoulders.',
+                execution: 'Lower chest toward floor. Push back up. Elevation increases difficulty and upper chest emphasis.'
+            },
+
+            // === MAIN LIFTS - PULLING ===
+            'Pull-Ups': {
+                setup: 'Hang from bar, overhand grip slightly wider than shoulders. Dead hang to start.',
+                execution: 'Pull up until chin clears bar. Lead with chest. Lower with control to dead hang. Add weight when possible.'
+            },
+            'Chin-Ups': {
+                setup: 'Hang from bar, underhand (supinated) grip shoulder-width.',
+                execution: 'Pull up until chin over bar. More bicep involvement than pull-ups. Lower with control.'
+            },
+            'Wide Grip Pull-Ups': {
+                setup: 'Hang from bar, grip 1.5x shoulder width. Overhand.',
+                execution: 'Pull up leading with chest. Emphasizes lat width. Lower with control. Harder than standard pull-ups.'
+            },
+            'Barbell Rows': {
+                setup: 'Hinge forward 45°, bar hanging at arm\'s length. Feet hip-width. Overhand or mixed grip.',
+                execution: 'Pull bar to lower sternum, squeezing shoulder blades. Lower with control. Keep back flat throughout.'
+            },
+            'Pendlay Rows': {
+                setup: 'Bar on floor. Hinged over with flat back parallel to ground.',
+                execution: 'Explosively row bar to chest. Lower to floor, reset, repeat. Each rep starts from dead stop. More explosive.'
+            },
+            'Meadows Row': {
+                setup: 'Landmine setup. Staggered stance perpendicular to bar. Grip end of bar.',
+                execution: 'Row bar to hip with elbow flaring out. Great lat stretch at bottom. Squeeze at top. Unique angle.'
+            },
+            'Single-Arm DB Row': {
+                setup: 'One hand and knee on bench. Other foot on floor. Dumbbell hanging.',
+                execution: 'Row dumbbell to hip, elbow close to body. Anti-rotation component. Lower with control. Full stretch at bottom.'
+            },
+            'Chest-Supported Row': {
+                setup: 'Lie face down on incline bench. Dumbbells or bar hanging.',
+                execution: 'Row weight to chest, squeezing shoulder blades. Removes lower back from equation. Pure back work.'
+            },
+            'Chest-Supported Rows': {
+                setup: 'Lie face down on incline bench. Dumbbells or bar hanging.',
+                execution: 'Row weight to chest, squeezing shoulder blades. Removes lower back from equation. Pure back work.'
+            },
+            'T-Bar Row': {
+                setup: 'Straddle T-bar or landmine. Grip handle. Hinged forward.',
+                execution: 'Row handle to chest, squeezing back. Allow slight upper body rise. Lower with control. Heavy loading possible.'
+            },
+            'Seal Rows': {
+                setup: 'Lie face down on elevated bench. Arms hang straight down with dumbbells or bar.',
+                execution: 'Row weight up squeezing shoulder blades. Complete isolation - no momentum possible. Full stretch at bottom.'
+            },
+            'Inverted Rows': {
+                setup: 'Set bar at hip height. Hang underneath, heels on ground, body straight.',
+                execution: 'Pull chest to bar squeezing shoulder blades. Lower with control. Adjust difficulty by changing body angle.'
+            },
+            'Cable Rows': {
+                setup: 'Sit at cable row station. Feet on platform. Grab handle.',
+                execution: 'Pull handle to lower chest, squeezing shoulder blades. Let shoulders protract forward on return. Constant tension.'
+            },
+            'Single-Arm Cable Row': {
+                setup: 'Stand or half-kneel at cable machine. Single handle.',
+                execution: 'Row handle to side, resisting rotation. Anti-rotation core work plus back. Alternate sides.'
+            },
+            'Lat Pulldown': {
+                setup: 'Sit at pulldown machine. Grip bar wide. Thighs under pad.',
+                execution: 'Pull bar to upper chest, leading with elbows. Squeeze lats. Control return. Don\'t lean back excessively.'
+            },
+            'Face Pulls': {
+                setup: 'Cable at face height. Rope attachment. Grip with thumbs toward you.',
+                execution: 'Pull rope to face, separating hands and externally rotating shoulders. Squeeze rear delts. Essential for shoulder health.'
+            },
+            'Rear Delt Flyes': {
+                setup: 'Bent over or on incline bench face down. Light dumbbells hanging.',
+                execution: 'Raise arms out to sides, leading with elbows. Squeeze shoulder blades. Light weight, high reps.'
+            },
+            'Band Pull-Aparts': {
+                setup: 'Hold band in front at shoulder height. Arms straight, shoulder-width grip.',
+                execution: 'Pull band apart by squeezing shoulder blades together. Arms go out to sides. Control return. High rep shoulder health.'
+            },
+            'Reverse Flyes': {
+                setup: 'Bent over or on incline bench face down. Light dumbbells.',
+                execution: 'Raise arms to sides targeting rear delts. Keep slight elbow bend. Squeeze at top. Control descent.'
+            },
+
+            // === ACCESSORIES - LEGS ===
+            'Leg Extensions': {
+                setup: 'Sit in leg extension machine. Pad on shins. Adjust back pad.',
+                execution: 'Extend legs fully, squeezing quads hard at top. Lower with control. Isolation quad exercise.'
+            },
+            'Leg Curls': {
+                setup: 'Lie face down on leg curl machine. Pad behind ankles.',
+                execution: 'Curl heels toward glutes. Squeeze hamstrings. Lower with control. Don\'t let hips rise.'
+            },
+            'Leg Press': {
+                setup: 'Sit in leg press. Feet shoulder-width on platform. Release safeties.',
+                execution: 'Lower platform with control until deep stretch. Press through whole foot. Don\'t lock knees at top.'
+            },
+            'Glute-Ham Raises': {
+                setup: 'On GHD machine. Knees on pad. Feet anchored.',
+                execution: 'Lower torso by straightening at knees. Use hamstrings to curl back up. Brutal hamstring exercise. Use assist if needed.'
+            },
+            'Standing Calf Raises': {
+                setup: 'Stand on calf raise machine or block. Balls of feet on edge.',
+                execution: 'Rise up on toes as high as possible. Full squeeze at top. Lower until heels below platform level for stretch.'
+            },
+            'Seated Calf Raises': {
+                setup: 'Sit in seated calf machine. Knees under pad. Balls of feet on platform.',
+                execution: 'Raise heels as high as possible. Hold squeeze. Lower for full stretch. Targets soleus muscle.'
+            },
+            'Calf Press on Leg Press': {
+                setup: 'On leg press with just balls of feet on platform edge.',
+                execution: 'Press through toes, extending ankles. Full range of motion. Can use heavy weight.'
+            },
+            'Single-Leg Calf Raise': {
+                setup: 'Stand on one foot on block or step. Hold something for balance.',
+                execution: 'Rise up on toes, full squeeze. Lower below platform level. Do all reps on one leg before switching.'
+            },
+            'Tibialis Raises': {
+                setup: 'Sit on edge of bench. Heels on ground, toes up. Or use tib bar.',
+                execution: 'Raise toes toward shins. Builds tibialis anterior. Important for shin health and ankle stability.'
+            },
+
+            // === ACCESSORIES - ARMS ===
+            'Hammer Curls': {
+                setup: 'Stand with dumbbells at sides, palms facing body.',
+                execution: 'Curl weights up keeping neutral grip. Squeeze brachialis. Lower with control. Builds forearm too.'
+            },
+            'Overhead Tricep Extension': {
+                setup: 'Hold dumbbell overhead with both hands or cable behind head.',
+                execution: 'Lower weight behind head by bending elbows. Feel tricep stretch. Press back up to lockout.'
+            },
+            'Barbell Curls': {
+                setup: 'Stand holding barbell with underhand grip. Arms at sides.',
+                execution: 'Curl bar up keeping elbows pinned. Squeeze biceps at top. Lower with control. Strict form.'
+            },
+            'Skull Crushers': {
+                setup: 'Lie on bench. Hold bar or EZ bar with arms straight over chest.',
+                execution: 'Lower weight toward forehead by bending elbows only. Extend back up. Keep upper arms still.'
+            },
+            'Cable Curls': {
+                setup: 'Face cable machine. Handle at low position. Grab with underhand grip.',
+                execution: 'Curl handle up squeezing biceps. Constant cable tension throughout. Lower with control.'
+            },
+            'Rope Pushdowns': {
+                setup: 'Face cable machine. Rope at high position. Grab rope ends.',
+                execution: 'Push down extending elbows fully. Spread rope at bottom for extra contraction. Control return.'
+            },
+
+            // === ACCESSORIES - SHOULDERS ===
+            'Lateral Raises': {
+                setup: 'Stand with light dumbbells at sides. Slight bend in elbows.',
+                execution: 'Raise arms out to sides until parallel to ground. Lead with elbows. Control descent. Don\'t swing.'
+            },
+            'Cable Upright Rows': {
+                setup: 'Face cable machine. Bar at low position. Grip shoulder-width or wider.',
+                execution: 'Pull bar up along body to chest height. Elbows go high and out. Squeeze at top. Lower with control.'
+            },
+            'Front Raises': {
+                setup: 'Stand with dumbbells in front of thighs or plate.',
+                execution: 'Raise weight forward to shoulder height. Keep slight elbow bend. Lower with control. Alternate or together.'
+            },
+            'Cable Flyes': {
+                setup: 'Stand between cable machines set at shoulder height. Handle in each hand.',
+                execution: 'Bring handles together in front of chest in hugging motion. Squeeze chest. Return with control.'
+            },
+
+            // === CORE EXERCISES ===
+            'Anti-Extension Circuit': {
+                setup: 'Prepare for planks, side planks, and dead bugs.',
+                execution: 'Plank 45s (brace core, flat back) → Side plank 30s each side → Dead bugs 12/side (opposite arm/leg extend). No rest between.'
+            },
+            'Loaded Carries': {
+                setup: 'Pick up heavy dumbbells or kettlebells.',
+                execution: 'Walk 40m with perfect posture. Includes farmer carry (both hands), overhead carry, suitcase carry (one hand). Crushing core work.'
+            },
+            'Rotational Core': {
+                setup: 'Mat or bench for exercises.',
+                execution: 'Russian twists, bicycle crunches, and oblique crunches. 10 reps per side each exercise. Control the rotation.'
+            },
+            'Compression Circuit': {
+                setup: 'Mat for floor exercises.',
+                execution: 'Leg raises 10-15, V-ups 10-15, hollow holds 20s. Targets hip flexors and rectus abdominis.'
+            },
+            'Ab Wheel Rollouts': {
+                setup: 'Kneel on mat. Grip ab wheel with both hands.',
+                execution: 'Roll wheel forward, extending body. Go as far as you can control. Use abs to pull back. Don\'t let hips sag.'
+            },
+            'Dead Bugs': {
+                setup: 'Lie on back. Arms straight up, knees at 90°.',
+                execution: 'Lower opposite arm and leg toward floor while keeping lower back pressed down. Alternate sides with control.'
+            },
+            'Toes to Bar': {
+                setup: 'Hang from pull-up bar. Arms straight.',
+                execution: 'Raise legs up to touch bar using core. Control the descent. Requires flexibility and strength.'
+            },
+            'Pallof Press': {
+                setup: 'Cable at chest height. Hold handle at sternum. Stand sideways.',
+                execution: 'Press handle straight out, resisting rotation. Hold at extension. Return to chest. Anti-rotation core.'
+            },
+            'Landmine Rotations': {
+                setup: 'Hold end of landmine barbell at chest with straight arms.',
+                execution: 'Rotate torso, moving bar in arc from hip to hip. Control the movement. Works obliques dynamically.'
+            },
+            'Cable Woodchops': {
+                setup: 'Cable set high or low. Stand sideways to machine.',
+                execution: 'Pull cable diagonally across body (high to low or low to high). Rotate through core. Control return.'
+            },
+            'Hanging Leg Raises': {
+                setup: 'Hang from pull-up bar or captain\'s chair. Arms straight.',
+                execution: 'Raise legs until parallel to ground or higher. Control descent - no swinging. Bend knees to make easier.'
+            },
+            'Decline Sit-Ups': {
+                setup: 'Lie on decline bench, feet hooked under pads.',
+                execution: 'Sit up fully, can add weight across chest. Lower with control. Decline increases difficulty.'
+            },
+            'Dragon Flags': {
+                setup: 'Lie on bench, grip behind head. Legs straight up.',
+                execution: 'Lower entire body as one straight unit. Only shoulders touch bench. Raise back up. Advanced movement.'
+            },
+            'Plank Variations': {
+                setup: 'Standard plank position on elbows.',
+                execution: 'Hold front plank, then side planks each direction. Keep body straight. Brace core tight. 30-60s each.'
+            },
+            'Bird Dogs': {
+                setup: 'On hands and knees. Back flat.',
+                execution: 'Extend opposite arm and leg straight out. Hold briefly. Return and switch. No rotation in hips or shoulders.'
+            },
+            'Farmer Carries': {
+                setup: 'Stand holding heavy dumbbells or kettlebells at sides.',
+                execution: 'Walk with tall posture, shoulders back, core braced. Don\'t let weight pull you to sides.'
+            },
+            'Suitcase Carries': {
+                setup: 'Heavy dumbbell or kettlebell in one hand only.',
+                execution: 'Walk without leaning toward or away from weight. Anti-lateral flexion core work. Switch sides.'
+            },
+            'Overhead Carries': {
+                setup: 'Single kettlebell or dumbbell pressed overhead.',
+                execution: 'Walk with arm locked out, bicep by ear. Core braced to prevent rib flare. Challenges shoulder stability.'
+            },
+            'Zercher Carries': {
+                setup: 'Barbell in crook of elbows, arms crossed.',
+                execution: 'Walk maintaining upright posture. Brutal on core and biceps. Unique carry variation.'
+            },
+            'Turkish Get-Up': {
+                setup: 'Lie on back. Kettlebell pressed up with one arm.',
+                execution: 'Stand up through specific sequence while keeping weight overhead. Reverse to return. Full body stability exercise.'
+            },
+            'Heavy Carries + Plank': {
+                setup: 'Heavy dumbbells and mat ready.',
+                execution: 'Farmer carry 20m, immediately into weighted plank 30s. Combines dynamic and static core work.'
+            },
+            'Anti-Rotation Complex': {
+                setup: 'Cable machine and mat.',
+                execution: 'Pallof press, bird dogs, side plank - 10/side each. All anti-rotation exercises. No rest between.'
+            },
+            'Explosive Core': {
+                setup: 'Med ball and mat.',
+                execution: 'Med ball slams 10, mountain climbers 20, v-ups 15. Ballistic core training. Keep rest minimal.'
+            },
+            'Isometric Hold Circuit': {
+                setup: 'Mat for floor work.',
+                execution: 'Hollow hold 20s, plank 30s, dead bug hold 20s/side. Static core strength. Breathe through holds.'
+            },
+            'Plank Circuit': {
+                setup: 'Mat for planks.',
+                execution: 'Front plank, left side plank, right side plank. 45s each. Keep body straight, core braced.'
+            },
+            'Anti-Rotation Circuit': {
+                setup: 'Cable and mat.',
+                execution: 'Pallof press 10/side, bird dogs 10/side, dead bugs 10/side. Anti-rotation focus throughout.'
+            },
+            'Hanging Core': {
+                setup: 'Hang from pull-up bar.',
+                execution: 'Hanging knee raises or straight leg raises for 10-15 reps. Control swing. Hits lower abs.'
+            },
+
+            // === OLYMPIC LIFTS & POWER ===
+            'Power Clean': {
+                setup: 'Bar on floor. Feet hip-width. Grip just outside knees. Flat back, chest up.',
+                execution: 'Pull bar from floor explosively. When bar reaches hips, jump and shrug. Drop under bar, catching in front rack. Stand up.'
+            },
+            'Hang Clean': {
+                setup: 'Bar at hip height. Slight knee bend. Grip just outside knees.',
+                execution: 'Dip slightly at knees, then explosively extend hips and pull. Drop under bar to catch in front rack. Stand.'
+            },
+            'Clean Pull': {
+                setup: 'Bar on floor. Clean grip. Flat back.',
+                execution: 'Pull bar like a deadlift, then explosively jump and shrug at top. Don\'t pull with arms. Builds power for cleans.'
+            },
+            'Kettlebell Swings (Heavy)': {
+                setup: 'Straddle heavy kettlebell. Hinge and grip handle. Flat back.',
+                execution: 'Hike bell back, then snap hips to drive bell to chest height. Arms are just hooks. All hip power.'
+            },
+            'Snatch Grip High Pull': {
+                setup: 'Wide grip on bar. Feet hip-width. Flat back.',
+                execution: 'Pull from floor explosively. At hip contact, shrug and pull elbows high. Bar reaches chest height. Builds snatch power.'
+            },
+
+            // === CARDIO & CONDITIONING ===
+            'Incline Treadmill Walk': {
+                setup: 'Set treadmill to 15% incline. Speed 3.0-3.5 mph.',
+                execution: 'Walk maintaining Zone 2 heart rate. Should be able to hold conversation. Pumps blood to legs for recovery.'
+            },
+            'Incline Treadmill Walk (40min)': {
+                setup: 'Set treadmill to 15% incline. Speed 3.0-3.5 mph.',
+                execution: 'Walk maintaining Zone 2 heart rate for 40 minutes. Conversational pace. ~275-325 calories burned.'
+            },
+            'Stationary Bike': {
+                setup: 'Adjust seat height. Light resistance.',
+                execution: 'Pedal at easy, conversational pace. Zone 2 cardio. Focus on recovery, not intensity.'
+            },
+            'Stationary Bike (40min)': {
+                setup: 'Adjust seat height. Light resistance.',
+                execution: 'Pedal at easy, conversational pace for 40 minutes. ~250-300 calories. Active recovery.'
+            },
+            'Easy Jog': {
+                setup: 'Flat terrain. Comfortable shoes.',
+                execution: 'Jog at pace where you can nose-breathe only. If you need to mouth-breathe, slow down. Zone 2.'
+            },
+            'Easy Jog (40min)': {
+                setup: 'Flat terrain. Comfortable shoes.',
+                execution: 'Jog at conversational pace for 40 minutes. ~300-350 calories. Keep heart rate in Zone 2.'
+            },
+            'Elliptical': {
+                setup: 'Set low resistance. Grip handles lightly.',
+                execution: 'Move at steady, sustainable pace. Zone 2 effort. Good low-impact option.'
+            },
+            'Elliptical (40min)': {
+                setup: 'Set low resistance.',
+                execution: 'Steady pace for 40 minutes. Low impact cardio. Keep it conversational.'
+            },
+            'Rowing (Easy Pace)': {
+                setup: 'Strap feet in. Grip handle lightly.',
+                execution: 'Row with focus on technique, not speed. Drive with legs first, then back, then arms. Zone 2.'
+            },
+            'Rowing Machine (Easy)': {
+                setup: 'Strap feet in. Light grip on handle.',
+                execution: 'Steady sustainable pace for duration. Focus on form: legs-back-arms, arms-back-legs. Zone 2 effort.'
+            },
+            'Swimming': {
+                setup: 'Pool with lanes. Any stroke you\'re comfortable with.',
+                execution: 'Easy laps at conversational effort. Great full-body recovery cardio. Mix strokes if desired.'
+            },
+            'Swim': {
+                setup: 'Pool with lanes. Any comfortable stroke.',
+                execution: 'Easy laps at sustainable pace. Low impact, full body cardio. Great for recovery days.'
+            },
+            'Outdoor Walk': {
+                setup: 'Find route with hills if possible.',
+                execution: 'Walk at brisk pace for duration. Hills add intensity without running. Zone 2 effort.'
+            },
+            'Stair Climber': {
+                setup: 'Set moderate pace on stair machine.',
+                execution: 'Climb stairs at sustainable pace. Glute emphasis. Don\'t lean heavily on rails.'
+            },
+            'Bodyweight Circuit': {
+                setup: 'Clear space. Set timer for 40s work, 20s rest.',
+                execution: 'Cycle through: burpees, jump squats, push-ups, mountain climbers, KB swings. 5 rounds. Maximum effort.'
+            },
+            'Treadmill Sprints': {
+                setup: 'Set treadmill to 8-12 mph, 1-3% incline.',
+                execution: 'Sprint 20-30 seconds, then rest 60-90 seconds (stand on rails). Repeat 10 times. All-out effort.'
+            },
+            'Sled Work': {
+                setup: 'Load sled with heavy weight. Clear 40m lane.',
+                execution: 'Push sled length of lane. Low, driving steps. Walk back during rest. Brutal conditioning.'
+            },
+            'Assault Bike': {
+                setup: 'Seat height so slight knee bend at bottom.',
+                execution: '30 seconds max effort (arms AND legs), 30 seconds easy. Repeat 10 rounds. The bike humbles everyone.'
+            },
+
+            // === MOBILITY & RECOVERY ===
+            'Lower Body Flow': {
+                setup: 'Mat or soft surface. No equipment needed.',
+                execution: 'Continuous flow: hip circles, leg swings, 90/90 stretch, pigeon pose, deep squat hold. 10 minutes of movement.'
+            },
+            'Upper Body Flow': {
+                setup: 'Mat and optional band or stick.',
+                execution: 'Flow through: shoulder dislocations, wall slides, thoracic rotations, cat-cow. Open up upper body.'
+            },
+            'Full Body Yoga Flow': {
+                setup: 'Yoga mat. Quiet space.',
+                execution: 'Sun salutations, downward dog, warrior poses, child\'s pose. Follow breath. 10 minutes of gentle movement.'
+            },
+            'Foam Rolling Session': {
+                setup: 'Foam roller. Mat optional.',
+                execution: 'Roll calves, quads, IT band, glutes, upper back. 1-2 minutes per area. Pause on tender spots.'
+            },
+            'Lower Body Stretching': {
+                setup: 'Mat for floor stretches.',
+                execution: 'Static stretches for hip flexors, hamstrings, glutes, calves. Hold each 30-60 seconds. Breathe into stretch.'
+            },
+            'Upper Body Stretching': {
+                setup: 'Doorway or wall helpful.',
+                execution: 'Static stretches for shoulders, chest, lats, triceps. Hold each 30-60 seconds. Don\'t force it.'
+            },
+            'Yoga Flow': {
+                setup: 'Mat. Comfortable clothes.',
+                execution: 'Sun salutations and gentle holds. Follow breath. Focus on mobility, not intensity.'
+            },
+            'Dynamic Mobility': {
+                setup: 'Open space. No equipment.',
+                execution: 'Leg swings, arm circles, hip circles, world\'s greatest stretch. Movement-based warmup or cooldown.'
+            },
+
+            // === SPORT & RECREATION ===
+            'Pickup Soccer': {
+                setup: 'Field or gym. Ball. Other players.',
+                execution: 'Small-sided games. Focus on fun and movement. Great conditioning that doesn\'t feel like work.'
+            },
+            'Tennis': {
+                setup: 'Court, racket, balls, opponent.',
+                execution: 'Singles or doubles. Great lateral movement, hand-eye coordination, and cardio.'
+            },
+            'MMA Training': {
+                setup: 'Heavy bag, gloves, open space.',
+                execution: 'Bag work, shadowboxing, basic combinations. Great for conditioning and stress relief.'
+            },
+            'Basketball': {
+                setup: 'Court. Ball. Other players helpful.',
+                execution: 'Pickup games or shooting around. Sprinting, jumping, lateral movement. Fun conditioning.'
+            },
+            'Skip Core Today': {
+                setup: 'No setup needed.',
+                execution: 'Full recovery option. Just do your cardio and stretching. Sometimes rest is the best choice.'
+            },
+            'Skip Core': {
+                setup: 'No setup needed.',
+                execution: 'Rest option for core. Focus on main workout recovery. Listen to your body.'
             }
         };
 
