@@ -43,31 +43,40 @@
         }
 
         html, body {
-            overflow-x: hidden;
+            overflow: hidden;
             width: 100%;
             max-width: 100vw;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
             background: var(--bg);
             color: var(--text);
-            padding-bottom: env(safe-area-inset-bottom);
+            display: flex;
+            flex-direction: column;
         }
 
         .screen {
             display: none;
-            min-height: 100vh;
-            padding-bottom: 80px;
+            flex: 1;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
         }
 
         .screen.active {
-            display: block;
+            display: flex;
         }
 
         .header {
-            position: sticky;
-            top: 0;
+            position: relative;
+            flex-shrink: 0;
             z-index: 100;
             background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(20px);
@@ -109,6 +118,16 @@
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 90px;
+        }
+
+        .container.no-scroll {
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .welcome {
@@ -335,11 +354,7 @@
             scrollbar-width: none;
             -ms-overflow-style: none;
             background: var(--bg);
-            position: fixed;
-            top: 56px;
-            left: 0;
-            right: 0;
-            z-index: 95;
+            flex-shrink: 0;
             border-bottom: 1px solid var(--separator);
         }
 
@@ -373,7 +388,10 @@
         }
 
         .workout-container {
-            padding-top: 50px !important; /* Space for fixed tabs + buffer */
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 160px !important; /* Space for bottom controls and nav */
         }
 
         .workout-section {
@@ -1214,7 +1232,22 @@
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 8px;
-            margin-bottom: 24px;
+            flex-shrink: 0;
+        }
+
+        .calendar-fixed-area {
+            flex-shrink: 0;
+            padding: 20px;
+            padding-bottom: 0;
+        }
+
+        .calendar-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 20px;
+            padding-top: 16px;
+            padding-bottom: 90px;
         }
 
         .calendar-day-header {
@@ -1243,6 +1276,16 @@
         .calendar-day.today {
             background: rgba(10, 132, 255, 0.2);
             border-color: var(--primary);
+        }
+
+        .calendar-day.has-workout {
+            background: rgba(48, 209, 88, 0.15);
+            border-color: var(--success);
+        }
+
+        .calendar-day.has-workout.today {
+            background: rgba(48, 209, 88, 0.25);
+            border-color: var(--success);
         }
 
         .calendar-day.has-workout .calendar-dot {
@@ -1618,8 +1661,8 @@
                 <div class="logo">Calendar</div>
             </div>
         </div>
-        
-        <div class="container">
+
+        <div class="calendar-fixed-area">
             <div class="month-header">
                 <div class="month-selectors">
                     <select class="month-select" id="monthSelect" onchange="setMonth(this.value)">
@@ -1643,11 +1686,11 @@
                     <button class="month-nav-btn" onclick="changeMonth(1)">→</button>
                 </div>
             </div>
-            
+
             <div class="calendar-grid" id="calendarGrid"></div>
-            
-            <div id="dayWorkouts" style="margin-top: 24px;"></div>
         </div>
+
+        <div class="calendar-scroll-area" id="dayWorkouts"></div>
     </div>
 
     <!-- Workout Detail Modal -->
