@@ -1677,13 +1677,48 @@
                         ]
                     },
                     {
-                        title: 'Core Work (Pick One Circuit)',
-                        isOptions: true,
+                        title: 'Core Circuit',
+                        isCircuit: true,
                         exercises: [
-                            { name: 'Anti-Extension Circuit', sets: 3, reps: '3 exercises', rest: '60s', notes: 'Plank 45s, side plank 30s/side, dead bugs 12/side' },
-                            { name: 'Loaded Carries', sets: 3, reps: '40m each', rest: '90s', notes: 'Farmer carry, overhead carry, suitcase carry' },
-                            { name: 'Rotational Core', sets: 3, reps: '10/side each', rest: '60s', notes: 'Russian twists, bicycle crunches, oblique crunches' },
-                            { name: 'Compression Circuit', sets: 3, reps: '10-15 each', rest: '60s', notes: 'Leg raises, V-ups, hollow holds 20s' }
+                            {
+                                name: 'Core Exercise 1',
+                                sets: 3,
+                                reps: '45s/12 reps',
+                                rest: '0s',
+                                notes: 'Anti-extension focus',
+                                rotations: [
+                                    { name: 'Plank', notes: 'Hold 45-60s, brace core' },
+                                    { name: 'Side Plank', notes: '30s each side' },
+                                    { name: 'Dead Bugs', notes: '12 reps per side, slow' },
+                                    { name: 'Hollow Body Hold', notes: '30-45s, lower back flat' }
+                                ]
+                            },
+                            {
+                                name: 'Core Exercise 2',
+                                sets: 3,
+                                reps: '10-15/40m',
+                                rest: '0s',
+                                notes: 'Loaded or rotational',
+                                rotations: [
+                                    { name: 'Farmer Carry', notes: '40m, heavy DBs or KBs' },
+                                    { name: 'Russian Twists', notes: '15 per side, weighted' },
+                                    { name: 'Bicycle Crunches', notes: '15 per side, controlled' },
+                                    { name: 'Suitcase Carry', notes: '40m each side' }
+                                ]
+                            },
+                            {
+                                name: 'Core Exercise 3',
+                                sets: 3,
+                                reps: '10-15',
+                                rest: '60s',
+                                notes: 'Compression focus',
+                                rotations: [
+                                    { name: 'Leg Raises', notes: 'Lying or hanging, control descent' },
+                                    { name: 'V-Ups', notes: 'Touch toes at top' },
+                                    { name: 'Oblique Crunches', notes: '12 per side' },
+                                    { name: 'Overhead Carry', notes: '40m, single or double arm' }
+                                ]
+                            }
                         ]
                     }
                 ]
@@ -2119,13 +2154,61 @@
                         ]
                     },
                     {
-                        title: 'Option 2: HIIT Circuit (Pick One)',
-                        isOptions: true,
+                        title: 'HIIT Circuit',
+                        isCircuit: true,
                         exercises: [
-                            { name: 'Bodyweight Circuit', sets: 5, reps: '40s/20s', rest: '', notes: 'Burpees, jumps, push-ups, climbers, KB swings' },
-                            { name: 'Treadmill Sprints', sets: 10, reps: '20-30s', rest: '60-90s', notes: '8-12 mph, 1-3% incline' },
-                            { name: 'Sled Work', sets: 8, reps: '40m', rest: '2min', notes: 'Heavy sled push' },
-                            { name: 'Assault Bike', sets: 10, reps: '30s/30s', rest: '', notes: 'Max effort on, easy off' }
+                            {
+                                name: 'HIIT Exercise 1',
+                                sets: 5,
+                                reps: '30-40s',
+                                rest: '20s',
+                                notes: 'Max effort',
+                                rotations: [
+                                    { name: 'Burpees', notes: 'Full burpee with jump' },
+                                    { name: 'Treadmill Sprint', notes: '8-12 mph, 1-3% incline' },
+                                    { name: 'Assault Bike Sprint', notes: 'Max effort calories' },
+                                    { name: 'Sled Push', notes: 'Heavy, 40m' }
+                                ]
+                            },
+                            {
+                                name: 'HIIT Exercise 2',
+                                sets: 5,
+                                reps: '30-40s',
+                                rest: '20s',
+                                notes: 'Explosive movement',
+                                rotations: [
+                                    { name: 'Jump Squats', notes: 'Explosive, soft landing' },
+                                    { name: 'Mountain Climbers', notes: 'Fast tempo, core tight' },
+                                    { name: 'Box Jumps', notes: '20-24 inch, step down' },
+                                    { name: 'Battle Ropes', notes: 'Alternating waves' }
+                                ]
+                            },
+                            {
+                                name: 'HIIT Exercise 3',
+                                sets: 5,
+                                reps: '30-40s',
+                                rest: '20s',
+                                notes: 'Upper body focus',
+                                rotations: [
+                                    { name: 'Push-Up Variations', notes: 'Standard or explosive' },
+                                    { name: 'KB Swings', notes: 'Hip hinge, explosive' },
+                                    { name: 'Med Ball Slams', notes: 'Full extension, slam hard' },
+                                    { name: 'Rowing Sprint', notes: 'Max effort strokes' }
+                                ]
+                            },
+                            {
+                                name: 'HIIT Exercise 4',
+                                sets: 5,
+                                reps: '30-40s',
+                                rest: '60s',
+                                notes: 'Finisher',
+                                rotations: [
+                                    { name: 'High Knees', notes: 'Fast tempo, drive knees' },
+                                    { name: 'Jumping Lunges', notes: 'Alternate legs, explosive' },
+                                    { name: 'Ski Erg Sprint', notes: 'Max effort pulls' },
+                                    { name: 'Sprawls', notes: 'Burpee without push-up' }
+                                ]
+                            }
                         ]
                     }
                 ]
@@ -2875,6 +2958,114 @@
             'Skip Core': {
                 setup: 'No setup needed.',
                 execution: 'Rest option for core. Focus on main workout recovery. Listen to your body.'
+            },
+
+            // === CORE EXERCISES (Individual) ===
+            'Plank': {
+                setup: 'Forearms on ground, elbows under shoulders. Body in straight line from head to heels.',
+                execution: 'Hold position, bracing core tight. Don\'t let hips sag or pike up. Breathe steadily. 45-60 seconds.'
+            },
+            'Side Plank': {
+                setup: 'Lie on side, forearm on ground, elbow under shoulder. Stack feet or stagger.',
+                execution: 'Lift hips to create straight line. Hold without letting hips drop. 30 seconds each side.'
+            },
+            'Hollow Body Hold': {
+                setup: 'Lie on back. Arms overhead, legs straight out.',
+                execution: 'Press lower back into floor. Lift shoulders and legs off ground. Hold banana shape. 30-45 seconds.'
+            },
+            'Farmer Carry': {
+                setup: 'Stand holding heavy dumbbells or kettlebells at sides.',
+                execution: 'Walk with tall posture, shoulders back, core braced. Don\'t let weights swing. 40m.'
+            },
+            'Russian Twists': {
+                setup: 'Sit with knees bent, feet off ground or anchored. Hold weight at chest.',
+                execution: 'Rotate torso side to side, touching weight to ground each side. Control the rotation. 15 per side.'
+            },
+            'Bicycle Crunches': {
+                setup: 'Lie on back, hands behind head. Legs off ground.',
+                execution: 'Bring opposite elbow to knee while extending other leg. Alternate sides with control. 15 per side.'
+            },
+            'Suitcase Carry': {
+                setup: 'Heavy dumbbell or kettlebell in one hand only at side.',
+                execution: 'Walk without leaning toward or away from weight. Fight the lateral pull. 40m each side.'
+            },
+            'Leg Raises': {
+                setup: 'Lie on back, hands under lower back or at sides. Legs straight.',
+                execution: 'Raise legs to vertical, keeping them straight. Lower slowly without arching back. 10-15 reps.'
+            },
+            'V-Ups': {
+                setup: 'Lie flat on back. Arms overhead, legs straight.',
+                execution: 'Simultaneously raise arms and legs to touch toes at top. Lower with control. 10-15 reps.'
+            },
+            'Oblique Crunches': {
+                setup: 'Lie on side, knees slightly bent. Bottom arm extended, top hand behind head.',
+                execution: 'Crunch up, bringing elbow toward hip. Squeeze obliques at top. 12 per side.'
+            },
+            'Overhead Carry': {
+                setup: 'Press dumbbell or kettlebell overhead. Lock arm, bicep by ear.',
+                execution: 'Walk while keeping weight stable overhead. Core braced, no rib flare. 40m each arm.'
+            },
+
+            // === HIIT EXERCISES ===
+            'Burpees': {
+                setup: 'Stand with feet shoulder-width apart.',
+                execution: 'Squat down, hands to floor. Jump feet back to plank. Optional push-up. Jump feet to hands. Jump up with arms overhead. Repeat.'
+            },
+            'Treadmill Sprint': {
+                setup: 'Set treadmill to 8-12 mph, 1-3% incline. Stand on rails.',
+                execution: 'Step onto belt and sprint for 20-30 seconds. Step back to rails for rest. Maximum effort.'
+            },
+            'Assault Bike Sprint': {
+                setup: 'Adjust seat height. Feet on pedals, hands on handles.',
+                execution: 'Go all-out for 30 seconds - push AND pull with arms. Legs driving hard. Watch calories climb.'
+            },
+            'Sled Push': {
+                setup: 'Load sled heavy. Hands on high or low handles. Feet behind sled.',
+                execution: 'Drive forward with low, powerful steps. Push for 40m. Keep chest up, core braced.'
+            },
+            'Jump Squats': {
+                setup: 'Stand with feet shoulder-width. Arms ready.',
+                execution: 'Squat down, then explode upward into jump. Land softly with bent knees. Immediately descend into next rep.'
+            },
+            'Mountain Climbers': {
+                setup: 'Start in push-up position. Core tight, body straight.',
+                execution: 'Drive knees toward chest alternating legs rapidly. Keep hips down. Go fast while maintaining form.'
+            },
+            'Battle Ropes': {
+                setup: 'Hold rope ends. Athletic stance facing anchor point.',
+                execution: 'Create alternating waves by raising and lowering arms rapidly. Keep core tight. Full range of motion.'
+            },
+            'Push-Up Variations': {
+                setup: 'Push-up position. Hands slightly wider than shoulders.',
+                execution: 'Standard push-ups, or make explosive by pushing hands off ground. Maintain straight body throughout.'
+            },
+            'KB Swings': {
+                setup: 'Stand with feet wider than shoulders. Kettlebell on ground in front.',
+                execution: 'Hike KB back, then drive hips forward explosively to swing KB to shoulder height. Control the descent.'
+            },
+            'Med Ball Slams': {
+                setup: 'Hold heavy med ball overhead. Feet shoulder-width.',
+                execution: 'Slam ball into ground with full force using entire body. Catch bounce and repeat immediately.'
+            },
+            'Rowing Sprint': {
+                setup: 'Strap feet in rowing machine. Grip handle.',
+                execution: 'Row with maximum power and speed. Drive with legs, pull with back, finish with arms. All-out effort.'
+            },
+            'High Knees': {
+                setup: 'Stand tall. Arms ready at sides.',
+                execution: 'Run in place, driving knees as high as possible. Pump arms. Fast tempo, stay on balls of feet.'
+            },
+            'Jumping Lunges': {
+                setup: 'Start in lunge position. Arms ready.',
+                execution: 'Jump and switch legs in mid-air. Land softly in opposite lunge. Alternate continuously.'
+            },
+            'Ski Erg Sprint': {
+                setup: 'Stand facing ski erg. Grip handles overhead.',
+                execution: 'Pull handles down explosively while hinging at hips. Drive with lats and core. Maximum effort pulls.'
+            },
+            'Sprawls': {
+                setup: 'Stand with feet shoulder-width apart.',
+                execution: 'Drop to ground, kicking legs back (like burpee without push-up). Jump feet back in and stand. Fast tempo.'
             }
         };
 
