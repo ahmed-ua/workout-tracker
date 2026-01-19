@@ -2142,29 +2142,34 @@
             },
             'Recovery': {
                 title: 'Recovery',
-                duration: '40 min',
+                duration: '40-50 min',
                 focus: 'Recovery cardio & mobility',
                 sections: [
                     {
-                        title: 'Zone 2 Cardio (30 min - Pick One)',
+                        title: 'Zone 2 Cardio (30-40 min - Pick One)',
                         isOptions: true,
                         exercises: [
-                            { name: 'Incline Treadmill Walk', sets: 1, reps: '30 min', rest: '', notes: '15% incline, 3.0 mph' },
-                            { name: 'Stationary Bike', sets: 1, reps: '30 min', rest: '', notes: 'Easy pace, conversational' },
-                            { name: 'Easy Jog', sets: 1, reps: '30 min', rest: '', notes: 'Nose breathing only' },
-                            { name: 'Elliptical', sets: 1, reps: '30 min', rest: '', notes: 'Low resistance, steady' },
-                            { name: 'Rowing (Easy Pace)', sets: 1, reps: '30 min', rest: '', notes: 'Focus on form, not speed' },
-                            { name: 'Swimming', sets: 1, reps: '30 min', rest: '', notes: 'Easy laps, any stroke' }
+                            { name: 'Incline Treadmill Walk', sets: 1, reps: '30-40 min', rest: '', notes: '15% incline, 3.0 mph' },
+                            { name: 'Stationary Bike', sets: 1, reps: '30-40 min', rest: '', notes: 'Easy pace, conversational' },
+                            { name: 'Easy Jog', sets: 1, reps: '30-40 min', rest: '', notes: 'Nose breathing only' },
+                            { name: 'Elliptical', sets: 1, reps: '30-40 min', rest: '', notes: 'Low resistance, steady' },
+                            { name: 'Rowing (Easy Pace)', sets: 1, reps: '30-40 min', rest: '', notes: 'Focus on form, not speed' },
+                            { name: 'Swimming', sets: 1, reps: '30-40 min', rest: '', notes: 'Easy laps, any stroke' },
+                            { name: 'Outdoor Walk', sets: 1, reps: '30-40 min', rest: '', notes: 'Hilly terrain preferred' },
+                            { name: 'Stair Climber', sets: 1, reps: '30-40 min', rest: '', notes: 'Moderate pace, glute focus' }
                         ]
                     },
                     {
-                        title: 'Mobility Work (10 min - Pick One Routine)',
+                        title: 'Mobility/Stretching (10 min - Pick One)',
                         isOptions: true,
                         exercises: [
                             { name: 'Lower Body Flow', sets: 1, reps: '10 min', rest: '', notes: 'Hip circles, leg swings, 90/90, pigeon, deep squat hold' },
                             { name: 'Upper Body Flow', sets: 1, reps: '10 min', rest: '', notes: 'Shoulder dislocations, wall slides, thoracic rotations, cat-cow' },
                             { name: 'Full Body Yoga Flow', sets: 1, reps: '10 min', rest: '', notes: 'Sun salutations, downward dog, warrior poses, child pose' },
-                            { name: 'Foam Rolling Session', sets: 1, reps: '10 min', rest: '', notes: 'Calves, quads, IT band, glutes, upper back' }
+                            { name: 'Foam Rolling Session', sets: 1, reps: '10 min', rest: '', notes: 'Calves, quads, IT band, glutes, upper back' },
+                            { name: 'Lower Body Stretching', sets: 1, reps: '10 min', rest: '', notes: 'Hip flexors, hamstrings, glutes, calves' },
+                            { name: 'Upper Body Stretching', sets: 1, reps: '10 min', rest: '', notes: 'Shoulders, chest, lats, triceps' },
+                            { name: 'Dynamic Mobility', sets: 1, reps: '10 min', rest: '', notes: 'Leg swings, arm circles, hip circles, world greatest stretch' }
                         ]
                     },
                     {
@@ -2174,6 +2179,7 @@
                             { name: 'Plank Variations', sets: 3, reps: '30-60s', rest: '30s', notes: 'Standard, side, reach-through' },
                             { name: 'Bird Dogs', sets: 3, reps: '10/side', rest: '30s', notes: 'Slow, controlled, no rotation' },
                             { name: 'Dead Bugs', sets: 3, reps: '12/side', rest: '30s', notes: 'Lower back flat on ground' },
+                            { name: 'Hanging Core', sets: 3, reps: '10-15', rest: '60s', notes: 'Hanging knee raises or leg raises' },
                             { name: 'Skip Core Today', sets: 0, reps: '', rest: '', notes: 'Just stretch and recover' }
                         ]
                     }
@@ -2240,47 +2246,6 @@
                                     { name: 'Sprawls', notes: 'Burpee without push-up' }
                                 ]
                             }
-                        ]
-                    }
-                ]
-            },
-            'Zone 2 Cardio': {
-                title: 'Zone 2 Cardio',
-                duration: '40 min',
-                focus: 'Recovery & calorie burn',
-                sections: [
-                    {
-                        title: 'Zone 2 Cardio (40 min - Pick One)',
-                        isOptions: true,
-                        exercises: [
-                            { name: 'Incline Treadmill Walk (40min)', sets: 1, reps: '40 min', rest: '', notes: '15% incline, 3.0 mph (~275-325 cals)' },
-                            { name: 'Outdoor Walk', sets: 1, reps: '40 min', rest: '', notes: 'Hilly terrain preferred' },
-                            { name: 'Stationary Bike (40min)', sets: 1, reps: '40 min', rest: '', notes: 'Easy pace (~250-300 cals)' },
-                            { name: 'Easy Jog (40min)', sets: 1, reps: '40 min', rest: '', notes: 'Conversational (~300-350 cals)' },
-                            { name: 'Swim', sets: 1, reps: '40 min', rest: '', notes: 'Easy laps' },
-                            { name: 'Elliptical (40min)', sets: 1, reps: '40 min', rest: '', notes: 'Low resistance, steady' },
-                            { name: 'Rowing Machine (Easy)', sets: 1, reps: '40 min', rest: '', notes: 'Sustainable pace, good form' },
-                            { name: 'Stair Climber', sets: 1, reps: '40 min', rest: '', notes: 'Moderate pace, glute focus' }
-                        ]
-                    },
-                    {
-                        title: 'Stretching/Mobility (10 min - Pick One)',
-                        isOptions: true,
-                        exercises: [
-                            { name: 'Lower Body Stretching', sets: 1, reps: '10 min', rest: '', notes: 'Hip flexors, hamstrings, glutes, calves' },
-                            { name: 'Upper Body Stretching', sets: 1, reps: '10 min', rest: '', notes: 'Shoulders, chest, lats, triceps' },
-                            { name: 'Yoga Flow', sets: 1, reps: '10 min', rest: '', notes: 'Sun salutations, gentle holds' },
-                            { name: 'Dynamic Mobility', sets: 1, reps: '10 min', rest: '', notes: 'Leg swings, arm circles, hip circles, world greatest stretch' }
-                        ]
-                    },
-                    {
-                        title: 'Optional Core Work (Pick One)',
-                        isOptions: true,
-                        exercises: [
-                            { name: 'Plank Circuit', sets: 3, reps: '45s each', rest: '30s', notes: 'Front, left side, right side' },
-                            { name: 'Anti-Rotation Circuit', sets: 3, reps: '10/side', rest: '30s', notes: 'Pallof press, bird dogs, dead bugs' },
-                            { name: 'Hanging Core', sets: 3, reps: '10-15', rest: '60s', notes: 'Hanging knee raises or leg raises' },
-                            { name: 'Skip Core', sets: 0, reps: '', rest: '', notes: 'Full recovery day' }
                         ]
                     }
                 ]
@@ -3306,8 +3271,7 @@
             'Recovery': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12c0-4 4-8 8-8"/><path d="M12 4c4 0 8 4 8 8"/><path d="M12 4v8l4 4"/><circle cx="12" cy="12" r="9"/></svg>',
             'Full Body': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2"/><path d="M12 6v4"/><path d="M8 10h8"/><path d="M8 10l-2 10"/><path d="M16 10l2 10"/><path d="M10 14l-1 6"/><path d="M14 14l1 6"/></svg>',
             'Upper Volume': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h1"/><path d="M19 12h1"/><rect x="5" y="8" width="3" height="8" rx="1"/><rect x="16" y="8" width="3" height="8" rx="1"/><rect x="8" y="5" width="8" height="14" rx="1"/></svg>',
-            'Sport & HIIT': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
-            'Zone 2 Cardio': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'
+            'HIIT': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>'
         };
 
         function updateHomeScreen() {
@@ -3318,8 +3282,7 @@
                 { key: 'Recovery' },
                 { key: 'Full Body' },
                 { key: 'Upper Volume' },
-                { key: 'Sport & HIIT' },
-                { key: 'Zone 2 Cardio' }
+                { key: 'HIIT' }
             ];
 
             let html = '';
