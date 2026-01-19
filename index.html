@@ -371,14 +371,72 @@
             color: white;
         }
 
-        /* Hide bottom nav when in workout */
-        .workout-active .bottom-nav {
-            display: none;
+        /* Active workout banner */
+        .active-workout-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--success) 0%, #28a745 100%);
+            color: white;
+            padding: 12px 20px;
+            padding-top: calc(12px + env(safe-area-inset-top));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 150;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
 
-        /* Add padding to workout content for fixed bottom buttons */
-        .workout-content-padding {
-            padding-bottom: 100px;
+        .active-workout-banner:active {
+            opacity: 0.9;
+        }
+
+        .banner-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .banner-dot {
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .banner-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .banner-title {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .banner-time {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .banner-action {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        /* Adjust screens when banner is showing */
+        .has-active-banner .header {
+            margin-top: 60px;
+        }
+
+        .has-active-banner .home-content {
+            padding-top: 60px;
         }
 
         .bottom-btn:active {
@@ -895,9 +953,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
+            padding-top: 8px;
             cursor: pointer;
             position: relative;
+            overflow: hidden;
         }
 
         .calendar-day.today {
@@ -923,18 +983,35 @@
             background: white;
         }
 
+        .calendar-day.selected .calendar-workout-name {
+            color: rgba(255,255,255,0.9);
+        }
+
         .calendar-day-number {
             font-size: 17px;
             font-weight: 600;
         }
 
         .calendar-dot {
-            width: 4px;
-            height: 4px;
+            width: 6px;
+            height: 6px;
             background: var(--success);
-            border-radius: 2px;
-            margin-top: 4px;
+            border-radius: 3px;
+            margin-top: 3px;
             display: none;
+        }
+
+        .calendar-workout-name {
+            font-size: 8px;
+            color: var(--text-secondary);
+            text-align: center;
+            line-height: 1.2;
+            margin-top: 2px;
+            max-width: 100%;
+            padding: 0 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .workout-history-item {
@@ -1320,6 +1397,18 @@
         <div class="rest-timer-label">Rest Time</div>
         <div class="rest-timer-display" id="restTimerDisplay">0:00</div>
         <button class="rest-timer-skip" onclick="skipRestTimer()">Skip</button>
+    </div>
+
+    <!-- Active Workout Banner -->
+    <div class="active-workout-banner" id="activeWorkoutBanner" style="display: none;" onclick="returnToActiveWorkout()">
+        <div class="banner-left">
+            <div class="banner-dot"></div>
+            <div class="banner-info">
+                <div class="banner-title" id="bannerWorkoutName"></div>
+                <div class="banner-time" id="bannerWorkoutTime">0:00</div>
+            </div>
+        </div>
+        <div class="banner-action">Tap to return →</div>
     </div>
 
     <!-- Bottom Navigation -->
@@ -2918,17 +3007,60 @@
                 }
             });
 
-            // Handle workout mode - hide/show bottom nav
-            if (screen === 'workout') {
-                document.body.classList.add('workout-active');
-            } else {
-                document.body.classList.remove('workout-active');
-            }
+            // Show/hide active workout banner when not on workout screen
+            updateActiveWorkoutBanner(screen);
 
             currentView = screen;
 
             if (screen === 'calendar') {
+                // Auto-select today's date
+                const today = new Date().toISOString().split('T')[0];
+                selectedCalendarDate = today;
                 renderCalendar();
+                showDayWorkouts(today);
+            }
+        }
+
+        function updateActiveWorkoutBanner(currentScreen) {
+            const banner = document.getElementById('activeWorkoutBanner');
+            const hasActiveWorkout = workoutStartTime !== null && currentWorkoutType !== null;
+
+            if (hasActiveWorkout && currentScreen !== 'workout') {
+                // Show banner on non-workout screens
+                banner.style.display = 'flex';
+                document.getElementById('bannerWorkoutName').textContent = currentWorkoutType;
+                document.getElementById('bannerWorkoutTime').textContent = getElapsedTime();
+                document.body.classList.add('has-active-banner');
+            } else {
+                // Hide banner
+                banner.style.display = 'none';
+                document.body.classList.remove('has-active-banner');
+            }
+        }
+
+        function returnToActiveWorkout() {
+            if (currentWorkoutType && workoutStartTime) {
+                // Return to active workout without restarting
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById('workoutScreen').classList.add('active');
+
+                // Hide banner since we're back in workout
+                document.getElementById('activeWorkoutBanner').style.display = 'none';
+                document.body.classList.remove('has-active-banner');
+
+                // Show header timer
+                document.getElementById('headerTimer').style.display = 'flex';
+                document.getElementById('headerTimerDisplay').textContent = getElapsedTime();
+
+                // Render content without restarting timer
+                renderWorkoutContent(currentWorkoutType);
+
+                // Ensure timer update is running
+                if (!workoutTimer) {
+                    startTimerUpdate();
+                }
+
+                currentView = 'workout';
             }
         }
 
@@ -2937,8 +3069,8 @@
             document.getElementById('homeScreen').classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector('.nav-btn').classList.add('active');
-            document.body.classList.remove('workout-active');
             hideWorkoutBottomControls();
+            updateActiveWorkoutBanner('home');
             currentView = 'home';
             updateHomeScreen();
         }
@@ -3043,9 +3175,17 @@
                 }
 
                 const elapsed = getElapsedTime();
+
+                // Update header timer
                 const headerTimerDisplay = document.getElementById('headerTimerDisplay');
                 if (headerTimerDisplay) {
                     headerTimerDisplay.textContent = elapsed;
+                }
+
+                // Update banner timer if visible
+                const bannerTime = document.getElementById('bannerWorkoutTime');
+                if (bannerTime) {
+                    bannerTime.textContent = elapsed;
                 }
             }, 1000);
         }
@@ -3990,20 +4130,39 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(currentYear, currentMonth, day);
                 const dateStr = date.toISOString().split('T')[0];
-                const hasWorkout = Object.keys(workoutLog).some(key => key.startsWith(dateStr + '_'));
+                const dayWorkouts = getDayWorkoutNames(dateStr);
+                const hasWorkout = dayWorkouts.length > 0;
                 const isToday = date.toDateString() === today.toDateString();
                 const isSelected = selectedCalendarDate === dateStr;
+
+                // Get short workout names for display
+                const workoutNamesHtml = hasWorkout ?
+                    `<div class="calendar-workout-name">${dayWorkouts.map(w => w.replace(' Body', '').replace(' Volume', '')).join(', ')}</div>` : '';
 
                 html += `
                     <div class="calendar-day ${hasWorkout ? 'has-workout' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}"
                          onclick="selectCalendarDay('${dateStr}')">
                         <div class="calendar-day-number">${day}</div>
                         ${hasWorkout ? '<div class="calendar-dot"></div>' : ''}
+                        ${workoutNamesHtml}
                     </div>
                 `;
             }
 
             grid.innerHTML = html;
+        }
+
+        function getDayWorkoutNames(dateStr) {
+            const workoutNames = [];
+            Object.keys(workoutLog).forEach(key => {
+                if (key.includes('_session_') && key.startsWith(dateStr)) {
+                    const session = workoutLog[key];
+                    if (session && session.workoutType && !workoutNames.includes(session.workoutType)) {
+                        workoutNames.push(session.workoutType);
+                    }
+                }
+            });
+            return workoutNames;
         }
 
         function selectCalendarDay(dateStr) {
