@@ -538,8 +538,8 @@
             right: 0;
             background: linear-gradient(135deg, var(--success) 0%, #28a745 100%);
             color: white;
-            padding: 12px 20px;
-            padding-top: calc(12px + env(safe-area-inset-top));
+            padding: 8px 16px;
+            padding-top: calc(8px + env(safe-area-inset-top));
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -555,12 +555,12 @@
         .banner-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .banner-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             background: white;
             border-radius: 50%;
             animation: pulse 1.5s infinite;
@@ -568,12 +568,13 @@
 
         .banner-info {
             display: flex;
-            flex-direction: column;
-            gap: 2px;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
         }
 
         .banner-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
         }
 
@@ -584,14 +585,14 @@
         }
 
         .banner-action {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             opacity: 0.9;
         }
 
         /* Adjust screens when banner is showing */
         .has-active-banner .header {
-            margin-top: 60px;
+            margin-top: 45px;
         }
 
         .bottom-btn:active {
