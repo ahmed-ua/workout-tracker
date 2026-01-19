@@ -1769,6 +1769,15 @@
                         ]
                     },
                     {
+                        title: 'Finisher',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Sled Push', sets: 4, reps: '30m', rest: '90s', notes: 'Heavy, drive through legs' },
+                            { name: 'Sled Drag', sets: 4, reps: '30m', rest: '90s', notes: 'Backward, stay low' },
+                            { name: 'Prowler Push', sets: 4, reps: '30m', rest: '90s', notes: 'Low handles, explosive' }
+                        ]
+                    },
+                    {
                         title: 'Core Circuit',
                         isCircuit: true,
                         exercises: [
@@ -1934,6 +1943,15 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        title: 'Finisher',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Battle Ropes', sets: 6, reps: '30s', rest: '30s', notes: 'Alternating waves, max effort' },
+                            { name: 'Rowing Sprint', sets: 6, reps: '30s', rest: '30s', notes: 'Max effort strokes' },
+                            { name: 'Assault Bike Sprint', sets: 6, reps: '30s', rest: '30s', notes: 'All out effort' }
+                        ]
                     }
                 ]
             },
@@ -2058,6 +2076,15 @@
                             { name: 'Overhead Carries', sets: 3, reps: '30m/arm', rest: '90s', notes: 'KB or DB overhead' },
                             { name: 'Zercher Carries', sets: 3, reps: '40m', rest: '90s', notes: 'Barbell in elbow crooks' },
                             { name: 'Turkish Get-Up', sets: 3, reps: '3/side', rest: '90s', notes: 'Full body stability' }
+                        ]
+                    },
+                    {
+                        title: 'Finisher',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Row Intervals', sets: 5, reps: '500m', rest: '2min', notes: 'Max effort each interval' },
+                            { name: 'Assault Bike Intervals', sets: 8, reps: '20s', rest: '10s', notes: 'All out effort, Tabata style' },
+                            { name: 'Sled Drag', sets: 4, reps: '30m', rest: '90s', notes: 'Backward, heavy load' }
                         ]
                     },
                     {
@@ -3039,7 +3066,31 @@
             },
             'Sled Push': {
                 setup: 'Load sled heavy. Hands on high or low handles. Feet behind sled.',
-                execution: 'Drive forward with low, powerful steps. Push for 40m. Keep chest up, core braced.'
+                execution: 'Drive forward with low, powerful steps. Push for 30-40m. Keep chest up, core braced.'
+            },
+            'Sled Drag': {
+                setup: 'Attach straps to sled. Face away from sled, hold straps at hips or over shoulders.',
+                execution: 'Walk backward dragging sled. Stay low, take short powerful steps. Keep tension on straps throughout.'
+            },
+            'Prowler Push': {
+                setup: 'Load prowler. Grip low handles. Body at 45-degree angle to ground.',
+                execution: 'Drive forward with explosive leg drive. Keep arms locked, core tight. Sprint for distance.'
+            },
+            'Rowing Sprint': {
+                setup: 'Sit on rower. Feet strapped in. Grip handle with arms extended.',
+                execution: 'Drive hard with legs, lean back slightly, pull handle to chest. Max effort strokes. Focus on power per stroke.'
+            },
+            'Assault Bike Sprint': {
+                setup: 'Sit on assault bike. Feet on pedals, hands on handles.',
+                execution: 'Go all-out pushing and pulling with arms while driving legs. Maximum effort for the interval duration.'
+            },
+            'Row Intervals': {
+                setup: 'Sit on rower. Set monitor to 500m intervals. Feet strapped, arms extended.',
+                execution: 'Row 500m at max sustainable pace. Rest between intervals. Focus on consistent split times across all sets.'
+            },
+            'Assault Bike Intervals': {
+                setup: 'Sit on assault bike. Set timer for work/rest intervals.',
+                execution: 'Go all-out for work period, then easy spin or complete rest. Tabata style - max effort each interval.'
             },
             'Jump Squats': {
                 setup: 'Stand with feet shoulder-width. Arms ready.',
