@@ -343,14 +343,13 @@
         /* Fixed Bottom Workout Controls */
         .workout-bottom-controls {
             position: fixed;
-            bottom: 0;
+            bottom: 70px; /* Position above the bottom nav */
             left: 0;
             right: 0;
-            padding: 16px 20px;
-            padding-bottom: calc(16px + env(safe-area-inset-bottom));
+            padding: 12px 20px;
             background: var(--bg);
             border-top: 1px solid var(--separator);
-            z-index: 100;
+            z-index: 98;
         }
 
         .workout-bottom-buttons {
@@ -3373,8 +3372,8 @@
                 }
             });
 
-            // Add spacer for fixed bottom buttons
-            html += '<div style="height: 100px;"></div>';
+            // Add spacer for fixed bottom buttons and footer
+            html += '<div style="height: 160px;"></div>';
 
             container.innerHTML = html;
 
@@ -3411,17 +3410,8 @@
         }
 
         function handleWorkoutBack() {
-            if (workoutStartTime) {
-                if (!confirm('You have an active workout. Are you sure you want to leave? Your progress will not be saved.')) {
-                    return;
-                }
-                clearInterval(workoutTimer);
-                workoutTimer = null;
-                workoutStartTime = null;
-                document.getElementById('headerTimer').style.display = 'none';
-            }
-            currentWorkoutType = null;
-            hideWorkoutBottomControls();
+            // Just go back to home - don't cancel the workout
+            // The active workout banner will show if a workout is still in progress
             goHome();
         }
 
