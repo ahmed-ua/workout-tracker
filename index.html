@@ -140,16 +140,6 @@
             margin-bottom: 32px;
         }
 
-        .home-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .home-content {
-            width: 100%;
-        }
-
         .workout-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -601,10 +591,6 @@
         /* Adjust screens when banner is showing */
         .has-active-banner .header {
             margin-top: 60px;
-        }
-
-        .has-active-banner .home-content {
-            padding-top: 60px;
         }
 
         .bottom-btn:active {
@@ -1607,13 +1593,11 @@
             </div>
         </div>
 
-        <div class="container home-container">
-            <div class="home-content">
-                <div class="welcome">Choose Your Workout</div>
-                <div class="subtitle">Select a workout to begin</div>
+        <div class="container">
+            <div class="welcome">Choose Your Workout</div>
+            <div class="subtitle">Select a workout to begin</div>
 
-                <div class="workout-grid" id="workoutGrid"></div>
-            </div>
+            <div class="workout-grid" id="workoutGrid"></div>
         </div>
     </div>
 
