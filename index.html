@@ -4389,16 +4389,11 @@
                 const isToday = date.toDateString() === today.toDateString();
                 const isSelected = selectedCalendarDate === dateStr;
 
-                // Get short workout names for display
-                const workoutNamesHtml = hasWorkout ?
-                    `<div class="calendar-workout-name">${dayWorkouts.map(w => w.replace(' Body', '').replace(' Volume', '')).join(', ')}</div>` : '';
-
                 html += `
                     <div class="calendar-day ${hasWorkout ? 'has-workout' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}"
                          onclick="selectCalendarDay('${dateStr}')">
                         <div class="calendar-day-number">${day}</div>
                         ${hasWorkout ? '<div class="calendar-dot"></div>' : ''}
-                        ${workoutNamesHtml}
                     </div>
                 `;
             }
@@ -4464,79 +4459,73 @@
             sessionKeys.forEach((sessionKey, index) => {
                 const session = workoutLog[sessionKey];
                 if (!session) return;
-                
+
                 const exerciseCount = Object.keys(session.exercises || {}).length;
                 const startTime = new Date(session.startTime);
                 const timeStr = startTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-                
+                const safeSessionKey = sessionKey.replace(/'/g, "\\'");
+
                 html += `
-                    <div class="workout-summary-card" onclick="openWorkoutDetailModal('${dateStr}', '${sessionKey}')" style="margin-bottom: 12px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div style="flex: 1;">
+                    <div class="workout-summary-card" style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="flex: 1; cursor: pointer;" onclick="openWorkoutDetailModal('${dateStr}', '${safeSessionKey}')">
                                 <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">${session.workoutType}</div>
                                 <div style="font-size: 14px; color: var(--text-secondary);">
                                     ${timeStr} • ${exerciseCount} exercises • ${session.durationMinutes}m
                                 </div>
                             </div>
-                            <div style="font-size: 24px; color: var(--text-secondary);">→</div>
+                            <button onclick="deleteSingleWorkout('${safeSessionKey}', '${dateStr}'); event.stopPropagation();"
+                                    id="delete_${index}"
+                                    style="background: rgba(255, 59, 48, 0.15);
+                                           border: 1px solid #ff3b30;
+                                           color: #ff3b30;
+                                           border-radius: 8px;
+                                           padding: 8px 12px;
+                                           font-size: 13px;
+                                           font-weight: 600;
+                                           cursor: pointer;
+                                           margin-left: 12px;">
+                                Delete
+                            </button>
                         </div>
                     </div>
                 `;
             });
             
-            html += `
-                <button onclick="deleteAllWorkoutsForDay('${dateStr}'); event.stopPropagation();"
-                        style="width: 100%; 
-                               margin-top: 8px;
-                               background: rgba(255, 59, 48, 0.15); 
-                               border: 1px solid #ff3b30; 
-                               color: #ff3b30; 
-                               border-radius: 12px; 
-                               padding: 14px; 
-                               font-size: 15px; 
-                               font-weight: 600; 
-                               cursor: pointer;">
-                    ✕ Delete All Workouts (${sessionKeys.length})
-                </button>
-            `;
-            
             container.innerHTML = html;
         }
 
-        function deleteAllWorkoutsForDay(dateStr) {
-            deleteClickCount++;
-            
-            if (deleteClickCount === 1) {
-                event.target.textContent = '⚠️ Click Again to Confirm';
-                event.target.style.background = '#ff3b30';
-                event.target.style.color = 'white';
-                
-                deleteClickTimer = setTimeout(() => {
-                    event.target.textContent = '✕ Delete All Workouts';
-                    event.target.style.background = 'rgba(255, 59, 48, 0.15)';
-                    event.target.style.color = '#ff3b30';
-                    deleteClickCount = 0;
+        let singleDeleteState = {};
+
+        function deleteSingleWorkout(sessionKey, dateStr) {
+            if (!singleDeleteState[sessionKey]) {
+                singleDeleteState[sessionKey] = { clicks: 0, timer: null };
+            }
+
+            singleDeleteState[sessionKey].clicks++;
+            const btn = event.target;
+
+            if (singleDeleteState[sessionKey].clicks === 1) {
+                btn.textContent = 'Confirm';
+                btn.style.background = '#ff3b30';
+                btn.style.color = 'white';
+
+                singleDeleteState[sessionKey].timer = setTimeout(() => {
+                    btn.textContent = 'Delete';
+                    btn.style.background = 'rgba(255, 59, 48, 0.15)';
+                    btn.style.color = '#ff3b30';
+                    singleDeleteState[sessionKey].clicks = 0;
                 }, 3000);
-            } else if (deleteClickCount === 2) {
-                clearTimeout(deleteClickTimer);
-                deleteClickCount = 0;
-                
-                const keysToDelete = Object.keys(workoutLog).filter(key => 
-                    key.startsWith(dateStr + '_')
-                );
-                console.log('Deleting ALL keys for date:', keysToDelete);
-                keysToDelete.forEach(key => delete workoutLog[key]);
-                
+            } else if (singleDeleteState[sessionKey].clicks === 2) {
+                clearTimeout(singleDeleteState[sessionKey].timer);
+                singleDeleteState[sessionKey].clicks = 0;
+
+                // Delete the session
+                delete workoutLog[sessionKey];
                 saveData();
-                
-                selectedCalendarDate = null;
-                
+
                 renderCalendar();
-                document.getElementById('dayWorkouts').innerHTML = '<div style="color: var(--success); text-align: center; padding: 20px; font-size: 18px; font-weight: 600;">✓ All Workouts Deleted</div>';
-                
-                setTimeout(() => {
-                    document.getElementById('dayWorkouts').innerHTML = '';
-                }, 2000);
+                showDayWorkouts(dateStr);
             }
         }
 
@@ -4582,18 +4571,19 @@
                 });
                 
                 html += `
-                    <button onclick="deleteSingleWorkout('${dateStr}', '${sessionKey}')"
-                            style="width: 100%; 
-                                   background: rgba(255, 59, 48, 0.15); 
-                                   border: 1px solid #ff3b30; 
-                                   color: #ff3b30; 
-                                   border-radius: 12px; 
-                                   padding: 14px; 
-                                   font-size: 15px; 
-                                   font-weight: 600; 
+                    <button onclick="deleteWorkoutFromModal('${sessionKey}', '${dateStr}')"
+                            id="modalDeleteBtn"
+                            style="width: 100%;
+                                   background: rgba(255, 59, 48, 0.15);
+                                   border: 1px solid #ff3b30;
+                                   color: #ff3b30;
+                                   border-radius: 12px;
+                                   padding: 14px;
+                                   font-size: 15px;
+                                   font-weight: 600;
                                    cursor: pointer;
                                    margin-top: 8px;">
-                        ✕ Delete This Workout
+                        Delete This Workout
                     </button>
                 `;
             } else {
@@ -4605,42 +4595,46 @@
             document.getElementById('workoutDetailModal').classList.add('active');
         }
 
-        function deleteSingleWorkout(dateStr, sessionKey) {
-            deleteClickCount++;
-            
-            if (deleteClickCount === 1) {
-                event.target.textContent = '⚠️ Click Again to Confirm';
-                event.target.style.background = '#ff3b30';
-                event.target.style.color = 'white';
-                
-                deleteClickTimer = setTimeout(() => {
-                    event.target.textContent = '✕ Delete This Workout';
-                    event.target.style.background = 'rgba(255, 59, 48, 0.15)';
-                    event.target.style.color = '#ff3b30';
-                    deleteClickCount = 0;
+        let modalDeleteClicks = 0;
+        let modalDeleteTimer = null;
+
+        function deleteWorkoutFromModal(sessionKey, dateStr) {
+            modalDeleteClicks++;
+            const btn = document.getElementById('modalDeleteBtn');
+
+            if (modalDeleteClicks === 1) {
+                btn.textContent = 'Confirm Delete';
+                btn.style.background = '#ff3b30';
+                btn.style.color = 'white';
+
+                modalDeleteTimer = setTimeout(() => {
+                    btn.textContent = 'Delete This Workout';
+                    btn.style.background = 'rgba(255, 59, 48, 0.15)';
+                    btn.style.color = '#ff3b30';
+                    modalDeleteClicks = 0;
                 }, 3000);
-            } else if (deleteClickCount === 2) {
-                clearTimeout(deleteClickTimer);
-                deleteClickCount = 0;
-                
+            } else if (modalDeleteClicks === 2) {
+                clearTimeout(modalDeleteTimer);
+                modalDeleteClicks = 0;
+
                 const session = workoutLog[sessionKey];
                 if (!session) return;
-                
+
                 const workoutType = session.workoutType;
-                
-                const keysToDelete = Object.keys(workoutLog).filter(key => 
+
+                // Delete related exercise data
+                const keysToDelete = Object.keys(workoutLog).filter(key =>
                     key.startsWith(dateStr + '_' + workoutType + '_') && !key.includes('_session_')
                 );
                 keysToDelete.forEach(key => delete workoutLog[key]);
-                
+
+                // Delete the session
                 delete workoutLog[sessionKey];
-                
+
                 saveData();
-                
+
                 closeWorkoutDetailModal();
-                
                 showDayWorkouts(dateStr);
-                
                 renderCalendar();
             }
         }
