@@ -115,13 +115,16 @@
         }
 
         .container {
-            padding: 20px;
+            padding: 10px;
             max-width: 800px;
             margin: 0 auto;
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
             padding-bottom: 100px;
+            box-sizing: border-box;
+            width: 100%;
         }
 
         .welcome {
@@ -607,9 +610,9 @@
 
         .exercise-card {
             background: var(--card-bg);
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 6px;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 4px;
         }
 
         .exercise-header {
@@ -617,7 +620,7 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .exercise-name {
@@ -776,8 +779,8 @@
         .set-row-container {
             position: relative;
             overflow: hidden;
-            border-radius: 8px;
-            margin-bottom: 4px;
+            border-radius: 6px;
+            margin-bottom: 2px;
         }
 
         .set-row-delete {
@@ -785,35 +788,35 @@
             right: 0;
             top: 0;
             bottom: 0;
-            width: 70px;
+            width: 60px;
             background: #ff453a;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .set-row {
             display: grid;
-            grid-template-columns: 28px 1fr 1fr 38px;
-            gap: 6px;
+            grid-template-columns: 24px 1fr 1fr 32px;
+            gap: 4px;
             align-items: center;
             background: var(--surface);
-            padding: 6px;
-            border-radius: 8px;
+            padding: 4px;
+            border-radius: 6px;
             position: relative;
             transition: transform 0.2s ease;
             touch-action: pan-y;
         }
 
         .set-row.swiped {
-            transform: translateX(-70px);
+            transform: translateX(-60px);
         }
 
         .set-label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: var(--text-secondary);
             text-align: center;
@@ -824,13 +827,13 @@
             align-items: center;
             justify-content: center;
             gap: 4px;
-            padding: 8px;
-            margin-top: 4px;
+            padding: 6px;
+            margin-top: 2px;
             background: var(--surface);
             border: 1px dashed var(--separator);
-            border-radius: 8px;
+            border-radius: 6px;
             color: var(--text-secondary);
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
@@ -876,16 +879,16 @@
         }
 
         .set-check {
-            width: 36px;
-            height: 36px;
-            border-radius: 18px;
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
             border: 2px solid var(--separator);
             background: var(--surface-elevated);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 14px;
             color: transparent;
             transition: all 0.2s;
         }
@@ -904,7 +907,7 @@
             background: var(--primary);
             border-color: var(--primary);
             color: white;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 700;
         }
 
@@ -963,19 +966,19 @@
         .tracking-select {
             background: var(--surface-elevated);
             border: 1px solid var(--separator);
-            border-radius: 8px;
-            padding: 8px 6px;
+            border-radius: 6px;
+            padding: 6px 4px;
             color: var(--text);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%238e8e93' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%238e8e93' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 6px center;
-            padding-right: 22px;
-            min-height: 36px;
+            background-position: right 4px center;
+            padding-right: 18px;
+            min-height: 30px;
             text-align: center;
         }
 
@@ -992,9 +995,9 @@
 
         .superset-container {
             background: var(--surface);
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 8px;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 6px;
             border: 1px solid var(--separator);
         }
 
@@ -1019,8 +1022,8 @@
 
         .circuit-container {
             background: var(--surface);
-            border-radius: 10px;
-            margin-bottom: 8px;
+            border-radius: 8px;
+            margin-bottom: 6px;
             border: 1px solid var(--separator);
             overflow: hidden;
         }
@@ -1240,7 +1243,7 @@
 
         .calendar-fixed-area {
             flex-shrink: 0;
-            padding: 20px;
+            padding: 10px;
             padding-bottom: 0;
         }
 
@@ -1248,7 +1251,7 @@
             flex: 1;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding: 20px;
+            padding: 10px;
             padding-top: 16px;
             padding-bottom: 100px;
         }
@@ -1380,64 +1383,16 @@
             to { opacity: 1; }
         }
 
-        @media (max-width: 430px) {
+        /* Responsive adjustments for larger phones */
+        @media (min-width: 430px) {
             .container {
                 padding: 16px;
-            }
-
-            .workout-title {
-                font-size: 18px;
-            }
-
-            .exercise-card {
-                padding: 14px;
-            }
-
-            .exercise-name {
-                font-size: 16px;
-            }
-
-            .exercise-specs {
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-
-            .set-row {
-                grid-template-columns: 28px 1fr 1fr 44px;
-                gap: 8px;
-            }
-
-            .set-label {
-                font-size: 14px;
-            }
-
-            .tracking-select {
-                padding: 12px 8px;
-                font-size: 14px;
-                min-height: 44px;
-                padding-right: 28px;
-            }
-
-            .set-check {
-                width: 44px;
-                height: 44px;
-            }
-
-            .set-control-btn {
-                padding: 10px 14px;
-                font-size: 14px;
-                min-height: 44px;
             }
 
             .workout-sticky-header {
                 margin: 0 -16px;
                 padding-left: 16px;
                 padding-right: 16px;
-            }
-
-            .option-pill {
-                padding: 10px 14px;
-                font-size: 14px;
             }
         }
 
