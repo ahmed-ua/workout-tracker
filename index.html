@@ -4096,22 +4096,24 @@
 
             section.supersets.forEach((superset, supersetIdx) => {
                 if (superset.isOptions) {
-                    const selectionKey = `${workoutType}_section${sectionIdx}_superset${supersetIdx}`;
-                    const selected = workoutLog[selectionKey] || 0;
-                    const selectedPair = superset.options[selected];
-
                     html += `
                         <div class="superset-container">
                             <div class="superset-badge">SUPERSET ${supersetIdx + 1}</div>
                     `;
 
-                    // Render selected exercises with dropdowns
-                    selectedPair.forEach((ex, exIdx) => {
-                        html += renderSupersetExerciseWithDropdown(ex, workoutType, section.title, superset.options, sectionIdx, supersetIdx, selected, exIdx);
-                        if (exIdx < selectedPair.length - 1) {
+                    // Render each exercise position with its own independent dropdown
+                    const numExercisesInPair = superset.options[0].length;
+                    for (let exIdx = 0; exIdx < numExercisesInPair; exIdx++) {
+                        // Each exercise position has its own selection key
+                        const selectionKey = `${workoutType}_section${sectionIdx}_superset${supersetIdx}_ex${exIdx}`;
+                        const selectedOptionIdx = workoutLog[selectionKey] || 0;
+                        const selectedExercise = superset.options[selectedOptionIdx][exIdx];
+
+                        html += renderSupersetExerciseWithDropdown(selectedExercise, workoutType, section.title, superset.options, sectionIdx, supersetIdx, selectedOptionIdx, exIdx);
+                        if (exIdx < numExercisesInPair - 1) {
                             html += '<div class="superset-arrow">↓</div>';
                         }
-                    });
+                    }
 
                     html += '</div>';
                 } else {
@@ -4132,8 +4134,9 @@
             return html;
         }
 
-        function selectSupersetOption(workoutType, sectionIdx, supersetIdx, optionIdx) {
-            workoutLog[`${workoutType}_section${sectionIdx}_superset${supersetIdx}`] = parseInt(optionIdx);
+        function selectSupersetOption(workoutType, sectionIdx, supersetIdx, optionIdx, exIdx) {
+            // Save selection for this specific exercise position within the superset
+            workoutLog[`${workoutType}_section${sectionIdx}_superset${supersetIdx}_ex${exIdx}`] = parseInt(optionIdx);
 
             // Set superset preset to Custom (-1) when individual superset is changed
             const workout = WORKOUTS[workoutType];
@@ -4177,11 +4180,14 @@
                 const section = workout?.sections?.[sectionIdx];
 
                 if (section && section.supersets) {
-                    // Set all supersets to the preset index
+                    // Set all exercise positions in all supersets to the preset index
                     section.supersets.forEach((superset, supersetIdx) => {
                         if (superset.isOptions && superset.options.length > presetIdx) {
-                            const selectionKey = `${workoutType}_section${sectionIdx}_superset${supersetIdx}`;
-                            workoutLog[selectionKey] = presetIdx;
+                            const numExercisesInPair = superset.options[0].length;
+                            for (let exIdx = 0; exIdx < numExercisesInPair; exIdx++) {
+                                const selectionKey = `${workoutType}_section${sectionIdx}_superset${supersetIdx}_ex${exIdx}`;
+                                workoutLog[selectionKey] = presetIdx;
+                            }
                         }
                     });
                 }
@@ -4214,7 +4220,7 @@
             let html = `
                 <div class="exercise-card" id="card_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
                     <div class="exercise-header">
-                        <select class="exercise-name-select" onchange="selectSupersetOption('${workoutType}', ${sectionIdx}, ${supersetIdx}, this.value)">
+                        <select class="exercise-name-select" onchange="selectSupersetOption('${workoutType}', ${sectionIdx}, ${supersetIdx}, this.value, ${exerciseIdxInPair})">
                             ${dropdownOptions}
                         </select>
                         <div class="exercise-meta">
