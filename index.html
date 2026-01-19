@@ -326,9 +326,12 @@
             scrollbar-width: none;
             -ms-overflow-style: none;
             background: var(--bg);
-            position: sticky;
+            position: fixed;
             top: 60px;
-            z-index: 90;
+            left: 0;
+            right: 0;
+            z-index: 95;
+            border-bottom: 1px solid var(--separator);
         }
 
         .workout-tabs::-webkit-scrollbar {
@@ -352,6 +355,10 @@
         .workout-tab.active {
             background: var(--primary);
             color: white;
+        }
+
+        .workout-container {
+            padding-top: 60px !important; /* Space for fixed tabs */
         }
 
         .workout-section {
@@ -1446,7 +1453,9 @@
             </div>
         </div>
 
-        <div class="container" id="workoutContent"></div>
+        <div class="workout-tabs" id="workoutTabs"></div>
+
+        <div class="container workout-container" id="workoutContent"></div>
     </div>
 
 
@@ -3406,16 +3415,17 @@
         function renderWorkoutContent(workoutType) {
             const workout = WORKOUTS[workoutType];
             const container = document.getElementById('workoutContent');
+            const tabsContainer = document.getElementById('workoutTabs');
 
             // Set workout name in header
             document.getElementById('workoutHeaderTitle').textContent = workout.title;
 
-            // Build tabs
-            let tabsHtml = '<div class="workout-tabs">';
+            // Build tabs (in separate fixed container)
+            let tabsHtml = '';
             workout.sections.forEach((section, sectionIdx) => {
                 tabsHtml += `<button class="workout-tab ${sectionIdx === currentSectionIdx ? 'active' : ''}" onclick="switchWorkoutSection('${workoutType}', ${sectionIdx})">${section.title}</button>`;
             });
-            tabsHtml += '</div>';
+            tabsContainer.innerHTML = tabsHtml;
 
             // Build section content
             let sectionsHtml = '';
@@ -3440,7 +3450,7 @@
             // Add spacer for fixed bottom buttons and footer
             sectionsHtml += '<div style="height: 160px;"></div>';
 
-            container.innerHTML = tabsHtml + sectionsHtml;
+            container.innerHTML = sectionsHtml;
 
             // Add fixed bottom controls (outside scrollable content)
             let bottomControls = document.getElementById('workoutBottomControls');
