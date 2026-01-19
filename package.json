@@ -1,0 +1,31 @@
+{
+  "name": "workout-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "build": "cp index.html www/",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:ios": "npm run build && npx cap sync ios && npx cap open ios"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahmed-ua/workout-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ahmed-ua/workout-tracker/issues"
+  },
+  "homepage": "https://github.com/ahmed-ua/workout-tracker#readme",
+  "dependencies": {
+    "@capacitor/cli": "^8.0.1",
+    "@capacitor/core": "^8.0.1",
+    "@capacitor/haptics": "^8.0.0",
+    "@capacitor/ios": "^8.0.1"
+  }
+}

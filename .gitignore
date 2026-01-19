@@ -10,3 +10,8 @@ firebase-debug.log
 
 # OS files
 .DS_Store
+
+# Capacitor
+ios/
+android/
+www/

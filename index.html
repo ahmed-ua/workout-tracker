@@ -6,6 +6,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Workout Tracker</title>
+    <!-- Capacitor -->
+    <script src="https://unpkg.com/@capacitor/core@latest/dist/capacitor.js"></script>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -3239,7 +3241,31 @@
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
         let selectedCalendarDate = null;
-        
+
+        // Capacitor Haptics for native vibration (works on iOS)
+        async function triggerVibration() {
+            try {
+                // Check if running in Capacitor native app
+                if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+                    const { Haptics } = window.Capacitor.Plugins;
+                    if (Haptics) {
+                        // Vibrate 3 times for notification
+                        await Haptics.vibrate({ duration: 200 });
+                        setTimeout(async () => await Haptics.vibrate({ duration: 200 }), 300);
+                        setTimeout(async () => await Haptics.vibrate({ duration: 200 }), 600);
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.log('Capacitor Haptics not available');
+            }
+
+            // Fallback to web vibration API (Android)
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+        }
+
         // Workout timer variables
         let workoutStartTime = null;
         let workoutTimer = null;
@@ -3381,9 +3407,7 @@
 
             if (playAlert) {
                 // Play alert sound and vibrate
-                if (navigator.vibrate) {
-                    navigator.vibrate([200, 100, 200, 100, 200]);
-                }
+                triggerVibration();
                 // Try to play a sound
                 try {
                     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
