@@ -316,6 +316,52 @@
             text-overflow: ellipsis;
         }
 
+        /* Workout Section Tabs */
+        .workout-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            background: var(--bg);
+            position: sticky;
+            top: 60px;
+            z-index: 90;
+        }
+
+        .workout-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .workout-tab {
+            flex-shrink: 0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: var(--surface);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .workout-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .workout-section {
+            display: none;
+        }
+
+        .workout-section.active {
+            display: block;
+        }
+
         /* Workout Header Timer */
         .workout-header-timer {
             display: flex;
@@ -481,6 +527,8 @@
             font-size: 18px;
             font-weight: 700;
             margin-bottom: 4px;
+            text-align: center;
+            width: 100%;
         }
 
         .exercise-name-select {
@@ -492,11 +540,14 @@
             cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
-            padding-right: 20px;
+            padding: 0 20px;
             text-align: center;
+            text-align-last: center;
             background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238e8e93' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0 center;
+            width: 100%;
+            max-width: 100%;
         }
 
         .exercise-name-select:focus {
@@ -3326,6 +3377,9 @@
         function startWorkout(workoutType) {
             currentWorkoutType = workoutType;
 
+            // Reset to first section tab when starting a new workout
+            currentSectionIdx = 0;
+
             // Show the workout screen
             showScreen('workout');
 
@@ -3347,6 +3401,8 @@
             }
         }
 
+        let currentSectionIdx = 0;
+
         function renderWorkoutContent(workoutType) {
             const workout = WORKOUTS[workoutType];
             const container = document.getElementById('workoutContent');
@@ -3354,28 +3410,37 @@
             // Set workout name in header
             document.getElementById('workoutHeaderTitle').textContent = workout.title;
 
-            let html = '';
-
+            // Build tabs
+            let tabsHtml = '<div class="workout-tabs">';
             workout.sections.forEach((section, sectionIdx) => {
-                html += `<div class="section-header">${section.title}</div>`;
+                tabsHtml += `<button class="workout-tab ${sectionIdx === currentSectionIdx ? 'active' : ''}" onclick="switchWorkoutSection('${workoutType}', ${sectionIdx})">${section.title}</button>`;
+            });
+            tabsHtml += '</div>';
+
+            // Build section content
+            let sectionsHtml = '';
+            workout.sections.forEach((section, sectionIdx) => {
+                sectionsHtml += `<div class="workout-section ${sectionIdx === currentSectionIdx ? 'active' : ''}" id="workoutSection_${sectionIdx}">`;
 
                 if (section.isOptions) {
-                    html += renderOptions(section, workoutType, sectionIdx);
+                    sectionsHtml += renderOptions(section, workoutType, sectionIdx);
                 } else if (section.isSupersets) {
-                    html += renderSupersets(section, workoutType, sectionIdx);
+                    sectionsHtml += renderSupersets(section, workoutType, sectionIdx);
                 } else if (section.isCircuit) {
-                    html += renderCircuit(section, workoutType, sectionIdx);
+                    sectionsHtml += renderCircuit(section, workoutType, sectionIdx);
                 } else {
                     section.exercises.forEach(ex => {
-                        html += renderExercise(ex, workoutType, section.title);
+                        sectionsHtml += renderExercise(ex, workoutType, section.title);
                     });
                 }
+
+                sectionsHtml += '</div>';
             });
 
             // Add spacer for fixed bottom buttons and footer
-            html += '<div style="height: 160px;"></div>';
+            sectionsHtml += '<div style="height: 160px;"></div>';
 
-            container.innerHTML = html;
+            container.innerHTML = tabsHtml + sectionsHtml;
 
             // Add fixed bottom controls (outside scrollable content)
             let bottomControls = document.getElementById('workoutBottomControls');
@@ -3392,6 +3457,23 @@
                 document.body.appendChild(bottomControls);
             }
             bottomControls.style.display = 'block';
+        }
+
+        function switchWorkoutSection(workoutType, sectionIdx) {
+            currentSectionIdx = sectionIdx;
+
+            // Update tab active states
+            document.querySelectorAll('.workout-tab').forEach((tab, idx) => {
+                tab.classList.toggle('active', idx === sectionIdx);
+            });
+
+            // Update section visibility
+            document.querySelectorAll('.workout-section').forEach((section, idx) => {
+                section.classList.toggle('active', idx === sectionIdx);
+            });
+
+            // Scroll to top of content
+            document.getElementById('workoutContent').scrollTop = 0;
         }
 
         function cancelWorkout() {
