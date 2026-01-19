@@ -398,6 +398,26 @@
             font-weight: 600;
         }
 
+        .exercise-name-select {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            padding-right: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238e8e93' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0 center;
+            max-width: calc(100% - 40px);
+        }
+
+        .exercise-name-select:focus {
+            outline: none;
+        }
+
         .info-btn {
             background: var(--surface-elevated);
             border: none;
@@ -448,32 +468,30 @@
 
         .set-controls {
             display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid var(--separator);
+            align-items: center;
+            gap: 8px;
         }
 
         .set-control-btn {
             background: var(--surface-elevated);
             border: 1px solid var(--separator);
-            border-radius: 10px;
+            border-radius: 8px;
             color: var(--text);
-            font-size: 15px;
-            font-weight: 600;
-            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 0;
+            width: 28px;
+            height: 28px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
             transition: all 0.2s;
-            min-height: 48px;
         }
 
         .set-control-btn:active {
             background: var(--surface);
-            transform: scale(0.97);
+            transform: scale(0.95);
         }
 
         .set-control-btn.remove {
@@ -1219,7 +1237,7 @@
     </div>
 
     <!-- Start Workout Overlay -->
-    <div class="start-workout-overlay" id="startWorkoutOverlay" style="display: none;">
+    <div id="startWorkoutOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.95); z-index: 200; align-items: center; justify-content: center; flex-direction: column; padding: 20px;">
         <div class="start-workout-content">
             <div class="start-workout-title" id="overlayWorkoutTitle"></div>
             <div class="start-workout-subtitle" id="overlayWorkoutSubtitle"></div>
@@ -2501,22 +2519,80 @@
         function renderOptions(section, workoutType, sectionIdx) {
             const selectionKey = `${workoutType}_section${sectionIdx}`;
             const selected = workoutLog[selectionKey] || 0;
+            const selectedEx = section.exercises[selected];
 
-            let html = `<select class="exercise-select" onchange="selectOption('${workoutType}', ${sectionIdx}, this.value)">`;
-            section.exercises.forEach((ex, idx) => {
-                html += `<option value="${idx}" ${idx === selected ? 'selected' : ''}>${ex.name}</option>`;
+            // Render the selected exercise with a dropdown in its header
+            return renderExerciseWithDropdown(selectedEx, workoutType, section.title, section.exercises, sectionIdx, selected);
+        }
+
+        function renderExerciseWithDropdown(ex, workoutType, sectionTitle, allOptions, sectionIdx, selectedIdx) {
+            const today = new Date().toISOString().split('T')[0];
+            const lastLog = getLastLog(workoutType, ex.name);
+            const safeExName = ex.name.replace(/'/g, "\\'");
+            const setCountKey = `${workoutType}_${ex.name}_setCount`;
+            const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : ex.sets;
+
+            // Build dropdown options
+            let dropdownOptions = '';
+            allOptions.forEach((opt, idx) => {
+                dropdownOptions += `<option value="${idx}" ${idx === selectedIdx ? 'selected' : ''}>${opt.name}</option>`;
             });
-            html += '</select>';
 
-            section.exercises.forEach((ex, idx) => {
+            let html = `
+                <div class="exercise-card" id="card_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
+                    <div class="exercise-header">
+                        <select class="exercise-name-select" onchange="selectOption('${workoutType}', ${sectionIdx}, this.value)">
+                            ${dropdownOptions}
+                        </select>
+                        <button class="info-btn" onclick="showExerciseInfo('${safeExName}')">i</button>
+                    </div>
+                    <div class="exercise-specs">
+                        <span>Sets: <span class="spec-value">${currentSets}</span></span>
+                        <span>Reps: <span class="spec-value">${ex.reps}</span></span>
+                        <span style="display: flex; align-items: center; gap: 8px;">
+                            Rest: <span class="spec-value">${ex.rest}</span>
+                            <span class="set-controls">
+                                <button class="set-control-btn remove" onclick="removeSet('${workoutType}', '${safeExName}', ${ex.sets})">−</button>
+                                <button class="set-control-btn add" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">+</button>
+                            </span>
+                        </span>
+                    </div>
+                    ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 12px;">${ex.notes}</div>` : ''}
+                    <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
+            `;
+
+            const restTime = ex.rest || '60s';
+
+            for (let i = 1; i <= currentSets; i++) {
+                const logKey = `${today}_${workoutType}_${ex.name}_${i}`;
+                const saved = workoutLog[logKey];
+                const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
+                const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
+                const setId = `set_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
+
                 html += `
-                    <div class="option-content ${idx === selected ? 'active' : ''}"
-                         data-option="${sectionIdx}-${idx}">
-                        ${renderExercise(ex, workoutType, section.title)}
+                    <div class="set-row">
+                        <div class="set-label">${i}</div>
+                        <select class="tracking-select ${saved ? 'filled' : ''}"
+                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'weight', this.value)">
+                            <option value="">Weight</option>
+                            <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
+                            ${generateWeightOptions(defaultWeight)}
+                        </select>
+                        <select class="tracking-select ${saved ? 'filled' : ''}"
+                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'reps', this.value)">
+                            <option value="">Reps</option>
+                            ${generateRepsOptions(defaultReps)}
+                        </select>
+                        <button class="set-check" id="${setId}" onclick="toggleSetComplete('${setId}', '${restTime}')"></button>
                     </div>
                 `;
-            });
+            }
 
+            html += `
+                    </div>
+                </div>
+            `;
             return html;
         }
 
@@ -2533,28 +2609,19 @@
                 if (superset.isOptions) {
                     const selectionKey = `${workoutType}_section${sectionIdx}_superset${supersetIdx}`;
                     const selected = workoutLog[selectionKey] || 0;
+                    const selectedPair = superset.options[selected];
 
                     html += `
                         <div class="superset-container">
                             <div class="superset-badge">SUPERSET ${supersetIdx + 1}</div>
-                            <select class="exercise-select" style="margin-bottom: 12px;" onchange="selectSupersetOption('${workoutType}', ${sectionIdx}, ${supersetIdx}, this.value)">
                     `;
 
-                    superset.options.forEach((option, optIdx) => {
-                        const firstExName = option[0].name;
-                        html += `<option value="${optIdx}" ${optIdx === selected ? 'selected' : ''}>Option ${optIdx + 1}: ${firstExName}</option>`;
-                    });
-                    html += '</select>';
-
-                    superset.options.forEach((optionPair, optIdx) => {
-                        html += `<div class="option-content ${optIdx === selected ? 'active' : ''}" data-superset-option="${sectionIdx}-${supersetIdx}-${optIdx}">`;
-                        optionPair.forEach((ex, exIdx) => {
-                            html += renderExercise(ex, workoutType, section.title);
-                            if (exIdx < optionPair.length - 1) {
-                                html += '<div class="superset-arrow">↓</div>';
-                            }
-                        });
-                        html += '</div>';
+                    // Render selected exercises with dropdowns
+                    selectedPair.forEach((ex, exIdx) => {
+                        html += renderSupersetExerciseWithDropdown(ex, workoutType, section.title, superset.options, sectionIdx, supersetIdx, selected, exIdx);
+                        if (exIdx < selectedPair.length - 1) {
+                            html += '<div class="superset-arrow">↓</div>';
+                        }
                     });
 
                     html += '</div>';
@@ -2564,7 +2631,7 @@
                             <div class="superset-badge">SUPERSET ${supersetIdx + 1}</div>
                     `;
                     superset.forEach((ex, exIdx) => {
-                        html += renderExercise(ex, workoutType, section.title);
+                        html += renderSingleExercise(ex, workoutType);
                         if (exIdx < superset.length - 1) {
                             html += '<div class="superset-arrow">↓</div>';
                         }
@@ -2580,6 +2647,78 @@
             workoutLog[`${workoutType}_section${sectionIdx}_superset${supersetIdx}`] = parseInt(optionIdx);
             saveData();
             renderWorkoutContent(workoutType);
+        }
+
+        function renderSupersetExerciseWithDropdown(ex, workoutType, sectionTitle, allSupersetOptions, sectionIdx, supersetIdx, selectedIdx, exerciseIdxInPair) {
+            const today = new Date().toISOString().split('T')[0];
+            const lastLog = getLastLog(workoutType, ex.name);
+            const safeExName = ex.name.replace(/'/g, "\\'");
+            const setCountKey = `${workoutType}_${ex.name}_setCount`;
+            const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : ex.sets;
+
+            // Build dropdown options showing first exercise of each superset option
+            let dropdownOptions = '';
+            allSupersetOptions.forEach((opt, idx) => {
+                const optExercise = opt[exerciseIdxInPair];
+                dropdownOptions += `<option value="${idx}" ${idx === selectedIdx ? 'selected' : ''}>${optExercise.name}</option>`;
+            });
+
+            let html = `
+                <div class="exercise-card" id="card_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
+                    <div class="exercise-header">
+                        <select class="exercise-name-select" onchange="selectSupersetOption('${workoutType}', ${sectionIdx}, ${supersetIdx}, this.value)">
+                            ${dropdownOptions}
+                        </select>
+                        <button class="info-btn" onclick="showExerciseInfo('${safeExName}')">i</button>
+                    </div>
+                    <div class="exercise-specs">
+                        <span>Sets: <span class="spec-value">${currentSets}</span></span>
+                        <span>Reps: <span class="spec-value">${ex.reps}</span></span>
+                        <span style="display: flex; align-items: center; gap: 8px;">
+                            Rest: <span class="spec-value">${ex.rest}</span>
+                            <span class="set-controls">
+                                <button class="set-control-btn remove" onclick="removeSet('${workoutType}', '${safeExName}', ${ex.sets})">−</button>
+                                <button class="set-control-btn add" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">+</button>
+                            </span>
+                        </span>
+                    </div>
+                    ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 12px;">${ex.notes}</div>` : ''}
+                    <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
+            `;
+
+            const restTime = ex.rest || '60s';
+
+            for (let i = 1; i <= currentSets; i++) {
+                const logKey = `${today}_${workoutType}_${ex.name}_${i}`;
+                const saved = workoutLog[logKey];
+                const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
+                const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
+                const setId = `set_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
+
+                html += `
+                    <div class="set-row">
+                        <div class="set-label">${i}</div>
+                        <select class="tracking-select ${saved ? 'filled' : ''}"
+                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'weight', this.value)">
+                            <option value="">Weight</option>
+                            <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
+                            ${generateWeightOptions(defaultWeight)}
+                        </select>
+                        <select class="tracking-select ${saved ? 'filled' : ''}"
+                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'reps', this.value)">
+                            <option value="">Reps</option>
+                            ${generateRepsOptions(defaultReps)}
+                        </select>
+                        <button class="set-check" id="${setId}" onclick="toggleSetComplete('${setId}', '${restTime}')"></button>
+                    </div>
+                `;
+            }
+
+            html += `
+                    </div>
+                </div>
+            `;
+            return html;
         }
 
         function renderCircuit(section, workoutType, sectionIdx) {
@@ -2629,7 +2768,7 @@
                     markCycleCompleted(workoutType, baseExerciseName);
                 }
 
-                let html = '<div style="margin-bottom: 12px;">';
+                let html = '';
 
                 if (shouldRotate) {
                     html += `
@@ -2645,55 +2784,103 @@
                                 <span>Time to Switch It Up!</span>
                             </div>
                             <div style="font-size: 13px; font-weight: 400; opacity: 0.95;">
-                                You've done ${currentEx.name} for ${uniqueDays} workout days (${daysThreshold}+ recommended). Try a different variation below!
+                                You've done ${currentEx.name} for ${uniqueDays} workout days (${daysThreshold}+ recommended). Try a different variation!
                             </div>
                         </div>
                     `;
                     markRotationRecommended(workoutType, currentEx.name);
                 }
 
-                html += '<div class="option-pills">';
-                ex.rotations.forEach((rotation, idx) => {
-                    const shortName = rotation.name.split(' ').slice(0, 2).join(' ');
-                    const isCurrent = idx === selectedRotation;
+                // Render exercise with rotation dropdown in header
+                html += renderRotationExerciseWithDropdown(ex, workoutType, sectionTitle, selectedRotation);
 
-                    const variantUniqueDays = getExerciseDaysSinceReset(workoutType, rotation.name, baseExerciseName);
-                    
-                    html += `
-                        <div class="option-pill ${isCurrent ? 'selected' : ''}" 
-                             onclick="selectRotation('${workoutType}', '${ex.name}', ${idx}, '${sectionTitle}')"
-                             style="position: relative;">
-                            ${shortName}
-                            ${variantUniqueDays > 0 ? `<div style="position: absolute; top: -6px; right: -6px; background: var(--success); color: white; border-radius: 10px; padding: 2px 6px; font-size: 10px; font-weight: 700;">${variantUniqueDays}</div>` : ''}
-                        </div>
-                    `;
-                });
-                html += '</div>';
-                
-                const exerciseData = {
-                    name: currentEx.name,
-                    sets: ex.sets,
-                    reps: ex.reps,
-                    rest: ex.rest,
-                    notes: currentEx.notes
-                };
-                html += renderSingleExercise(exerciseData, workoutType);
-                html += '</div>';
-                
                 return html;
             } else {
                 return renderSingleExercise(ex, workoutType);
             }
         }
 
+        function renderRotationExerciseWithDropdown(ex, workoutType, sectionTitle, selectedRotation) {
+            const today = new Date().toISOString().split('T')[0];
+            const currentEx = ex.rotations[selectedRotation];
+            const safeExName = currentEx.name.replace(/'/g, "\\'");
+            const safeBaseExName = ex.name.replace(/'/g, "\\'");
+            const setCountKey = `${workoutType}_${currentEx.name}_setCount`;
+            const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : ex.sets;
+            const lastLog = getLastLog(workoutType, currentEx.name);
+            const baseExerciseName = ex.name;
+
+            // Build dropdown options with day counts
+            let dropdownOptions = '';
+            ex.rotations.forEach((rotation, idx) => {
+                const variantUniqueDays = getExerciseDaysSinceReset(workoutType, rotation.name, baseExerciseName);
+                const dayLabel = variantUniqueDays > 0 ? ` (${variantUniqueDays}d)` : '';
+                dropdownOptions += `<option value="${idx}" ${idx === selectedRotation ? 'selected' : ''}>${rotation.name}${dayLabel}</option>`;
+            });
+
+            let html = `
+                <div class="exercise-card" id="card_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
+                    <div class="exercise-header">
+                        <select class="exercise-name-select" onchange="selectRotation('${workoutType}', '${safeBaseExName}', this.value, '${sectionTitle}')">
+                            ${dropdownOptions}
+                        </select>
+                        <button class="info-btn" onclick="showExerciseInfo('${safeExName}')">i</button>
+                    </div>
+                    <div class="exercise-specs">
+                        <span>Sets: <span class="spec-value">${currentSets}</span></span>
+                        <span>Reps: <span class="spec-value">${ex.reps}</span></span>
+                        <span style="display: flex; align-items: center; gap: 8px;">
+                            Rest: <span class="spec-value">${ex.rest}</span>
+                            <span class="set-controls">
+                                <button class="set-control-btn remove" onclick="removeSet('${workoutType}', '${safeExName}', ${ex.sets})">−</button>
+                                <button class="set-control-btn add" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">+</button>
+                            </span>
+                        </span>
+                    </div>
+                    ${currentEx.notes ? `<div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 12px;">${currentEx.notes}</div>` : ''}
+                    <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
+            `;
+
+            const restTime = ex.rest || '60s';
+
+            for (let i = 1; i <= currentSets; i++) {
+                const logKey = `${today}_${workoutType}_${currentEx.name}_${i}`;
+                const saved = workoutLog[logKey];
+                const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
+                const defaultReps = saved ? saved.reps : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].reps : '');
+                const setId = `set_${workoutType}_${safeExName}_${i}`.replace(/[^a-zA-Z0-9_]/g, '_');
+
+                html += `
+                    <div class="set-row">
+                        <div class="set-label">${i}</div>
+                        <select class="tracking-select ${saved ? 'filled' : ''}"
+                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'weight', this.value)">
+                            <option value="">Weight</option>
+                            <option value="BW" ${defaultWeight === 'BW' ? 'selected' : ''}>BW</option>
+                            ${generateWeightOptions(defaultWeight)}
+                        </select>
+                        <select class="tracking-select ${saved ? 'filled' : ''}"
+                                onchange="logSet('${workoutType}', '${safeExName}', ${i}, 'reps', this.value)">
+                            <option value="">Reps</option>
+                            ${generateRepsOptions(defaultReps)}
+                        </select>
+                        <button class="set-check" id="${setId}" onclick="toggleSetComplete('${setId}', '${restTime}')"></button>
+                    </div>
+                `;
+            }
+
+            html += `
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
         function selectRotation(workoutType, exerciseName, rotationIdx, sectionTitle) {
             const rotationKey = `${workoutType}_rotation_${exerciseName}`;
-            const oldSelection = workoutLog[rotationKey] || 0;
-            
-            workoutLog[rotationKey] = rotationIdx;
+            workoutLog[rotationKey] = parseInt(rotationIdx);
             saveData();
-            
-            startWorkout(workoutType);
+            renderWorkoutContent(workoutType);
         }
 
         function renderSingleExercise(ex, workoutType) {
@@ -2707,14 +2894,20 @@
                 <div class="exercise-card" id="card_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
                     <div class="exercise-header">
                         <div class="exercise-name">${ex.name}</div>
-                        <button class="info-btn" onclick="showExerciseInfo('${ex.name}')">i</button>
+                        <button class="info-btn" onclick="showExerciseInfo('${safeExName}')">i</button>
                     </div>
                     <div class="exercise-specs">
-                        <span>Sets: <span class="spec-value" id="setCount_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">${currentSets}</span></span>
+                        <span>Sets: <span class="spec-value">${currentSets}</span></span>
                         <span>Reps: <span class="spec-value">${ex.reps}</span></span>
-                        <span>Rest: <span class="spec-value">${ex.rest}</span></span>
+                        <span style="display: flex; align-items: center; gap: 8px;">
+                            Rest: <span class="spec-value">${ex.rest}</span>
+                            <span class="set-controls">
+                                <button class="set-control-btn remove" onclick="removeSet('${workoutType}', '${safeExName}', ${ex.sets})">−</button>
+                                <button class="set-control-btn add" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">+</button>
+                            </span>
+                        </span>
                     </div>
-                    ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 15px; margin-top: 8px;">${ex.notes}</div>` : ''}
+                    ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 12px;">${ex.notes}</div>` : ''}
                     <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
             `;
 
@@ -2748,10 +2941,6 @@
 
             html += `
                     </div>
-                    <div class="set-controls">
-                        <button class="set-control-btn remove" onclick="removeSet('${workoutType}', '${safeExName}', ${ex.sets})">− Remove Set</button>
-                        <button class="set-control-btn add" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">+ Add Set</button>
-                    </div>
                 </div>
             `;
             return html;
@@ -2782,7 +2971,7 @@
             saveData();
 
             // Re-render the workout to update the UI
-            startWorkout(workoutType);
+            renderWorkoutContent(workoutType);
         }
 
         function removeSet(workoutType, exerciseName, defaultSets) {
@@ -2802,7 +2991,7 @@
             saveData();
 
             // Re-render the workout to update the UI
-            startWorkout(workoutType);
+            renderWorkoutContent(workoutType);
         }
 
         function getLastLog(workoutType, exerciseName) {
@@ -2853,13 +3042,107 @@
 
         function showExerciseInfo(exerciseName) {
             const info = EXERCISE_DB[exerciseName];
+            document.getElementById('exerciseName').textContent = exerciseName;
             if (info) {
-                document.getElementById('exerciseName').textContent = exerciseName;
                 document.getElementById('exerciseInfo').innerHTML = `
                     <p><strong>Setup:</strong> ${info.setup}</p>
                     <p><strong>Execution:</strong> ${info.execution}</p>
                 `;
-                document.getElementById('exerciseModal').classList.add('active');
+            } else {
+                // Generate a generic description based on exercise name
+                const genericInfo = generateExerciseInfo(exerciseName);
+                document.getElementById('exerciseInfo').innerHTML = `
+                    <p><strong>Setup:</strong> ${genericInfo.setup}</p>
+                    <p><strong>Execution:</strong> ${genericInfo.execution}</p>
+                `;
+            }
+            document.getElementById('exerciseModal').classList.add('active');
+        }
+
+        function generateExerciseInfo(exerciseName) {
+            const name = exerciseName.toLowerCase();
+
+            // Common exercise patterns
+            if (name.includes('squat')) {
+                return {
+                    setup: 'Position feet shoulder-width apart. Brace your core and maintain a neutral spine.',
+                    execution: 'Descend by pushing hips back and bending knees. Keep chest up and knees tracking over toes. Drive through feet to return to standing.'
+                };
+            } else if (name.includes('deadlift') || name.includes('rdl')) {
+                return {
+                    setup: 'Stand with feet hip-width apart. Grip the bar just outside your legs. Shoulders back, chest up.',
+                    execution: 'Hinge at hips while maintaining flat back. Drive through heels and extend hips to stand. Control the descent.'
+                };
+            } else if (name.includes('press') || name.includes('bench')) {
+                return {
+                    setup: 'Set up with stable base. Grip the weight firmly. Engage core and set shoulders.',
+                    execution: 'Control the weight down, then press up powerfully. Maintain proper elbow position throughout.'
+                };
+            } else if (name.includes('row')) {
+                return {
+                    setup: 'Hinge forward with flat back. Grip the weight with arms extended.',
+                    execution: 'Pull weight toward torso, squeezing shoulder blades. Lower with control. Avoid momentum.'
+                };
+            } else if (name.includes('curl')) {
+                return {
+                    setup: 'Stand tall with weight at sides. Elbows close to body.',
+                    execution: 'Curl weight up by bending elbows. Squeeze at top. Lower with control. Avoid swinging.'
+                };
+            } else if (name.includes('extension') || name.includes('pushdown')) {
+                return {
+                    setup: 'Set up with stable stance. Grip firmly with proper hand position.',
+                    execution: 'Extend through full range of motion. Control the negative. Keep tension on target muscle.'
+                };
+            } else if (name.includes('lunge') || name.includes('split')) {
+                return {
+                    setup: 'Stand tall with feet hip-width apart. Core engaged.',
+                    execution: 'Step into lunge position. Lower until rear knee nearly touches ground. Drive through front foot to return.'
+                };
+            } else if (name.includes('pull-up') || name.includes('chin')) {
+                return {
+                    setup: 'Grip bar with chosen hand position. Hang with arms fully extended.',
+                    execution: 'Pull body up until chin clears bar. Lower with control. Avoid swinging.'
+                };
+            } else if (name.includes('jump') || name.includes('hop') || name.includes('bound')) {
+                return {
+                    setup: 'Athletic stance with soft knees. Arms ready to drive.',
+                    execution: 'Explode upward/forward with full extension. Land softly with bent knees. Reset and repeat.'
+                };
+            } else if (name.includes('plank') || name.includes('hold')) {
+                return {
+                    setup: 'Set up in position with core engaged. Maintain neutral spine alignment.',
+                    execution: 'Hold position while breathing steadily. Avoid sagging or piking. Focus on tension throughout core.'
+                };
+            } else if (name.includes('raise') || name.includes('fly')) {
+                return {
+                    setup: 'Position body appropriately for the movement. Light grip on weight.',
+                    execution: 'Raise weight through controlled arc. Pause at top. Lower with control. Maintain slight elbow bend.'
+                };
+            } else if (name.includes('calf')) {
+                return {
+                    setup: 'Position feet on edge of platform. Hold support for balance if needed.',
+                    execution: 'Rise onto toes through full range. Squeeze at top. Lower slowly below platform level. Full stretch at bottom.'
+                };
+            } else if (name.includes('carry') || name.includes('walk')) {
+                return {
+                    setup: 'Pick up weight with proper deadlift form. Stand tall with shoulders back.',
+                    execution: 'Walk with controlled steps. Maintain upright posture. Breathe steadily. Keep core braced throughout.'
+                };
+            } else if (name.includes('med ball') || name.includes('slam')) {
+                return {
+                    setup: 'Hold med ball at chest or overhead. Athletic stance.',
+                    execution: 'Generate power from hips and core. Release or slam with full body effort. Reset and repeat.'
+                };
+            } else if (name.includes('circuit') || name.includes('combo')) {
+                return {
+                    setup: 'Prepare all equipment needed. Plan transitions between exercises.',
+                    execution: 'Perform each exercise with good form. Minimize rest between movements. Complete all rounds as prescribed.'
+                };
+            } else {
+                return {
+                    setup: 'Set up in proper starting position. Engage core and maintain good posture.',
+                    execution: 'Perform the movement with controlled tempo. Focus on mind-muscle connection. Complete all reps with good form.'
+                };
             }
         }
 
