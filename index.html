@@ -304,6 +304,18 @@
             cursor: pointer;
         }
 
+        /* Workout Header Title */
+        .workout-header-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text);
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         /* Workout Header Timer */
         .workout-header-timer {
             display: flex;
@@ -1376,6 +1388,7 @@
         <div class="header">
             <div class="header-content">
                 <button class="back-btn" onclick="handleWorkoutBack()">← Back</button>
+                <div class="workout-header-title" id="workoutHeaderTitle"></div>
                 <div class="workout-header-timer" id="headerTimer" style="display: none;">
                     <div class="timer-dot"></div>
                     <span id="headerTimerDisplay">0:00</span>
@@ -3339,14 +3352,10 @@
             const workout = WORKOUTS[workoutType];
             const container = document.getElementById('workoutContent');
 
-            let html = `
-                <div class="workout-sticky-header">
-                    <div class="workout-sticky-title">
-                        <div class="welcome">${workout.title}</div>
-                        <div class="subtitle">${workout.focus} • ${workout.duration}</div>
-                    </div>
-                </div>
-            `;
+            // Set workout name in header
+            document.getElementById('workoutHeaderTitle').textContent = workout.title;
+
+            let html = '';
 
             workout.sections.forEach((section, sectionIdx) => {
                 html += `<div class="section-header">${section.title}</div>`;
