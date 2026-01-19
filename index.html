@@ -274,6 +274,42 @@
             color: var(--text-secondary);
         }
 
+        .set-controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--separator);
+        }
+
+        .set-control-btn {
+            background: var(--surface-elevated);
+            border: 1px solid var(--separator);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .set-control-btn:active {
+            background: var(--surface);
+        }
+
+        .set-control-btn.remove {
+            color: #ff453a;
+        }
+
+        .set-control-btn.add {
+            color: var(--success);
+        }
+
         .set-check {
             width: 44px;
             height: 44px;
@@ -2364,26 +2400,28 @@
         function renderSingleExercise(ex, workoutType) {
             const today = new Date().toISOString().split('T')[0];
             const lastLog = getLastLog(workoutType, ex.name);
+            const safeExName = ex.name.replace(/'/g, "\\'");
+            const setCountKey = `${workoutType}_${ex.name}_setCount`;
+            const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : ex.sets;
 
             let html = `
-                <div class="exercise-card">
+                <div class="exercise-card" id="card_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
                     <div class="exercise-header">
                         <div class="exercise-name">${ex.name}</div>
                         <button class="info-btn" onclick="showExerciseInfo('${ex.name}')">i</button>
                     </div>
                     <div class="exercise-specs">
-                        <span>Sets: <span class="spec-value">${ex.sets}</span></span>
+                        <span>Sets: <span class="spec-value" id="setCount_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">${currentSets}</span></span>
                         <span>Reps: <span class="spec-value">${ex.reps}</span></span>
                         <span>Rest: <span class="spec-value">${ex.rest}</span></span>
                     </div>
                     ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 15px; margin-top: 8px;">${ex.notes}</div>` : ''}
-                    <div class="set-tracker">
+                    <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
             `;
 
             const restTime = ex.rest || '60s';
-            const safeExName = ex.name.replace(/'/g, "\\'");
 
-            for (let i = 1; i <= ex.sets; i++) {
+            for (let i = 1; i <= currentSets; i++) {
                 const logKey = `${today}_${workoutType}_${ex.name}_${i}`;
                 const saved = workoutLog[logKey];
                 const defaultWeight = saved ? saved.weight : (lastLog && lastLog[`set${i}`] ? lastLog[`set${i}`].weight : '');
@@ -2411,6 +2449,10 @@
 
             html += `
                     </div>
+                    <div class="set-controls">
+                        <button class="set-control-btn remove" onclick="removeSet('${workoutType}', '${safeExName}', ${ex.sets})">− Remove Set</button>
+                        <button class="set-control-btn add" onclick="addSet('${workoutType}', '${safeExName}', ${ex.sets})">+ Add Set</button>
+                    </div>
                 </div>
             `;
             return html;
@@ -2430,6 +2472,38 @@
                 options += `<option value="${r}" ${r == defaultValue ? 'selected' : ''}>${r}</option>`;
             }
             return options;
+        }
+
+        function addSet(workoutType, exerciseName, defaultSets) {
+            const setCountKey = `${workoutType}_${exerciseName}_setCount`;
+            const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : defaultSets;
+            const newSets = currentSets + 1;
+
+            workoutLog[setCountKey] = newSets;
+            saveData();
+
+            // Re-render the workout to update the UI
+            startWorkout(workoutType);
+        }
+
+        function removeSet(workoutType, exerciseName, defaultSets) {
+            const setCountKey = `${workoutType}_${exerciseName}_setCount`;
+            const currentSets = workoutLog[setCountKey] !== undefined ? workoutLog[setCountKey] : defaultSets;
+
+            if (currentSets <= 1) return; // Don't go below 1 set
+
+            const newSets = currentSets - 1;
+            workoutLog[setCountKey] = newSets;
+
+            // Also remove the logged data for the removed set
+            const today = new Date().toISOString().split('T')[0];
+            const removedSetKey = `${today}_${workoutType}_${exerciseName}_${currentSets}`;
+            delete workoutLog[removedSetKey];
+
+            saveData();
+
+            // Re-render the workout to update the UI
+            startWorkout(workoutType);
         }
 
         function getLastLog(workoutType, exerciseName) {
