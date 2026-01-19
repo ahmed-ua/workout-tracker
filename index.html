@@ -218,6 +218,159 @@
             color: white;
         }
 
+        .exercise-select {
+            background: var(--surface-elevated);
+            border: 1px solid var(--separator);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--text);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            width: 100%;
+            margin-bottom: 16px;
+            min-height: 52px;
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%238e8e93' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .exercise-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Start Workout Overlay */
+        .start-workout-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .start-workout-content {
+            text-align: center;
+            max-width: 320px;
+        }
+
+        .start-workout-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .start-workout-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .start-workout-btn {
+            background: var(--success);
+            border: none;
+            color: white;
+            padding: 18px 48px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            max-width: 280px;
+            margin-bottom: 16px;
+        }
+
+        .start-workout-btn:active {
+            transform: scale(0.97);
+        }
+
+        .cancel-start-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Workout Header Timer */
+        .workout-header-timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'SF Mono', monospace;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .timer-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Bottom Workout Controls */
+        .workout-bottom-controls {
+            padding: 20px;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+            background: var(--bg);
+            border-top: 1px solid var(--separator);
+            margin-top: 32px;
+        }
+
+        .workout-bottom-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .bottom-btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+        }
+
+        .bottom-btn.cancel {
+            background: var(--surface-elevated);
+            color: var(--text-secondary);
+            border: 1px solid var(--separator);
+        }
+
+        .bottom-btn.save {
+            background: var(--success);
+            color: white;
+        }
+
+        .bottom-btn:active {
+            transform: scale(0.97);
+        }
+
         .option-content {
             display: none;
         }
@@ -1054,12 +1207,25 @@
     <div class="screen" id="workoutScreen">
         <div class="header">
             <div class="header-content">
-                <button class="back-btn" onclick="goHome()">← Back</button>
-                <div class="header-date" id="workoutDate"></div>
+                <button class="back-btn" onclick="handleWorkoutBack()">← Back</button>
+                <div class="workout-header-timer" id="headerTimer" style="display: none;">
+                    <div class="timer-dot"></div>
+                    <span id="headerTimerDisplay">0:00</span>
+                </div>
             </div>
         </div>
-        
+
         <div class="container" id="workoutContent"></div>
+    </div>
+
+    <!-- Start Workout Overlay -->
+    <div class="start-workout-overlay" id="startWorkoutOverlay" style="display: none;">
+        <div class="start-workout-content">
+            <div class="start-workout-title" id="overlayWorkoutTitle"></div>
+            <div class="start-workout-subtitle" id="overlayWorkoutSubtitle"></div>
+            <button class="start-workout-btn" onclick="beginWorkoutSession()">Start Workout</button>
+            <button class="cancel-start-btn" onclick="cancelWorkoutStart()">Cancel</button>
+        </div>
     </div>
 
     <!-- Calendar Screen -->
@@ -2146,17 +2312,18 @@
 
         function startTimerUpdate() {
             if (workoutTimer) clearInterval(workoutTimer);
-            
+
             workoutTimer = setInterval(() => {
                 if (!workoutStartTime) {
                     clearInterval(workoutTimer);
                     workoutTimer = null;
                     return;
                 }
-                
-                const timerDisplay = document.getElementById('timerDisplay');
-                if (timerDisplay) {
-                    timerDisplay.textContent = getElapsedTime();
+
+                const elapsed = getElapsedTime();
+                const headerTimerDisplay = document.getElementById('headerTimerDisplay');
+                if (headerTimerDisplay) {
+                    headerTimerDisplay.textContent = elapsed;
                 }
             }, 1000);
         }
@@ -2174,23 +2341,23 @@
 
         function endWorkoutSession() {
             if (!workoutStartTime || !currentWorkoutType) return;
-            
+
             const endTime = new Date();
             const durationMs = endTime - workoutStartTime;
             const durationMinutes = Math.round(durationMs / 60000);
             const today = new Date().toISOString().split('T')[0];
-            
+
             const timestamp = workoutStartTime.getTime();
             const sessionKey = `${today}_session_${timestamp}_${currentWorkoutType}`;
             const exercises = {};
-            
+
             Object.keys(workoutLog).forEach(key => {
                 if (key.startsWith(today + '_' + currentWorkoutType)) {
                     const parts = key.split('_');
                     if (parts.length >= 4 && !key.includes('_session_')) {
                         const exerciseName = parts.slice(2, -1).join('_');
                         const setNum = parts[parts.length - 1];
-                        
+
                         if (!exercises[exerciseName]) {
                             exercises[exerciseName] = {};
                         }
@@ -2198,7 +2365,7 @@
                     }
                 }
             });
-            
+
             workoutLog[sessionKey] = {
                 workoutType: currentWorkoutType,
                 date: today,
@@ -2207,16 +2374,17 @@
                 durationMinutes: durationMinutes,
                 exercises: exercises
             };
-            
+
             saveData();
-            
+
             clearInterval(workoutTimer);
             workoutTimer = null;
             workoutStartTime = null;
-            
+            document.getElementById('headerTimer').style.display = 'none';
+
             const exerciseCount = Object.keys(exercises).length;
             alert(`Workout Complete!\n\n${currentWorkoutType}\nDuration: ${durationMinutes} minutes\nExercises logged: ${exerciseCount}\n\nGreat work!`);
-            
+
             currentWorkoutType = null;
             goHome();
         }
@@ -2224,30 +2392,39 @@
         function startWorkout(workoutType) {
             currentWorkoutType = workoutType;
             const workout = WORKOUTS[workoutType];
-            const container = document.getElementById('workoutContent');
-            
             const isActive = workoutStartTime !== null;
-            const timerDisplay = isActive ? getElapsedTime() : '0:00';
-            
+
+            // Show the workout screen
+            showScreen('workout');
+
+            // If workout not started yet, show overlay
+            if (!isActive) {
+                document.getElementById('overlayWorkoutTitle').textContent = workout.title;
+                document.getElementById('overlayWorkoutSubtitle').textContent = `${workout.focus} • ${workout.duration}`;
+                document.getElementById('startWorkoutOverlay').style.display = 'flex';
+                document.getElementById('headerTimer').style.display = 'none';
+                renderWorkoutContent(workoutType);
+            } else {
+                // Workout already active, just render content
+                document.getElementById('startWorkoutOverlay').style.display = 'none';
+                document.getElementById('headerTimer').style.display = 'flex';
+                document.getElementById('headerTimerDisplay').textContent = getElapsedTime();
+                renderWorkoutContent(workoutType);
+                if (!workoutTimer) {
+                    startTimerUpdate();
+                }
+            }
+        }
+
+        function renderWorkoutContent(workoutType) {
+            const workout = WORKOUTS[workoutType];
+            const container = document.getElementById('workoutContent');
+
             let html = `
                 <div class="workout-sticky-header">
                     <div class="workout-sticky-title">
                         <div class="welcome">${workout.title}</div>
                         <div class="subtitle">${workout.focus} • ${workout.duration}</div>
-                    </div>
-                    <div class="workout-controls">
-                        <div class="timer-display">
-                            <div class="timer-label">Workout Time</div>
-                            <div class="timer-time" id="timerDisplay">${timerDisplay}</div>
-                        </div>
-                        <div class="control-buttons">
-                            <button class="control-btn start" id="startBtn" onclick="startWorkoutTimer()" ${isActive ? 'disabled' : ''}>
-                                ${isActive ? 'Started' : 'Start Workout'}
-                            </button>
-                            <button class="control-btn end" id="endBtn" onclick="endWorkoutSession()" ${!isActive ? 'disabled' : ''}>
-                                End & Save
-                            </button>
-                        </div>
                     </div>
                 </div>
             `;
@@ -2268,32 +2445,72 @@
                 }
             });
 
+            // Add bottom controls
+            html += `
+                <div class="workout-bottom-controls">
+                    <div class="workout-bottom-buttons">
+                        <button class="bottom-btn cancel" onclick="cancelWorkout()">Cancel</button>
+                        <button class="bottom-btn save" onclick="endWorkoutSession()">End & Save</button>
+                    </div>
+                </div>
+            `;
+
             container.innerHTML = html;
-            showScreen('workout');
-            
-            if (isActive && !workoutTimer) {
-                startTimerUpdate();
+        }
+
+        function beginWorkoutSession() {
+            document.getElementById('startWorkoutOverlay').style.display = 'none';
+            document.getElementById('headerTimer').style.display = 'flex';
+            startWorkoutTimer();
+        }
+
+        function cancelWorkoutStart() {
+            document.getElementById('startWorkoutOverlay').style.display = 'none';
+            currentWorkoutType = null;
+            goHome();
+        }
+
+        function cancelWorkout() {
+            if (workoutStartTime) {
+                if (!confirm('Are you sure you want to cancel this workout? Your progress will not be saved.')) {
+                    return;
+                }
             }
+            clearInterval(workoutTimer);
+            workoutTimer = null;
+            workoutStartTime = null;
+            currentWorkoutType = null;
+            document.getElementById('headerTimer').style.display = 'none';
+            goHome();
+        }
+
+        function handleWorkoutBack() {
+            if (workoutStartTime) {
+                if (!confirm('You have an active workout. Are you sure you want to leave? Your progress will not be saved.')) {
+                    return;
+                }
+                clearInterval(workoutTimer);
+                workoutTimer = null;
+                workoutStartTime = null;
+                document.getElementById('headerTimer').style.display = 'none';
+            }
+            currentWorkoutType = null;
+            goHome();
         }
 
         function renderOptions(section, workoutType, sectionIdx) {
             const selectionKey = `${workoutType}_section${sectionIdx}`;
             const selected = workoutLog[selectionKey] || 0;
 
-            let html = '<div class="option-pills">';
+            let html = `<select class="exercise-select" onchange="selectOption('${workoutType}', ${sectionIdx}, this.value)">`;
             section.exercises.forEach((ex, idx) => {
-                html += `
-                    <div class="option-pill ${idx === selected ? 'selected' : ''}" 
-                         onclick="selectOption('${workoutType}', ${sectionIdx}, ${idx})">
-                        ${ex.name}
-                    </div>
-                `;
+                html += `<option value="${idx}" ${idx === selected ? 'selected' : ''}>${ex.name}</option>`;
             });
-            html += '</div>';
+            html += '</select>';
 
             section.exercises.forEach((ex, idx) => {
                 html += `
-                    <div class="option-content ${idx === selected ? 'active' : ''}" 
+                    <div class="option-content ${idx === selected ? 'active' : ''}"
                          data-option="${sectionIdx}-${idx}">
                         ${renderExercise(ex, workoutType, section.title)}
                     </div>
@@ -2304,35 +2521,31 @@
         }
 
         function selectOption(workoutType, sectionIdx, optionIdx) {
-            workoutLog[`${workoutType}_section${sectionIdx}`] = optionIdx;
+            workoutLog[`${workoutType}_section${sectionIdx}`] = parseInt(optionIdx);
             saveData();
-            startWorkout(workoutType);
+            renderWorkoutContent(workoutType);
         }
 
         function renderSupersets(section, workoutType, sectionIdx) {
             let html = '';
-            
+
             section.supersets.forEach((superset, supersetIdx) => {
                 if (superset.isOptions) {
                     const selectionKey = `${workoutType}_section${sectionIdx}_superset${supersetIdx}`;
                     const selected = workoutLog[selectionKey] || 0;
-                    
+
                     html += `
                         <div class="superset-container">
                             <div class="superset-badge">SUPERSET ${supersetIdx + 1}</div>
-                            <div class="option-pills" style="margin-bottom: 12px;">
+                            <select class="exercise-select" style="margin-bottom: 12px;" onchange="selectSupersetOption('${workoutType}', ${sectionIdx}, ${supersetIdx}, this.value)">
                     `;
-                    
+
                     superset.options.forEach((option, optIdx) => {
-                        html += `
-                            <div class="option-pill ${optIdx === selected ? 'selected' : ''}" 
-                                 onclick="selectSupersetOption('${workoutType}', ${sectionIdx}, ${supersetIdx}, ${optIdx})">
-                                Option ${optIdx + 1}
-                            </div>
-                        `;
+                        const firstExName = option[0].name;
+                        html += `<option value="${optIdx}" ${optIdx === selected ? 'selected' : ''}>Option ${optIdx + 1}: ${firstExName}</option>`;
                     });
-                    html += '</div>';
-                    
+                    html += '</select>';
+
                     superset.options.forEach((optionPair, optIdx) => {
                         html += `<div class="option-content ${optIdx === selected ? 'active' : ''}" data-superset-option="${sectionIdx}-${supersetIdx}-${optIdx}">`;
                         optionPair.forEach((ex, exIdx) => {
@@ -2343,7 +2556,7 @@
                         });
                         html += '</div>';
                     });
-                    
+
                     html += '</div>';
                 } else {
                     html += `
@@ -2359,14 +2572,14 @@
                     html += '</div>';
                 }
             });
-            
+
             return html;
         }
 
         function selectSupersetOption(workoutType, sectionIdx, supersetIdx, optionIdx) {
-            workoutLog[`${workoutType}_section${sectionIdx}_superset${supersetIdx}`] = optionIdx;
+            workoutLog[`${workoutType}_section${sectionIdx}_superset${supersetIdx}`] = parseInt(optionIdx);
             saveData();
-            startWorkout(workoutType);
+            renderWorkoutContent(workoutType);
         }
 
         function renderCircuit(section, workoutType, sectionIdx) {
