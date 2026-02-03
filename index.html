@@ -33,7 +33,7 @@
         }
 
         :root {
-            --bg: #000000;
+            --bg: #1c1c1e;
             --surface: #1c1c1e;
             --surface-elevated: #2c2c2e;
             --card-bg: #1c1c1e;
@@ -867,6 +867,12 @@
             padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
         }
 
+        /* Compact padding for PWA standalone mode */
+        body.pwa-standalone #homeScreen .container,
+        body.pwa-standalone #workoutsPageScreen .container {
+            padding-bottom: 70px;
+        }
+
         /* Monthly Counter Widget */
         .monthly-counter-grid {
             display: grid;
@@ -1302,6 +1308,7 @@
             margin-bottom: 16px;
             position: relative;
             transition: all 0.2s ease;
+            border: 1px solid var(--separator);
         }
 
         .widget.edit-mode {
@@ -1322,39 +1329,43 @@
             gap: 8px;
         }
 
-        .widget-reorder-btns {
+        /* Widget edit mode */
+        .widget.edit-mode {
+            border-color: var(--primary);
+        }
+
+        .widget-move-buttons {
             display: none;
-            flex-direction: column;
-            gap: 2px;
+            gap: 4px;
+            margin-right: 8px;
         }
 
-        .widget.edit-mode .widget-reorder-btns {
+        .widget.edit-mode .widget-move-buttons {
             display: flex;
+            align-items: center;
         }
 
-        .widget-reorder-btn {
+        .widget-move-btn {
             background: var(--surface-elevated);
-            border: 1px solid var(--separator);
+            border: none;
             color: var(--text-secondary);
             width: 28px;
-            height: 22px;
-            border-radius: 4px;
+            height: 28px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            padding: 0;
         }
 
-        .widget-reorder-btn:active {
+        .widget-move-btn:active {
             background: var(--primary);
             color: white;
-            border-color: var(--primary);
         }
 
-        .widget-reorder-btn svg {
-            width: 14px;
-            height: 14px;
+        .widget-move-btn svg {
+            width: 16px;
+            height: 16px;
         }
 
         .widget-title {
@@ -2013,8 +2024,8 @@
 
         .weight-input {
             flex: 1;
-            background: var(--input-bg);
-            border: 1px solid var(--border);
+            background: var(--surface-elevated);
+            border: 1px solid var(--separator);
             border-radius: 8px;
             padding: 10px 12px;
             font-size: 16px;
@@ -2141,14 +2152,12 @@
         .workout-meta {
             font-size: 11px;
             color: var(--text-secondary);
-            margin-left: 32px;
         }
 
         .last-workout {
             font-size: 11px;
             color: var(--success);
             margin-top: 4px;
-            margin-left: 32px;
         }
 
         .section-header {
@@ -2386,6 +2395,10 @@
             padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
             background: var(--bg);
             border-top: 1px solid var(--separator);
+        }
+
+        body.pwa-standalone .workout-bottom-controls {
+            padding-bottom: 60px;
         }
 
         .workout-bottom-buttons {
@@ -3018,15 +3031,25 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(28, 28, 30, 0.95);
+            background: rgba(28, 28, 30, 0.98);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-top: 0.5px solid var(--separator);
             padding: 8px 0;
-            padding-bottom: calc(8px + env(safe-area-inset-bottom));
+            padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
             display: flex;
             justify-content: space-around;
             z-index: 99;
+        }
+
+        /* Compact nav for PWA standalone mode */
+        body.pwa-standalone .bottom-nav {
+            padding: 4px 0 0 0;
+        }
+
+        body.pwa-standalone .nav-btn {
+            padding: 2px 8px 0 8px;
+            gap: 1px;
         }
 
         .nav-btn {
@@ -4544,6 +4567,148 @@
                         exercises: [
                             { name: 'Circuit A - Bodyweight HIIT', sets: 5, reps: '40s work/20s rest', rest: '2min between rounds', notes: 'Burpees, Jump Squats, Push-Ups, Mountain Climbers, Kettlebell Swings' },
                             { name: 'Circuit B - Treadmill Sprints', sets: 10, reps: '20-30s sprint', rest: '60-90s walk', notes: '8-12 mph, 1-3% incline. 5 min warm-up, 5 min cool-down' }
+                        ]
+                    }
+                ]
+            },
+            'Morning Stretch': {
+                title: 'Morning Stretch',
+                duration: '28-32 min',
+                focus: 'Full body mobility & flexibility',
+                sections: [
+                    {
+                        title: 'Warm-Up & Activation (3 min)',
+                        isCircuit: true,
+                        exercises: [
+                            { name: 'Neck Circles', sets: 1, reps: '10 each direction', rest: '0s', notes: 'Slow, controlled circles' },
+                            { name: 'Shoulder Rolls', sets: 1, reps: '10 forward, 10 back', rest: '0s', notes: 'Big circles, relax shoulders' },
+                            { name: 'Arm Circles Forward', sets: 1, reps: '15', rest: '0s', notes: 'Start small, get bigger' },
+                            { name: 'Arm Circles Backward', sets: 1, reps: '15', rest: '0s', notes: 'Full range of motion' },
+                            { name: 'Trunk Rotations', sets: 1, reps: '10 each side', rest: '0s', notes: 'Feet planted, rotate torso' },
+                            { name: 'Hip Circles Dynamic', sets: 1, reps: '10 each direction', rest: '0s', notes: 'Hands on hips, big circles' }
+                        ]
+                    },
+                    {
+                        title: 'Neck & Shoulders (4 min)',
+                        exercises: [
+                            { name: 'Neck Side Bend Stretch', sets: 1, reps: '30s each side', rest: '0s', notes: 'Ear to shoulder, gentle hand pressure' },
+                            { name: 'Levator Scapulae Stretch', sets: 1, reps: '30s each side', rest: '0s', notes: 'Look down toward armpit' },
+                            { name: 'Cross-Body Shoulder Stretch', sets: 1, reps: '30s each arm', rest: '0s', notes: 'Pull arm across chest' },
+                            { name: 'Thread the Needle', sets: 1, reps: '8 each side', rest: '0s', notes: 'Reach through, follow hand with eyes' },
+                            { name: 'Wall Angels', sets: 1, reps: '10 reps', rest: '0s', notes: 'Back flat against wall, slide arms up' }
+                        ]
+                    },
+                    {
+                        title: 'Upper Back & Chest (4 min)',
+                        exercises: [
+                            { name: 'Cat-Cow Stretch', sets: 1, reps: '10 cycles', rest: '0s', notes: 'Breathe: inhale cow, exhale cat' },
+                            { name: 'Thoracic Extension Stretch', sets: 1, reps: '30s', rest: '0s', notes: 'On foam roller or rolled towel' },
+                            { name: 'Open Book Stretch', sets: 1, reps: '8 each side', rest: '0s', notes: 'Side-lying, rotate and follow hand' },
+                            { name: 'Doorway Pec Stretch', sets: 1, reps: '30s each side', rest: '0s', notes: 'Elbow at 90°, lean through doorway' },
+                            { name: 'Child\'s Pose Lat Stretch', sets: 1, reps: '45s', rest: '0s', notes: 'Walk hands to each side 15s' }
+                        ]
+                    },
+                    {
+                        title: 'Spine & Lower Back (4 min)',
+                        exercises: [
+                            { name: 'Supine Spinal Twist', sets: 1, reps: '45s each side', rest: '0s', notes: 'Knees to side, look opposite' },
+                            { name: 'Knee to Chest Stretch', sets: 1, reps: '30s each leg', rest: '0s', notes: 'Pull knee gently, other leg flat' },
+                            { name: 'Happy Baby Pose', sets: 1, reps: '45s', rest: '0s', notes: 'Grab feet, rock side to side' },
+                            { name: 'Cobra Pose', sets: 1, reps: '3 x 10s holds', rest: '0s', notes: 'Press up, keep hips down' }
+                        ]
+                    },
+                    {
+                        title: 'Hip Complex (6 min)',
+                        exercises: [
+                            { name: 'Kneeling Hip Flexor Stretch', sets: 1, reps: '45s each side', rest: '0s', notes: 'Squeeze glute, lean forward' },
+                            { name: 'Pigeon Pose', sets: 1, reps: '60s each side', rest: '0s', notes: 'Front shin parallel if possible' },
+                            { name: '90/90 Hip Stretch', sets: 1, reps: '45s each side', rest: '0s', notes: 'Sit tall, rotate between positions' },
+                            { name: 'Frog Stretch', sets: 1, reps: '60s', rest: '0s', notes: 'Widen knees, rock forward and back' },
+                            { name: 'Deep Squat Hold', sets: 1, reps: '60s', rest: '0s', notes: 'Heels down, elbows push knees out' }
+                        ]
+                    },
+                    {
+                        title: 'Legs (5 min)',
+                        exercises: [
+                            { name: 'Standing Hamstring Stretch', sets: 1, reps: '30s each leg', rest: '0s', notes: 'Foot on elevated surface, hinge forward' },
+                            { name: 'Standing Quad Stretch', sets: 1, reps: '30s each leg', rest: '0s', notes: 'Pull heel to glute, knees together' },
+                            { name: 'Standing Calf Stretch', sets: 1, reps: '30s each leg', rest: '0s', notes: 'Wall lean, back heel down' },
+                            { name: 'Seated Forward Fold', sets: 1, reps: '45s', rest: '0s', notes: 'Reach for toes, relax into it' },
+                            { name: 'Butterfly Stretch', sets: 1, reps: '45s', rest: '0s', notes: 'Soles together, gently press knees down' }
+                        ]
+                    },
+                    {
+                        title: 'Full Body Integration (4 min)',
+                        exercises: [
+                            { name: 'World\'s Greatest Stretch', sets: 1, reps: '5 each side', rest: '0s', notes: 'Lunge, elbow to floor, rotate up' },
+                            { name: 'Downward Dog', sets: 1, reps: '45s', rest: '0s', notes: 'Pedal feet, press chest toward thighs' },
+                            { name: 'Upward Facing Dog', sets: 1, reps: '30s', rest: '0s', notes: 'Open chest, shoulders back' },
+                            { name: 'Standing Side Bend', sets: 1, reps: '30s each side', rest: '0s', notes: 'Reach overhead, lean and breathe' },
+                            { name: 'Forward Fold', sets: 1, reps: '45s', rest: '0s', notes: 'Let head hang, relax completely' }
+                        ]
+                    }
+                ]
+            },
+            'Shoulder Rehab': {
+                title: 'Shoulder Rehab',
+                duration: '20-25 min',
+                focus: 'Rotator cuff healing & mobility',
+                sections: [
+                    {
+                        title: 'Gentle Warm-Up (3 min)',
+                        isCircuit: true,
+                        exercises: [
+                            { name: 'Pendulum Stretch', sets: 1, reps: '30s each arm', rest: '0s', notes: 'Lean forward, let arm hang and swing in small circles. NO PAIN.' },
+                            { name: 'Shoulder Rolls', sets: 1, reps: '10 forward, 10 back', rest: '0s', notes: 'Slow, controlled, full range' },
+                            { name: 'Arm Circles Forward', sets: 1, reps: '10 small, 10 medium', rest: '0s', notes: 'Start small, gradually bigger. Stop if pain.' },
+                            { name: 'Neck Side Bend Stretch', sets: 1, reps: '20s each side', rest: '0s', notes: 'Releases upper trap tension affecting shoulder' }
+                        ]
+                    },
+                    {
+                        title: 'Posterior Capsule & Rotator Cuff (5 min)',
+                        exercises: [
+                            { name: 'Sleeper Stretch', sets: 2, reps: '30s each side', rest: '10s', notes: 'Side-lying, gently push forearm down. GENTLE pressure only.' },
+                            { name: 'Cross-Body Shoulder Stretch', sets: 2, reps: '30s each arm', rest: '10s', notes: 'Pull arm across chest, keep shoulder down' },
+                            { name: 'Posterior Capsule Stretch', sets: 2, reps: '30s each side', rest: '10s', notes: 'Arm across body at shoulder height, gentle pull' },
+                            { name: 'Thread the Needle', sets: 1, reps: '8 each side', rest: '0s', notes: 'Reach through slowly, feel stretch in shoulder blade area' }
+                        ]
+                    },
+                    {
+                        title: 'Chest & Front Shoulder (4 min)',
+                        exercises: [
+                            { name: 'Doorway Pec Stretch', sets: 2, reps: '30s each side', rest: '10s', notes: 'Elbow at 90°, lean gently. Tight pecs pull shoulder forward.' },
+                            { name: 'Corner Pec Stretch', sets: 1, reps: '45s', rest: '0s', notes: 'Both arms on walls, lean into corner' },
+                            { name: 'Supine Chest Stretch', sets: 1, reps: '45s', rest: '0s', notes: 'Lie on foam roller lengthwise, arms out to sides' },
+                            { name: 'Anterior Shoulder Stretch', sets: 1, reps: '30s each side', rest: '0s', notes: 'Hands behind back on surface, step forward' }
+                        ]
+                    },
+                    {
+                        title: 'Rotation & Mobility (5 min)',
+                        exercises: [
+                            { name: 'External Rotation Stretch', sets: 2, reps: '30s each side', rest: '10s', notes: 'Elbow at side, rotate forearm out. Key for rotator cuff!' },
+                            { name: 'Internal Rotation Stretch', sets: 2, reps: '30s each side', rest: '10s', notes: 'Hand behind back, gently pull up with towel' },
+                            { name: 'Wall Slides', sets: 2, reps: '10 reps', rest: '20s', notes: 'Back against wall, slide arms up keeping contact' },
+                            { name: 'Floor Angels', sets: 2, reps: '10 reps', rest: '20s', notes: 'Lie on back, slide arms like snow angel. Keep contact with floor.' },
+                            { name: 'Shoulder CARs', sets: 1, reps: '5 each direction', rest: '0s', notes: 'Controlled Articular Rotations - slow full circles' }
+                        ]
+                    },
+                    {
+                        title: 'Scapular & Upper Back (4 min)',
+                        exercises: [
+                            { name: 'Cat-Cow Stretch', sets: 1, reps: '10 cycles', rest: '0s', notes: 'Focus on shoulder blade movement' },
+                            { name: 'Thoracic Rotation Stretch', sets: 1, reps: '8 each side', rest: '0s', notes: 'Quadruped position, hand behind head, rotate' },
+                            { name: 'Child\'s Pose Lat Stretch', sets: 1, reps: '45s', rest: '0s', notes: 'Walk hands to each side to target lats' },
+                            { name: 'Prone Y Raises', sets: 2, reps: '10 reps', rest: '15s', notes: 'Face down, arms in Y, lift with thumbs up. Strengthens lower traps.' },
+                            { name: 'Prone I Raises', sets: 2, reps: '10 reps', rest: '15s', notes: 'Arms overhead, lift keeping arms straight. Lower trap activation.' }
+                        ]
+                    },
+                    {
+                        title: 'Gentle Strengthening (4 min)',
+                        exercises: [
+                            { name: 'Banded External Rotation', sets: 2, reps: '15 each side', rest: '20s', notes: 'Light band, elbow at side, rotate out. Core rotator cuff exercise!' },
+                            { name: 'Banded Pull-Aparts', sets: 2, reps: '15 reps', rest: '20s', notes: 'Light band, arms straight, pull apart at chest height' },
+                            { name: 'Isometric External Rotation', sets: 2, reps: '10s hold x 5', rest: '10s', notes: 'Press back of hand into wall, hold. No movement, just activation.' },
+                            { name: 'Scapular Squeezes', sets: 2, reps: '10 reps, 5s hold', rest: '15s', notes: 'Squeeze shoulder blades together and down' }
                         ]
                     }
                 ]
@@ -7337,6 +7502,173 @@
                 // Cardio Machines
                 'Treadmill', 'Elliptical Machine', 'Stair Stepper', 'Rowing Machine',
                 'Assault Bike', 'Spin Bike', 'Recumbent Bike'
+            ],
+            'Stretches': [
+                // NECK STRETCHES
+                'Neck Side Bend Stretch', 'Neck Forward Flexion Stretch', 'Neck Extension Stretch',
+                'Neck Rotation Stretch', 'Chin Tuck Stretch', 'Levator Scapulae Stretch',
+                'Upper Trapezius Stretch', 'SCM Stretch', 'Scalene Stretch',
+                'Neck Circles', 'Ear to Shoulder Stretch', 'Chin to Chest Stretch',
+
+                // SHOULDER STRETCHES
+                'Cross-Body Shoulder Stretch', 'Overhead Tricep Shoulder Stretch', 'Doorway Chest Stretch',
+                'Wall Shoulder Stretch', 'Sleeper Stretch', 'Behind Back Shoulder Stretch',
+                'Thread the Needle', 'Eagle Arms Stretch', 'Cow Face Arms',
+                'Shoulder Dislocates', 'Wall Slides', 'Pendulum Stretch',
+                'Shoulder Flexion Stretch', 'Shoulder Extension Stretch', 'Internal Rotation Stretch',
+                'External Rotation Stretch', 'Posterior Capsule Stretch', 'Anterior Shoulder Stretch',
+                'Lat Hang Stretch', 'Dead Hang Stretch', 'Banded Shoulder Stretch',
+                'PVC Shoulder Pass-Through', 'Floor Angels', 'Wall Angels',
+
+                // CHEST STRETCHES
+                'Doorway Pec Stretch', 'Corner Pec Stretch', 'Supine Chest Stretch',
+                'Foam Roller Chest Opener', 'Floor Chest Stretch', 'Standing Chest Stretch',
+                'Pec Minor Stretch', 'Pec Major Stretch', 'Single Arm Chest Stretch',
+                'Incline Chest Stretch', 'Decline Chest Stretch', 'Banded Chest Stretch',
+
+                // UPPER BACK STRETCHES
+                'Cat Stretch', 'Cow Stretch', 'Cat-Cow Stretch',
+                'Child\'s Pose', 'Extended Child\'s Pose', 'Wide Child\'s Pose',
+                'Thread the Needle Stretch', 'Thoracic Extension Stretch', 'Thoracic Rotation Stretch',
+                'Foam Roller Thoracic Extension', 'Prayer Stretch', 'Lat Stretch',
+                'Side-Lying Thoracic Rotation', 'Open Book Stretch', 'Seated Thoracic Rotation',
+                'Quadruped Thoracic Rotation', 'Wall Thoracic Extension', 'Sphinx Pose',
+
+                // LAT STRETCHES
+                'Standing Lat Stretch', 'Kneeling Lat Stretch', 'Hanging Lat Stretch',
+                'Side-Lying Lat Stretch', 'Child\'s Pose Lat Stretch', 'Wall Lat Stretch',
+                'Foam Roller Lat Stretch', 'Banded Lat Stretch', 'Doorway Lat Stretch',
+
+                // LOWER BACK STRETCHES
+                'Knee to Chest Stretch', 'Double Knee to Chest', 'Supine Spinal Twist',
+                'Seated Spinal Twist', 'Standing Side Bend', 'Cat-Cow for Lower Back',
+                'Pelvic Tilts', 'Lower Back Rotation Stretch', 'Press Up Stretch',
+                'McKenzie Extension', 'Prone Press-Up', 'Flexion Stretch',
+                'Lumbar Rotation Stretch', 'Child\'s Pose for Lower Back', 'Happy Baby Pose',
+                'Wind Relieving Pose', 'Supine Figure Four', 'Lying Knee Roll',
+
+                // HIP FLEXOR STRETCHES
+                'Kneeling Hip Flexor Stretch', 'Standing Hip Flexor Stretch', 'Couch Stretch',
+                'Low Lunge Stretch', 'Half Kneeling Hip Flexor Stretch', 'Rear Foot Elevated Hip Flexor Stretch',
+                'Psoas Stretch', 'Rectus Femoris Stretch', 'Thomas Stretch',
+                'Lizard Pose', 'Crescent Lunge', 'Runner\'s Lunge',
+                'Deep Lunge Stretch', 'Hip Flexor Hold', 'Dynamic Hip Flexor Stretch',
+
+                // GLUTE STRETCHES
+                'Pigeon Pose', 'Seated Pigeon Stretch', 'Supine Pigeon Stretch',
+                'Figure Four Stretch', 'Seated Figure Four', 'Standing Figure Four',
+                'Glute Cross-Leg Stretch', 'Knee to Opposite Shoulder', 'Pretzel Stretch',
+                'Double Pigeon Pose', 'Fire Log Pose', 'Reclined Glute Stretch',
+                'Glute Bridge Stretch', 'Standing Glute Stretch', 'Wall Glute Stretch',
+
+                // HAMSTRING STRETCHES
+                'Standing Hamstring Stretch', 'Seated Hamstring Stretch', 'Lying Hamstring Stretch',
+                'Standing Single Leg Hamstring Stretch', 'Doorway Hamstring Stretch', 'Wall Hamstring Stretch',
+                'Forward Fold', 'Seated Forward Fold', 'Standing Forward Fold',
+                'Hurdler Stretch', 'Single Leg Forward Fold', 'Wide Leg Forward Fold',
+                'Downward Dog', 'Pyramid Pose', 'Half Split',
+                'Supine Hamstring Stretch', 'Banded Hamstring Stretch', 'PNF Hamstring Stretch',
+                'Standing Toe Touch', 'Good Morning Stretch', 'Jefferson Curl Stretch',
+
+                // QUAD STRETCHES
+                'Standing Quad Stretch', 'Lying Quad Stretch', 'Side-Lying Quad Stretch',
+                'Kneeling Quad Stretch', 'Prone Quad Stretch', 'Couch Stretch for Quads',
+                'Wall Quad Stretch', 'Heel to Glute Stretch', 'Quad Foam Roller Stretch',
+                'Single Leg Quad Stretch', 'Double Quad Stretch', 'Banded Quad Stretch',
+
+                // HIP STRETCHES
+                '90/90 Hip Stretch', 'Hip Circles Stretch', 'Hip Internal Rotation Stretch',
+                'Hip External Rotation Stretch', 'Frog Stretch', 'Deep Frog Stretch',
+                'Butterfly Stretch', 'Bound Angle Pose', 'Reclined Butterfly',
+                'Seated Butterfly Stretch', 'Happy Baby Stretch', 'Squat Stretch',
+                'Deep Squat Hold', 'Malasana Stretch', 'Garland Pose',
+                'Hip Opener Stretch', 'Hip Capsule Stretch', 'Standing Hip Circles',
+                'Leg Swings Front to Back', 'Leg Swings Side to Side', 'Hip CARs',
+
+                // ADDUCTOR/GROIN STRETCHES
+                'Seated Groin Stretch', 'Standing Groin Stretch', 'Side Lunge Stretch',
+                'Cossack Squat Stretch', 'Wide Stance Stretch', 'Sumo Squat Stretch',
+                'Lying Groin Stretch', 'Frog Stretch for Groin', 'Adductor Stretch',
+                'Short Adductor Stretch', 'Long Adductor Stretch', 'Half Kneeling Adductor Stretch',
+                'Standing Adductor Stretch', 'Wall Adductor Stretch', 'Straddle Stretch',
+
+                // CALF STRETCHES
+                'Standing Calf Stretch', 'Wall Calf Stretch', 'Step Calf Stretch',
+                'Downward Dog Calf Stretch', 'Seated Calf Stretch', 'Bent Knee Calf Stretch',
+                'Straight Leg Calf Stretch', 'Gastrocnemius Stretch', 'Soleus Stretch',
+                'Single Leg Calf Stretch', 'Dynamic Calf Stretch', 'Foam Roller Calf Stretch',
+                'Toe Raise Stretch', 'Plantar Flexion Stretch', 'Dorsiflexion Stretch',
+
+                // ANKLE & FOOT STRETCHES
+                'Ankle Circles', 'Ankle Dorsiflexion Stretch', 'Ankle Plantarflexion Stretch',
+                'Ankle Inversion Stretch', 'Ankle Eversion Stretch', 'Toe Stretch',
+                'Plantar Fascia Stretch', 'Arch Stretch', 'Toe Flexor Stretch',
+                'Toe Extensor Stretch', 'Ball of Foot Stretch', 'Heel Cord Stretch',
+                'Kneeling Ankle Stretch', 'Wall Ankle Stretch', 'Banded Ankle Stretch',
+
+                // ARM STRETCHES
+                'Tricep Stretch', 'Bicep Stretch', 'Forearm Extensor Stretch',
+                'Forearm Flexor Stretch', 'Wrist Flexor Stretch', 'Wrist Extensor Stretch',
+                'Prayer Stretch for Wrists', 'Reverse Prayer Stretch', 'Wrist Circles',
+                'Finger Stretch', 'Hand Stretch', 'Thumb Stretch',
+                'Standing Bicep Stretch', 'Wall Bicep Stretch', 'Doorway Bicep Stretch',
+                'Overhead Tricep Stretch', 'Cross-Body Tricep Stretch', 'Wall Tricep Stretch',
+
+                // FULL BODY STRETCHES
+                'World\'s Greatest Stretch', 'Sun Salutation A', 'Sun Salutation B',
+                'Full Body Stretch Routine', 'Morning Stretch Routine', 'Bedtime Stretch Routine',
+                'Dynamic Stretch Routine', 'Static Stretch Routine', 'Active Stretch Routine',
+                'Post-Workout Stretch', 'Pre-Workout Stretch', 'Cool Down Stretch',
+
+                // YOGA-INSPIRED STRETCHES
+                'Upward Facing Dog', 'Cobra Pose', 'Low Cobra',
+                'Puppy Pose', 'Seal Pose', 'Camel Pose',
+                'Bow Pose', 'Bridge Pose', 'Wheel Pose',
+                'Locust Pose', 'Superman Stretch', 'Swimming Stretch',
+                'Half Moon Pose', 'Triangle Pose', 'Extended Triangle',
+                'Warrior I Stretch', 'Warrior II Stretch', 'Warrior III Stretch',
+                'Side Angle Pose', 'Revolved Side Angle', 'Half Pigeon',
+                'King Pigeon', 'Sleeping Pigeon', 'Twisted Pigeon',
+                'Reclined Hero Pose', 'Hero Pose', 'Saddle Pose',
+                'Corpse Pose', 'Legs Up the Wall', 'Supported Bridge',
+                'Reclined Spinal Twist', 'Supine Twist', 'Seated Twist',
+
+                // DYNAMIC STRETCHES
+                'Arm Circles Forward', 'Arm Circles Backward', 'Shoulder Rolls',
+                'Trunk Rotations', 'Hip Circles Dynamic', 'Leg Circles',
+                'Walking Knee Hugs', 'Walking Quad Pulls', 'Walking Lunges with Twist',
+                'Inch Worms', 'Scorpion Stretch', 'Iron Cross Stretch',
+                'Toy Soldiers', 'Frankenstein Walks', 'High Kicks',
+                'Side Shuffles', 'Grapevine', 'Butt Kicks Stretch',
+                'A-Skip Stretch', 'B-Skip Stretch', 'Lateral Leg Swings',
+
+                // PNF & ACTIVE STRETCHES
+                'PNF Quad Stretch', 'PNF Hamstring Stretch', 'PNF Hip Flexor Stretch',
+                'PNF Chest Stretch', 'PNF Shoulder Stretch', 'PNF Calf Stretch',
+                'Contract-Relax Hamstring', 'Contract-Relax Hip Flexor', 'Contract-Relax Quad',
+                'Active Isolated Hamstring', 'Active Isolated Quad', 'Active Isolated Hip Flexor',
+
+                // PARTNER STRETCHES
+                'Partner Hamstring Stretch', 'Partner Chest Stretch', 'Partner Shoulder Stretch',
+                'Partner Hip Stretch', 'Partner Back Stretch', 'Partner Quad Stretch',
+
+                // BANDED STRETCHES
+                'Banded Hamstring Stretch', 'Banded Hip Flexor Stretch', 'Banded Shoulder Stretch',
+                'Banded Chest Stretch', 'Banded Lat Stretch', 'Banded Ankle Stretch',
+                'Banded Quad Stretch', 'Banded Adductor Stretch', 'Banded Glute Stretch',
+
+                // STRETCHES WITH PROPS
+                'Foam Roller Upper Back', 'Foam Roller Lower Back', 'Foam Roller IT Band',
+                'Foam Roller Quads', 'Foam Roller Hamstrings', 'Foam Roller Calves',
+                'Foam Roller Glutes', 'Foam Roller Lats', 'Foam Roller Chest',
+                'Yoga Block Hip Opener', 'Yoga Block Chest Opener', 'Yoga Block Supported Bridge',
+                'Yoga Strap Hamstring', 'Yoga Strap Shoulder', 'Yoga Strap Quad',
+                'Lacrosse Ball Glute Release', 'Lacrosse Ball Chest Release', 'Lacrosse Ball Foot Release',
+
+                // SPLIT STRETCHES
+                'Front Split Prep', 'Middle Split Prep', 'Pancake Stretch',
+                'Half Front Split', 'Wall Split Stretch', 'Elevated Split Stretch',
+                'Straddle Sit', 'Pike Stretch', 'Seal Stretch'
             ]
         };
 
@@ -7425,6 +7757,8 @@
 
         const USER_ID = 'default_user'; // You can add authentication later for multiple users
 
+        let dataSource = 'unknown';
+
         async function loadData() {
             // Store backup of default workouts for reset functionality
             if (!defaultWorkoutsBackup) {
@@ -7445,12 +7779,18 @@
                     if (data.homeWidgets) homeWidgets = data.homeWidgets;
                     if (data.workoutsPageWidgets) workoutsPageWidgets = data.workoutsPageWidgets;
                     console.log('Data loaded from Firebase');
+                    dataSource = 'firebase';
+                    showDataSourceIndicator();
                     return;
                 }
             } catch (e) {
                 console.log('Firebase not available, falling back to localStorage:', e);
+                dataSource = 'localStorage: ' + e.message;
+                showDataSourceIndicator();
+                return;
             }
-            // Fallback to localStorage
+            // Fallback to localStorage (no Firebase data found)
+            dataSource = 'localStorage (no cloud data)';
             const saved = localStorage.getItem('workoutLog');
             if (saved) {
                 workoutLog = JSON.parse(saved);
@@ -7487,6 +7827,48 @@
             if (savedCustomWorkoutIcons) {
                 customWorkoutIcons = JSON.parse(savedCustomWorkoutIcons);
             }
+            showDataSourceIndicator();
+        }
+
+        function showDataSourceIndicator() {
+            // Remove existing indicators if any
+            document.querySelectorAll('.data-source-indicator').forEach(el => el.remove());
+
+            const indicatorStyle = `
+                background: ${dataSource === 'firebase' ? 'var(--success)' : 'var(--primary)'};
+                color: white;
+                padding: 4px 10px;
+                border-radius: 12px;
+                font-size: 11px;
+                font-weight: 600;
+                opacity: 1;
+                transition: opacity 0.5s ease;
+            `;
+            const indicatorText = dataSource === 'firebase' ? '☁️ Synced' : '📱 Local';
+
+            // Insert into header-right of home and workouts screens
+            const headers = [
+                document.querySelector('#homeScreen .header-right'),
+                document.querySelector('#workoutsPageScreen .header-right')
+            ];
+
+            headers.forEach(header => {
+                if (header) {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'data-source-indicator';
+                    indicator.style.cssText = indicatorStyle;
+                    indicator.textContent = indicatorText;
+                    header.insertBefore(indicator, header.firstChild);
+                }
+            });
+
+            // Fade out and remove after 3 seconds
+            setTimeout(() => {
+                document.querySelectorAll('.data-source-indicator').forEach(el => {
+                    el.style.opacity = '0';
+                    setTimeout(() => el.remove(), 500);
+                });
+            }, 3000);
         }
 
         async function saveData() {
@@ -7590,8 +7972,8 @@
             for (let i = 0; i < 7; i++) {
                 const dayDate = new Date(monday);
                 dayDate.setDate(monday.getDate() + i);
-                const dateStr = dayDate.toISOString().split('T')[0];
-                const isToday = dateStr === today.toISOString().split('T')[0];
+                const dateStr = getLocalDateString(dayDate);
+                const isToday = dateStr === getLocalDateString(today);
                 const hasWorkout = checkWorkoutOnDate(dateStr);
 
                 html += `
@@ -7618,7 +8000,7 @@
         // ==========================================
 
         function renderWeightTracker() {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             const todayWeight = weightLog[today];
             const inputRow = document.getElementById('weightInputRow');
             const todayDisplay = document.getElementById('weightToday');
@@ -7646,7 +8028,7 @@
                 return;
             }
 
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             weightLog[today] = weight;
             saveData();
             input.value = '';
@@ -7654,7 +8036,7 @@
         }
 
         function editTodayWeight() {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             const currentWeight = weightLog[today];
 
             document.getElementById('weightInputRow').style.display = 'flex';
@@ -7785,7 +8167,7 @@
             for (let i = 29; i >= 0; i--) {
                 const date = new Date(today);
                 date.setDate(today.getDate() - i);
-                const dateStr = date.toISOString().split('T')[0];
+                const dateStr = getLocalDateString(date);
 
                 if (weightLog[dateStr] !== undefined) {
                     entries.push({
@@ -8002,22 +8384,8 @@
                 sectionsHtml = '<div class="empty-state">No sections yet. Add a section to get started.</div>';
             }
 
-            // Get current icon for this workout
-            const workoutKey = editingWorkout.originalKey || editingWorkout.key;
-            const currentIconKey = customWorkoutIcons[workoutKey] || editingWorkout.data.iconKey || '';
-            const defaultIcon = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="14"/><line x1="18" y1="10" x2="18" y2="14"/></svg>';
-            const currentIcon = currentIconKey ? AVAILABLE_WORKOUT_ICONS[currentIconKey] : (workoutIcons[workoutKey] || defaultIcon);
-
             const html = `
                 <div class="editor-form">
-                    <div class="editor-field">
-                        <label class="editor-label">Workout Icon</label>
-                        <div class="icon-picker-preview" onclick="openIconPicker()">
-                            <div class="icon-picker-current" id="currentWorkoutIcon">${currentIcon}</div>
-                            <span>Tap to change</span>
-                        </div>
-                        <input type="hidden" id="workoutIconInput" value="${escapeHtml(currentIconKey)}">
-                    </div>
                     <div class="editor-field">
                         <label class="editor-label">Workout Name</label>
                         <input type="text" class="editor-input" id="workoutNameInput" value="${escapeHtml(workout.title)}" placeholder="e.g., Upper Body Push">
@@ -9719,9 +10087,11 @@
         function updateDate() {
             const today = new Date();
             const formatted = today.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-            document.getElementById('currentDate').textContent = formatted;
-            document.getElementById('workoutDate').textContent = formatted;
+            const currentDateEl = document.getElementById('currentDate');
+            const workoutDateEl = document.getElementById('workoutDate');
             const workoutsPageDateEl = document.getElementById('workoutsPageDate');
+            if (currentDateEl) currentDateEl.textContent = formatted;
+            if (workoutDateEl) workoutDateEl.textContent = formatted;
             if (workoutsPageDateEl) workoutsPageDateEl.textContent = formatted;
         }
 
@@ -9798,6 +10168,16 @@
             renderHomeWidgets();
         }
 
+        // Refresh all widgets and displays after workout changes
+        function refreshAllWorkoutDisplays() {
+            // Refresh home widgets
+            renderHomeWidgets();
+            // Refresh workouts page widgets
+            renderWorkoutsPageWidgets();
+            // Refresh calendar
+            renderCalendar();
+        }
+
         // ==========================================
         // HOME WIDGET SYSTEM
         // ==========================================
@@ -9853,10 +10233,6 @@
                 renderWidgetContent(widget);
             });
 
-            // Set up drag-and-drop if in edit mode
-            if (homeEditMode) {
-                setupWidgetDragDrop('home');
-            }
         }
 
         function renderWidget(widget) {
@@ -9867,12 +10243,12 @@
                 <div class="widget ${editClass}" id="widget-${widget.id}" data-widget-id="${widget.id}">
                     <div class="widget-header">
                         <div class="widget-header-left">
-                            <div class="widget-reorder-btns">
-                                <button class="widget-reorder-btn" onclick="event.stopPropagation(); moveWidgetUp('${widget.id}', 'home')">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                            <div class="widget-move-buttons">
+                                <button class="widget-move-btn" onclick="event.stopPropagation(); moveWidget('${widget.id}', 'up', 'home')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
                                 </button>
-                                <button class="widget-reorder-btn" onclick="event.stopPropagation(); moveWidgetDown('${widget.id}', 'home')">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                                <button class="widget-move-btn" onclick="event.stopPropagation(); moveWidget('${widget.id}', 'down', 'home')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                                 </button>
                             </div>
                             <span class="widget-title">${widgetInfo.name}</span>
@@ -9945,8 +10321,8 @@
             for (let i = 0; i < 7; i++) {
                 const dayDate = new Date(monday);
                 dayDate.setDate(monday.getDate() + i);
-                const dateStr = dayDate.toISOString().split('T')[0];
-                const isToday = dateStr === today.toISOString().split('T')[0];
+                const dateStr = getLocalDateString(dayDate);
+                const isToday = dateStr === getLocalDateString(today);
                 const hasWorkout = checkWorkoutOnDate(dateStr);
 
                 html += `
@@ -9971,20 +10347,16 @@
 
                 const workout = effectiveWorkouts[key];
                 const lastWorkout = getLastWorkoutDate(key);
-                const icon = customWorkoutIcons[key] ? AVAILABLE_WORKOUT_ICONS[customWorkoutIcons[key]] : (workoutIcons[key] || defaultIcon);
                 const isCustom = isWorkoutCustom(key);
-                const isModified = isWorkoutModified(key);
 
                 let badgeHtml = '';
                 if (isCustom) {
                     badgeHtml = '<span class="card-badge custom">Custom</span>';
                 }
-                // Note: Modified badge only shown in manage/edit screen, not here
 
                 html += `
                     <div class="workout-card" onclick="startWorkout('${escapeHtml(key)}')">
                         <div class="workout-card-header">
-                            <div class="workout-icon">${icon}</div>
                             <div class="workout-card-title-wrapper">
                                 <span class="workout-title">${workout.title}</span>
                                 ${badgeHtml}
@@ -10000,7 +10372,7 @@
         }
 
         function renderWeightWidgetContent(container, widgetId) {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             const todayWeight = weightLog[today];
 
             let html = '';
@@ -10042,14 +10414,14 @@
             const weight = parseFloat(input.value);
             if (isNaN(weight) || weight <= 0) return;
 
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             weightLog[today] = weight;
             saveData();
             renderHomeWidgets();
         }
 
         function editTodayWeightWidget(widgetId) {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             const currentWeight = weightLog[today];
             const newWeight = prompt('Enter weight (lbs):', currentWeight);
             if (newWeight !== null) {
@@ -10511,39 +10883,35 @@
             }
         }
 
-        // Widget reordering with up/down buttons (mobile-friendly)
-        function moveWidgetUp(widgetId, page) {
+        // Move widget up or down
+        function moveWidget(widgetId, direction, page) {
             const widgetArray = page === 'home' ? homeWidgets : workoutsPageWidgets;
             const index = widgetArray.findIndex(w => w.id === widgetId);
 
-            if (index > 0) {
-                // Swap with previous widget
-                [widgetArray[index - 1], widgetArray[index]] = [widgetArray[index], widgetArray[index - 1]];
-                saveData();
+            if (index === -1) return;
 
-                if (page === 'home') {
-                    renderHomeWidgets();
-                } else {
-                    renderWorkoutsPageWidgets();
-                }
+            // Haptic feedback
+            if (window.Capacitor && Capacitor.Plugins.Haptics) {
+                Capacitor.Plugins.Haptics.impact({ style: 'light' });
             }
-        }
 
-        function moveWidgetDown(widgetId, page) {
-            const widgetArray = page === 'home' ? homeWidgets : workoutsPageWidgets;
-            const index = widgetArray.findIndex(w => w.id === widgetId);
-            const enabledWidgets = widgetArray.filter(w => w.enabled);
-
-            if (index < enabledWidgets.length - 1) {
-                // Swap with next widget
+            if (direction === 'up' && index > 0) {
+                // Swap with previous
+                [widgetArray[index - 1], widgetArray[index]] = [widgetArray[index], widgetArray[index - 1]];
+            } else if (direction === 'down' && index < widgetArray.length - 1) {
+                // Swap with next
                 [widgetArray[index], widgetArray[index + 1]] = [widgetArray[index + 1], widgetArray[index]];
-                saveData();
+            } else {
+                return; // Can't move further
+            }
 
-                if (page === 'home') {
-                    renderHomeWidgets();
-                } else {
-                    renderWorkoutsPageWidgets();
-                }
+            saveData();
+
+            // Re-render
+            if (page === 'home') {
+                renderHomeWidgets();
+            } else {
+                renderWorkoutsPageWidgets();
             }
         }
 
@@ -10566,6 +10934,9 @@
             const container = document.getElementById('workoutsPageWidgetsContainer');
             if (!container) return;
 
+            // Update date in header
+            updateDate();
+
             let html = '';
 
             // Render each enabled widget
@@ -10586,10 +10957,6 @@
                 renderWorkoutsPageWidgetContent(widget);
             });
 
-            // Set up drag-and-drop if in edit mode
-            if (workoutsPageEditMode) {
-                setupWidgetDragDrop('workoutsPage');
-            }
         }
 
         function renderWorkoutsPageWidget(widget) {
@@ -10600,12 +10967,12 @@
                 <div class="widget ${editClass}" id="wp-widget-${widget.id}" data-widget-id="${widget.id}">
                     <div class="widget-header">
                         <div class="widget-header-left">
-                            <div class="widget-reorder-btns">
-                                <button class="widget-reorder-btn" onclick="event.stopPropagation(); moveWidgetUp('${widget.id}', 'workoutsPage')">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                            <div class="widget-move-buttons">
+                                <button class="widget-move-btn" onclick="event.stopPropagation(); moveWidget('${widget.id}', 'up', 'workoutsPage')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
                                 </button>
-                                <button class="widget-reorder-btn" onclick="event.stopPropagation(); moveWidgetDown('${widget.id}', 'workoutsPage')">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                                <button class="widget-move-btn" onclick="event.stopPropagation(); moveWidget('${widget.id}', 'down', 'workoutsPage')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                                 </button>
                             </div>
                             <span class="widget-title">${widgetInfo.name}</span>
@@ -10758,7 +11125,7 @@
                 const dateStr = key.split('_')[0];
                 const date = new Date(dateStr);
                 const weekStart = getWeekStart(date);
-                const weekKey = weekStart.toISOString().split('T')[0];
+                const weekKey = getLocalDateString(weekStart);
 
                 if (!weekDayMap.has(weekKey)) {
                     weekDayMap.set(weekKey, new Set());
@@ -10781,7 +11148,7 @@
             // Check if current week qualifies
             const today = new Date();
             const currentWeekStart = getWeekStart(today);
-            const currentWeekKey = currentWeekStart.toISOString().split('T')[0];
+            const currentWeekKey = getLocalDateString(currentWeekStart);
 
             let currentStreak = 0;
             let bestStreak = 0;
@@ -10790,7 +11157,7 @@
             // Calculate current streak (must include current or last week)
             const lastWeekStart = new Date(currentWeekStart);
             lastWeekStart.setDate(lastWeekStart.getDate() - 7);
-            const lastWeekKey = lastWeekStart.toISOString().split('T')[0];
+            const lastWeekKey = getLocalDateString(lastWeekStart);
 
             // Start from current week or last week (only if they qualify)
             let checkDate = qualifyingWeeks.has(currentWeekKey) ? new Date(currentWeekKey) :
@@ -10798,7 +11165,7 @@
 
             if (checkDate) {
                 while (true) {
-                    const weekKey = checkDate.toISOString().split('T')[0];
+                    const weekKey = getLocalDateString(checkDate);
                     if (qualifyingWeeks.has(weekKey)) {
                         currentStreak++;
                         checkDate.setDate(checkDate.getDate() - 7);
@@ -10813,7 +11180,7 @@
                 const weekDate = new Date(weeks[i]);
                 const prevWeekDate = new Date(weekDate);
                 prevWeekDate.setDate(prevWeekDate.getDate() - 7);
-                const prevWeekKey = prevWeekDate.toISOString().split('T')[0];
+                const prevWeekKey = getLocalDateString(prevWeekDate);
 
                 if (i === 0 || weeks[i - 1] === prevWeekKey ||
                     new Date(weeks[i - 1]).getTime() === prevWeekDate.getTime()) {
@@ -11301,6 +11668,11 @@
 
             currentView = screen;
 
+            if (screen === 'home' || screen === 'workoutsPage') {
+                // Update date in header for home and workouts pages
+                updateDate();
+            }
+
             if (screen === 'calendar') {
                 // Auto-select today's date (use local date to avoid timezone issues)
                 const today = getLocalDateString();
@@ -11504,7 +11876,7 @@
             const endTime = new Date();
             const durationMs = endTime - workoutStartTime;
             const durationMinutes = Math.round(durationMs / 60000);
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
 
             const timestamp = workoutStartTime.getTime();
             const sessionKey = `${today}_session_${timestamp}_${currentWorkoutType}`;
@@ -11550,6 +11922,9 @@
             }
 
             saveData();
+
+            // Refresh all displays immediately
+            refreshAllWorkoutDisplays();
 
             clearInterval(workoutTimer);
             workoutTimer = null;
@@ -11752,7 +12127,7 @@
         }
 
         function renderExerciseWithDropdown(ex, workoutType, sectionTitle, allOptions, sectionIdx, selectedIdx) {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             const lastLog = getLastLog(workoutType, ex.name);
             const safeExName = ex.name.replace(/'/g, "\\'");
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
@@ -11968,7 +12343,7 @@
         }
 
         function renderSupersetExerciseWithDropdown(ex, workoutType, sectionTitle, allSupersetOptions, sectionIdx, supersetIdx, selectedIdx, exerciseIdxInPair) {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             const lastLog = getLastLog(workoutType, ex.name);
             const safeExName = ex.name.replace(/'/g, "\\'");
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
@@ -12134,7 +12509,7 @@
         }
 
         function renderExercise(ex, workoutType, sectionTitle = '') {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             const baseExerciseName = ex.name; // The base exercise name for tracking rotation cycles
 
             if (ex.rotations && ex.rotations.length > 1) {
@@ -12186,7 +12561,7 @@
         }
 
         function renderRotationExerciseWithDropdown(ex, workoutType, sectionTitle, selectedRotation) {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             const currentEx = ex.rotations[selectedRotation];
             const safeExName = currentEx.name.replace(/'/g, "\\'");
             const safeBaseExName = ex.name.replace(/'/g, "\\'");
@@ -12286,7 +12661,7 @@
         }
 
         function renderSingleExercise(ex, workoutType) {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             const lastLog = getLastLog(workoutType, ex.name);
             const safeExName = ex.name.replace(/'/g, "\\'");
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
@@ -12473,7 +12848,7 @@
             workoutLog[setCountKey] = newSets;
 
             // Also remove the logged data for the removed set
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             const removedSetKey = `${today}_${workoutType}_${exerciseName}_${currentSets}`;
             delete workoutLog[removedSetKey];
 
@@ -12489,7 +12864,7 @@
 
             if (currentSets <= 1) return; // Don't go below 1 set
 
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
 
             // Shift all sets after the deleted one down by 1
             for (let i = setNum; i < currentSets; i++) {
@@ -12572,7 +12947,7 @@
         });
 
         function getLastLog(workoutType, exerciseName) {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             // Filter for set logs (format: date_workoutType_exerciseName_setNum)
             // Must match exact workout type to be workout-specific
             const keys = Object.keys(workoutLog).filter(key => {
@@ -12607,7 +12982,7 @@
         }
 
         function logSet(workoutType, exerciseName, setNum, field, value) {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             const logKey = `${today}_${workoutType}_${exerciseName}_${setNum}`;
             
             if (!workoutLog[logKey]) {
@@ -13034,7 +13409,8 @@
                 delete workoutLog[sessionKey];
                 saveData();
 
-                renderCalendar();
+                // Refresh all displays
+                refreshAllWorkoutDisplays();
                 showDayWorkouts(dateStr);
             }
         }
@@ -13145,9 +13521,9 @@
 
                 closeWorkoutDetailModal();
                 showDayWorkouts(dateStr);
-                renderCalendar();
-                renderWorkoutGrid(); // Update "Last" dates on home screen
-                renderWeeklyTracker(); // Update weekly activity tracker
+
+                // Refresh all displays
+                refreshAllWorkoutDisplays();
             }
         }
 
@@ -13156,6 +13532,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Detect PWA standalone mode (added to home screen)
+            if (window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) {
+                document.body.classList.add('pwa-standalone');
+            }
+
             document.getElementById('workoutDetailModal').addEventListener('click', function(e) {
                 if (e.target === this) {
                     closeWorkoutDetailModal();
