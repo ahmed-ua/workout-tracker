@@ -2877,56 +2877,412 @@
             font-weight: 700;
         }
 
-        /* Rest Timer Overlay */
-        .rest-timer-overlay {
+        /* Rest Timer - Inline in header */
+        .rest-timer-inline {
             display: none;
+            align-items: center;
+            gap: 8px;
+            background: rgba(10, 132, 255, 0.15);
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin-left: 8px;
+        }
+
+        .rest-timer-inline.active {
+            display: flex;
+        }
+
+        .rest-timer-inline-display {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'SF Mono', monospace;
+            color: var(--primary);
+            min-width: 45px;
+        }
+
+        .rest-timer-inline-skip {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .rest-timer-inline-skip:active {
+            opacity: 0.8;
+        }
+
+        /* Rest timer row below tabs - shows when resting */
+        .rest-timer-row {
+            display: none;
+            background: linear-gradient(135deg, rgba(10, 132, 255, 0.2) 0%, rgba(10, 132, 255, 0.1) 100%);
+            padding: 12px 20px;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .rest-timer-row.active {
+            display: flex;
+        }
+
+        .rest-timer-row-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rest-timer-row-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .rest-timer-row-display {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: 'SF Mono', monospace;
+            color: var(--primary);
+        }
+
+        .rest-timer-row-skip {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .rest-timer-row-skip:active {
+            opacity: 0.8;
+            transform: scale(0.97);
+        }
+
+        /* Set Notes Input - inline with each set */
+        .set-notes-row {
+            padding: 0 8px 8px 8px;
+            margin-top: -4px;
+        }
+
+        .set-notes-input {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--separator);
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 13px;
+            color: var(--text);
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .set-notes-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .set-notes-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        .set-notes-input.filled {
+            border-color: var(--primary);
+            background: rgba(10, 132, 255, 0.05);
+        }
+
+        /* Quick Start / Freestyle Workout */
+        .quick-start-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, #0077ED 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .quick-start-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .freestyle-add-exercise-btn {
+            width: 100%;
+            background: var(--surface);
+            border: 2px dashed var(--separator);
+            border-radius: 12px;
+            padding: 20px;
+            color: var(--primary);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .freestyle-add-exercise-btn:active {
+            background: var(--surface-elevated);
+        }
+
+        .freestyle-exercise-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .freestyle-exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .freestyle-exercise-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .freestyle-remove-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            padding: 4px 8px;
+            opacity: 0.6;
+        }
+
+        .freestyle-remove-btn:hover,
+        .freestyle-remove-btn:active {
+            color: var(--destructive);
+            opacity: 1;
+        }
+
+        .freestyle-add-set-btn {
+            background: var(--surface-elevated);
+            border: 1px solid var(--separator);
+            border-radius: 8px;
+            padding: 10px;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .freestyle-set-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .freestyle-set-num {
+            width: 24px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .freestyle-remove-set-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        /* Exercise Picker Modal */
+        .exercise-picker-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 1000;
-            align-items: center;
+            display: none;
             justify-content: center;
-            flex-direction: column;
+            align-items: flex-end;
         }
 
-        .rest-timer-overlay.active {
+        .exercise-picker-overlay.active {
             display: flex;
         }
 
-        .rest-timer-display {
-            font-size: 96px;
-            font-weight: 700;
-            font-family: 'SF Mono', monospace;
-            color: var(--primary);
-            margin-bottom: 8px;
+        .exercise-picker-modal {
+            background: var(--background);
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
         }
 
-        .rest-timer-label {
-            font-size: 20px;
-            color: var(--text-secondary);
-            margin-bottom: 48px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
         }
 
-        .rest-timer-skip {
-            background: var(--surface-elevated);
-            border: 1px solid var(--separator);
-            color: var(--text);
-            padding: 18px 48px;
-            border-radius: 14px;
+        .exercise-picker-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--separator);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .exercise-picker-title {
             font-size: 18px;
             font-weight: 600;
-            cursor: pointer;
-            min-height: 56px;
         }
 
-        .rest-timer-skip:active {
+        .exercise-picker-close {
+            background: var(--surface-elevated);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .exercise-picker-search {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .exercise-picker-search input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--separator);
+            border-radius: 10px;
+            font-size: 16px;
             background: var(--surface);
-            transform: scale(0.97);
+            color: var(--text);
+            box-sizing: border-box;
+        }
+
+        .exercise-picker-categories {
+            display: flex;
+            gap: 8px;
+            padding: 12px 20px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--separator);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .exercise-picker-category {
+            background: var(--surface);
+            border: 1px solid var(--separator);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            white-space: nowrap;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .exercise-picker-category.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .exercise-picker-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 20px;
+        }
+
+        .exercise-picker-item {
+            padding: 14px 16px;
+            background: var(--surface);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .exercise-picker-item:active {
+            background: var(--surface-elevated);
+        }
+
+        .exercise-picker-item-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .exercise-picker-item-add {
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 300;
+        }
+
+        /* Save as template modal */
+        .save-template-prompt {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .save-template-prompt h3 {
+            margin-bottom: 12px;
+        }
+
+        .save-template-prompt p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .save-template-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .save-template-buttons button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .save-template-btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .save-template-btn-primary {
+            background: var(--primary);
+            color: white;
         }
 
         .tracking-select {
@@ -3655,6 +4011,14 @@
                 </div>
             </div>
             <div class="workout-tabs" id="workoutTabs"></div>
+            <!-- Rest Timer Row (shows below tabs when resting) -->
+            <div class="rest-timer-row" id="restTimerRow">
+                <div class="rest-timer-row-left">
+                    <div class="rest-timer-row-label">Rest</div>
+                    <div class="rest-timer-row-display" id="restTimerDisplay">0:00</div>
+                </div>
+                <button class="rest-timer-row-skip" onclick="skipRestTimer()">Skip</button>
+            </div>
         </div>
 
         <div class="container workout-container" id="workoutContent"></div>
@@ -3889,11 +4253,19 @@
         </div>
     </div>
 
-    <!-- Rest Timer Overlay -->
-    <div class="rest-timer-overlay" id="restTimerOverlay">
-        <div class="rest-timer-label">Rest Time</div>
-        <div class="rest-timer-display" id="restTimerDisplay">0:00</div>
-        <button class="rest-timer-skip" onclick="skipRestTimer()">Skip</button>
+    <!-- Exercise Picker Modal for Freestyle Workouts -->
+    <div class="exercise-picker-overlay" id="exercisePickerOverlay" onclick="closeExercisePicker(event)">
+        <div class="exercise-picker-modal" onclick="event.stopPropagation()">
+            <div class="exercise-picker-header">
+                <span class="exercise-picker-title">Add Exercise</span>
+                <button class="exercise-picker-close" onclick="closeExercisePicker()">×</button>
+            </div>
+            <div class="exercise-picker-search">
+                <input type="text" id="exercisePickerSearch" placeholder="Search exercises..." oninput="filterExercisePicker()">
+            </div>
+            <div class="exercise-picker-categories" id="exercisePickerCategories"></div>
+            <div class="exercise-picker-list" id="exercisePickerList"></div>
+        </div>
     </div>
 
     <!-- Active Workout Banner -->
@@ -4709,6 +5081,207 @@
                             { name: 'Banded Pull-Aparts', sets: 2, reps: '15 reps', rest: '20s', notes: 'Light band, arms straight, pull apart at chest height' },
                             { name: 'Isometric External Rotation', sets: 2, reps: '10s hold x 5', rest: '10s', notes: 'Press back of hand into wall, hold. No movement, just activation.' },
                             { name: 'Scapular Squeezes', sets: 2, reps: '10 reps, 5s hold', rest: '15s', notes: 'Squeeze shoulder blades together and down' }
+                        ]
+                    }
+                ]
+            },
+            'PAP Lower Body + Core': {
+                title: 'PAP Lower Body + Core',
+                duration: '~48 min',
+                focus: 'Strength, power, core — Monday',
+                sections: [
+                    {
+                        title: 'PAP Primer',
+                        exercises: [
+                            { name: 'Box Jumps', sets: 3, reps: '4', rest: '2min', notes: 'Max height, step down between reps' }
+                        ]
+                    },
+                    {
+                        title: 'Main Lifts',
+                        exercises: [
+                            { name: 'Back Squat', sets: 4, reps: '5', rest: '3min', notes: '80-85% 1RM — add 2.5kg when all reps clean' },
+                            { name: 'Romanian Deadlift', sets: 3, reps: '6', rest: '2min', notes: 'Hinge at hip, soft knee bend, feel hamstrings' }
+                        ]
+                    },
+                    {
+                        title: 'Core Circuit',
+                        exercises: [
+                            { name: 'Plank', sets: 2, reps: '60s', rest: '30s', notes: 'Brace core, neutral spine' },
+                            { name: 'Dead Bug', sets: 2, reps: '10/side', rest: '30s', notes: 'Opposite arm/leg, lower back pressed to floor' }
+                        ]
+                    },
+                    {
+                        title: 'Hip Mobility',
+                        exercises: [
+                            { name: 'Hip Flexor Lunge Stretch', sets: 1, reps: '60s/side', rest: '', notes: 'Posterior tilt pelvis, hold and breathe' },
+                            { name: 'Pigeon Pose', sets: 1, reps: '60s/side', rest: '', notes: 'Relax hips toward floor, breathe into stretch' }
+                        ]
+                    }
+                ]
+            },
+            'PAP Upper Body + Shoulder Mobility': {
+                title: 'PAP Upper Body + Shoulder Mobility',
+                duration: '~48 min',
+                focus: 'Strength, pressing, pulling — Tuesday',
+                sections: [
+                    {
+                        title: 'Shoulder Warm-Up',
+                        exercises: [
+                            { name: 'Band Pull-Aparts', sets: 2, reps: '15', rest: '20s', notes: 'Light band, retract scapula at end' },
+                            { name: 'Scapular Push-Ups', sets: 1, reps: '12', rest: '20s', notes: 'Protract and retract fully, arms stay straight' }
+                        ]
+                    },
+                    {
+                        title: 'PAP Primer',
+                        exercises: [
+                            { name: 'Med Ball Chest Throw', sets: 3, reps: '5', rest: '60s', notes: 'Max power against wall, catch and reset' }
+                        ]
+                    },
+                    {
+                        title: 'Main Lifts',
+                        exercises: [
+                            { name: 'Barbell Bench Press', sets: 4, reps: '5', rest: '3min', notes: '80-85% 1RM — add 1.25kg when all reps clean' },
+                            { name: 'Weighted Pull-Ups', sets: 4, reps: '5', rest: '2min 30s', notes: 'Full ROM, controlled descent — add weight weekly' }
+                        ]
+                    },
+                    {
+                        title: 'Superset — OHP + Row',
+                        exercises: [
+                            { name: 'Overhead Press', sets: 3, reps: '6', rest: '90s', notes: 'Superset with row — rest 90s after each pair' },
+                            { name: 'Barbell Row', sets: 3, reps: '6', rest: '90s', notes: 'Superset with OHP — pull to lower chest' }
+                        ]
+                    },
+                    {
+                        title: 'Shoulder Mobility',
+                        exercises: [
+                            { name: 'Doorframe Pec Stretch', sets: 1, reps: '60s', rest: '', notes: 'Elbow at 90°, lean gently through doorframe' },
+                            { name: 'Thoracic Extension on Foam Roller', sets: 1, reps: '90s', rest: '', notes: 'Support neck, breathe deeply into extension' }
+                        ]
+                    }
+                ]
+            },
+            'Swimming + Core + Flexibility': {
+                title: 'Swimming + Core + Flexibility',
+                duration: '~47 min',
+                focus: 'Swim intervals, core, mobility — Wednesday',
+                sections: [
+                    {
+                        title: 'Swim Session',
+                        exercises: [
+                            { name: 'Easy Freestyle Warm-Up', sets: 1, reps: '200m', rest: '', notes: 'Easy pace, find breathing rhythm' },
+                            { name: 'Catch-Up Stroke Drills', sets: 4, reps: '50m', rest: '20s', notes: 'Full extension before pulling next stroke' },
+                            { name: 'Sprint Intervals (Freestyle)', sets: 6, reps: '50m', rest: '30s', notes: '90-95% effort, max speed each rep' },
+                            { name: 'Easy Backstroke Cool-Down', sets: 1, reps: '100m', rest: '', notes: 'Easy pace, focus on long strokes' }
+                        ]
+                    },
+                    {
+                        title: 'Core Circuit',
+                        exercises: [
+                            { name: 'Hanging Leg Raises', sets: 2, reps: '12', rest: '30s', notes: 'Control the descent, no swinging' },
+                            { name: 'Cable Woodchops', sets: 2, reps: '12/side', rest: '30s', notes: 'Rotate through core, keep arms straight' }
+                        ]
+                    },
+                    {
+                        title: 'Flexibility',
+                        exercises: [
+                            { name: "World's Greatest Stretch", sets: 1, reps: '5/side', rest: '', notes: 'Lunge + reach + thoracic rotation' },
+                            { name: 'Pigeon Pose', sets: 1, reps: '90s/side', rest: '', notes: 'Full relaxation, breathe into hip' },
+                            { name: 'Seated Forward Fold', sets: 1, reps: '90s', rest: '', notes: 'Hinge at hips, reach for feet' }
+                        ]
+                    }
+                ]
+            },
+            'Power, Plyometrics + Agility': {
+                title: 'Power, Plyometrics + Agility',
+                duration: '~48 min',
+                focus: 'Olympic lifts, jumps, sprints — Thursday',
+                sections: [
+                    {
+                        title: 'Warm-Up',
+                        exercises: [
+                            { name: 'Jump Rope', sets: 1, reps: '2 min', rest: '', notes: 'Steady rhythm, stay light on feet' },
+                            { name: 'A-Skips + B-Skips', sets: 2, reps: '15m each', rest: '20s', notes: 'High knee drive, sprint mechanics' },
+                            { name: 'Light Bounding', sets: 2, reps: '15m', rest: '20s', notes: 'Long powerful strides, soft landings' }
+                        ]
+                    },
+                    {
+                        title: 'Olympic Lifts',
+                        exercises: [
+                            { name: 'Hang Clean', sets: 4, reps: '3', rest: '90s', notes: '60-70% 1RM — explosive hip extension, fast elbows' },
+                            { name: 'Push Press', sets: 3, reps: '3', rest: '90s', notes: 'Leg drive into press, lock out overhead' }
+                        ]
+                    },
+                    {
+                        title: 'Plyometrics',
+                        exercises: [
+                            { name: 'Box Jumps', sets: 4, reps: '4', rest: '90s', notes: 'Max height, step down between reps' },
+                            { name: 'Depth Jumps', sets: 3, reps: '4', rest: '90s', notes: 'Step off box, jump immediately on landing' }
+                        ]
+                    },
+                    {
+                        title: 'Agility',
+                        exercises: [
+                            { name: '10m Acceleration Sprints', sets: 6, reps: '10m', rest: '45s', notes: 'Max acceleration, drive phase — not top speed' },
+                            { name: '5-10-5 Shuttle Drill', sets: 4, reps: '1 run', rest: '60s', notes: 'Touch lines, explosive change of direction' }
+                        ]
+                    }
+                ]
+            },
+            'Endurance + Deep Flexibility': {
+                title: 'Endurance + Deep Flexibility',
+                duration: '~50 min',
+                focus: 'Zone 2 cardio, mobility — Friday',
+                sections: [
+                    {
+                        title: 'Zone 2 Cardio',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Steady Swim', sets: 1, reps: '700-900m', rest: '', notes: 'Conversational pace, nasal breathing preferred' },
+                            { name: 'Zone 2 Run', sets: 1, reps: '25 min', rest: '', notes: '~130-140 bpm, comfortable effort' }
+                        ]
+                    },
+                    {
+                        title: 'Foam Rolling',
+                        exercises: [
+                            { name: 'Foam Roll Quads', sets: 1, reps: '60s', rest: '', notes: 'Slow roll, pause on tight spots' },
+                            { name: 'Foam Roll Hamstrings', sets: 1, reps: '60s', rest: '', notes: 'Cross one leg over for added pressure' },
+                            { name: 'Foam Roll Calves', sets: 1, reps: '60s', rest: '', notes: 'Point and flex foot while rolling' }
+                        ]
+                    },
+                    {
+                        title: 'Deep Flexibility',
+                        exercises: [
+                            { name: 'PNF Hamstring Stretch', sets: 3, reps: '1/leg', rest: '20s', notes: '8s contract → 20s relax, repeat per leg' },
+                            { name: 'Couch Stretch', sets: 1, reps: '90s/leg', rest: '', notes: 'Hip flexor + quad, stay upright and tall' },
+                            { name: 'Deep Squat Hold', sets: 1, reps: '2 min', rest: '', notes: 'Heels down, use doorframe if needed' },
+                            { name: 'Cossack Squats', sets: 1, reps: '8/side', rest: '', notes: 'Shift weight side to side, slow and controlled' },
+                            { name: 'Legs Up the Wall', sets: 1, reps: '3 min', rest: '', notes: 'Relax fully, passive hamstring recovery' }
+                        ]
+                    }
+                ]
+            },
+            'Active Recovery + Yoga': {
+                title: 'Active Recovery + Yoga',
+                duration: '~40 min',
+                focus: 'Light movement, yoga flow — Saturday',
+                sections: [
+                    {
+                        title: 'Light Movement',
+                        isOptions: true,
+                        exercises: [
+                            { name: 'Easy Swim (Technique Focus)', sets: 1, reps: '400-500m', rest: '', notes: 'Slow pace, focus on form and catch drills' },
+                            { name: 'Slow Walk', sets: 1, reps: '15 min', rest: '', notes: 'Easy pace, enjoy the outdoors' }
+                        ]
+                    },
+                    {
+                        title: 'Yoga Flow',
+                        exercises: [
+                            { name: 'Cat-Cow', sets: 1, reps: '90s', rest: '', notes: 'Inhale on cow, exhale on cat — slow' },
+                            { name: "Child's Pose", sets: 1, reps: '90s', rest: '', notes: 'Arms extended, breathe into lower back' },
+                            { name: 'Sun Salutations', sets: 4, reps: '1 round', rest: '', notes: 'Slow, 2 breaths per position' },
+                            { name: 'Warrior I + II Sequence', sets: 1, reps: '60s/side', rest: '', notes: 'Hold each pose, breathe deep' },
+                            { name: 'Lizard Pose', sets: 1, reps: '90s/side', rest: '', notes: 'Front foot outside hand, relax hips toward floor' },
+                            { name: 'Legs Up the Wall', sets: 1, reps: '4 min', rest: '', notes: 'Final relaxation, let legs fully release' }
                         ]
                     }
                 ]
@@ -7749,6 +8322,8 @@
 
         async function init() {
             await loadData();
+            loadSessionState(); // Load session state (checked sets, notes, rest timer)
+            restoreWorkoutTimer(); // Restore main workout timer if active
             updateHomeScreen();
             updateDate();
             initYearSelect();
@@ -9968,6 +10543,65 @@
         let restTimeRemaining = 0;
         let currentRestSetId = null;
 
+        // Session state for persistence (checked sets, timer state)
+        let sessionState = {
+            completedSets: {},      // { setId: true }
+            restTimerState: null    // { setId, endTime, totalSeconds }
+        };
+
+        // Load session state from localStorage
+        function loadSessionState() {
+            const saved = localStorage.getItem('workoutSessionState');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    sessionState = { ...sessionState, ...parsed };
+
+                    // Check if there's a running rest timer to resume
+                    if (sessionState.restTimerState) {
+                        const { setId, endTime, totalSeconds } = sessionState.restTimerState;
+                        const remaining = Math.ceil((endTime - Date.now()) / 1000);
+                        if (remaining > 0) {
+                            // Resume the timer
+                            setTimeout(() => resumeRestTimer(setId, remaining, totalSeconds), 100);
+                        } else {
+                            // Timer already expired, mark as complete
+                            sessionState.completedSets[setId] = true;
+                            sessionState.restTimerState = null;
+                            saveSessionState();
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error loading session state:', e);
+                }
+            }
+        }
+
+        // Save session state to localStorage
+        function saveSessionState() {
+            localStorage.setItem('workoutSessionState', JSON.stringify(sessionState));
+        }
+
+        // Clear session state (when workout ends)
+        function clearSessionState() {
+            sessionState = {
+                completedSets: {},
+                restTimerState: null
+            };
+            localStorage.removeItem('workoutSessionState');
+        }
+
+        // Restore checked state for a set button
+        function restoreSetState(setId) {
+            if (sessionState.completedSets[setId]) {
+                const btn = document.getElementById(setId);
+                if (btn) {
+                    btn.classList.add('checked');
+                    btn.textContent = '✓';
+                }
+            }
+        }
+
         function parseRestTime(restString) {
             // Parse rest time like "90s", "2 min", "60-90s"
             const match = restString.match(/(\d+)/);
@@ -9985,28 +10619,56 @@
             currentRestSetId = setId;
             restTimeRemaining = restSeconds;
 
-            const overlay = document.getElementById('restTimerOverlay');
-            const display = document.getElementById('restTimerDisplay');
-
-            overlay.classList.add('active');
-            updateRestDisplay();
-
-            // Mark the button as resting
+            // Mark the set as complete IMMEDIATELY
             const btn = document.getElementById(setId);
             if (btn) {
-                btn.classList.add('resting');
+                btn.classList.add('checked');
+                btn.textContent = '✓';
             }
+
+            // Save completed state immediately
+            sessionState.completedSets[setId] = true;
+            sessionState.restTimerState = {
+                setId: setId,
+                endTime: Date.now() + (restSeconds * 1000),
+                totalSeconds: restSeconds
+            };
+            saveSessionState();
+
+            // Show the rest timer row
+            const timerRow = document.getElementById('restTimerRow');
+            timerRow.classList.add('active');
+            updateRestDisplay();
 
             restTimerInterval = setInterval(() => {
                 restTimeRemaining--;
                 updateRestDisplay();
 
-                // Update the button countdown
-                if (btn) {
-                    const mins = Math.floor(restTimeRemaining / 60);
-                    const secs = restTimeRemaining % 60;
-                    btn.textContent = mins > 0 ? `${mins}:${secs.toString().padStart(2, '0')}` : secs;
+                if (restTimeRemaining <= 0) {
+                    endRestTimer(true);
                 }
+            }, 1000);
+        }
+
+        // Resume a rest timer (called when page loads with active timer)
+        function resumeRestTimer(setId, remainingSeconds, totalSeconds) {
+            currentRestSetId = setId;
+            restTimeRemaining = remainingSeconds;
+
+            // Ensure set is marked complete (it should already be from session state)
+            const btn = document.getElementById(setId);
+            if (btn) {
+                btn.classList.add('checked');
+                btn.textContent = '✓';
+            }
+
+            const timerRow = document.getElementById('restTimerRow');
+            timerRow.classList.add('active');
+            updateRestDisplay();
+
+            restTimerInterval = setInterval(() => {
+                restTimeRemaining--;
+                updateRestDisplay();
 
                 if (restTimeRemaining <= 0) {
                     endRestTimer(true);
@@ -10025,41 +10687,90 @@
             clearInterval(restTimerInterval);
             restTimerInterval = null;
 
-            const overlay = document.getElementById('restTimerOverlay');
-            overlay.classList.remove('active');
+            // Hide the rest timer row
+            const timerRow = document.getElementById('restTimerRow');
+            timerRow.classList.remove('active');
 
-            // Mark the button as checked (not resting anymore)
+            // Clear rest timer state (set is already marked complete)
             if (currentRestSetId) {
-                const btn = document.getElementById(currentRestSetId);
-                if (btn) {
-                    btn.classList.remove('resting');
-                    btn.classList.add('checked');
-                    btn.textContent = '✓';
-                }
+                sessionState.restTimerState = null;
+                saveSessionState();
             }
 
             if (playAlert) {
-                // Play alert sound and vibrate
+                // Play alert sound, vibrate, and show notification
                 triggerVibration();
-                // Try to play a sound
-                try {
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                playRestTimerAlert();
+                showRestTimerNotification();
+            }
+
+            currentRestSetId = null;
+        }
+
+        // Play a more noticeable alert sound
+        function playRestTimerAlert() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                // Play 3 beeps for better noticeability
+                const playBeep = (startTime, frequency) => {
                     const oscillator = audioContext.createOscillator();
                     const gainNode = audioContext.createGain();
                     oscillator.connect(gainNode);
                     gainNode.connect(audioContext.destination);
-                    oscillator.frequency.value = 800;
+                    oscillator.frequency.value = frequency;
                     oscillator.type = 'sine';
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.5);
-                } catch (e) {
-                    console.log('Audio not available');
-                }
-            }
+                    gainNode.gain.setValueAtTime(0.5, startTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.15);
+                    oscillator.start(startTime);
+                    oscillator.stop(startTime + 0.15);
+                };
 
-            currentRestSetId = null;
+                const now = audioContext.currentTime;
+                playBeep(now, 880);        // First beep - A5
+                playBeep(now + 0.2, 880);  // Second beep
+                playBeep(now + 0.4, 1100); // Third beep - higher pitch
+            } catch (e) {
+                console.log('Audio not available');
+            }
+        }
+
+        // Request notification permission (call this on user interaction)
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        // Show a system notification when rest timer ends
+        function showRestTimerNotification() {
+            if (!('Notification' in window)) return;
+
+            if (Notification.permission === 'granted') {
+                try {
+                    const notification = new Notification('Rest Complete! 💪', {
+                        body: 'Time for your next set',
+                        icon: '/app-icon.svg',
+                        tag: 'rest-timer',
+                        requireInteraction: false,
+                        silent: false
+                    });
+
+                    // Auto-close after 4 seconds
+                    setTimeout(() => notification.close(), 4000);
+
+                    // Focus app when notification is clicked
+                    notification.onclick = () => {
+                        window.focus();
+                        notification.close();
+                    };
+                } catch (e) {
+                    console.log('Notification error:', e);
+                }
+            } else if (Notification.permission === 'default') {
+                // Permission not yet requested - will ask next time user interacts
+                console.log('Notification permission not granted yet');
+            }
         }
 
         function skipRestTimer() {
@@ -10070,15 +10781,20 @@
             const btn = document.getElementById(setId);
             if (!btn) return;
 
-            if (btn.classList.contains('checked') || btn.classList.contains('resting')) {
-                // Already checked or resting, uncheck it
+            if (btn.classList.contains('checked')) {
+                // Already checked, uncheck it
+                // Stop rest timer if it's running for this set
                 if (restTimerInterval && currentRestSetId === setId) {
                     endRestTimer(false);
                 }
-                btn.classList.remove('checked', 'resting');
+                btn.classList.remove('checked');
                 btn.textContent = '';
+
+                // Remove from completed state
+                delete sessionState.completedSets[setId];
+                saveSessionState();
             } else {
-                // Start rest timer
+                // Mark complete and start rest timer
                 const restSeconds = parseRestTime(restString);
                 startRestTimer(setId, restSeconds);
             }
@@ -10341,7 +11057,16 @@
             const effectiveWorkouts = getEffectiveWorkouts();
             const defaultIcon = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="14"/><line x1="18" y1="10" x2="18" y2="14"/></svg>';
 
-            let html = '<div class="workout-grid">';
+            let html = `
+                <button class="quick-start-btn" onclick="startFreestyleWorkout()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Quick Start
+                </button>
+            `;
+            html += '<div class="workout-grid">';
             Object.keys(effectiveWorkouts).forEach(key => {
                 if (hiddenWorkouts.includes(key)) return;
 
@@ -11697,7 +12422,8 @@
             if (hasActiveWorkout && currentScreen !== 'workout') {
                 // Show banner on non-workout screens
                 banner.style.display = 'flex';
-                document.getElementById('bannerWorkoutName').textContent = currentWorkoutType;
+                const displayName = isFreestyleWorkout ? 'Quick Workout' : currentWorkoutType;
+                document.getElementById('bannerWorkoutName').textContent = displayName;
                 document.getElementById('bannerWorkoutTime').textContent = getElapsedTime();
                 document.body.classList.add('has-active-banner');
             } else {
@@ -11816,12 +12542,567 @@
             saveData();
         }
 
+        // =====================
+        // FREESTYLE WORKOUT
+        // =====================
+        let isFreestyleWorkout = false;
+        let freestyleExercises = []; // Array of { name, sets: [{ weight, reps, notes }] }
+        let exercisePickerCategory = 'All';
+
+        function startFreestyleWorkout() {
+            // Request notification permission for rest timer alerts
+            requestNotificationPermission();
+
+            // Check if there's an active workout
+            if (workoutStartTime && currentWorkoutType) {
+                if (!confirm(`You have an active "${currentWorkoutType}" workout. Cancel it and start a new workout?`)) {
+                    return;
+                }
+                clearInterval(workoutTimer);
+                workoutTimer = null;
+                workoutStartTime = null;
+                document.getElementById('headerTimer').style.display = 'none';
+                hideWorkoutBottomControls();
+            }
+
+            isFreestyleWorkout = true;
+            freestyleExercises = [];
+            currentWorkoutType = 'Freestyle';
+            currentSectionIdx = 0;
+
+            showScreen('workout');
+            startWorkoutTimer();
+
+            document.getElementById('headerTimer').style.display = 'flex';
+            document.getElementById('headerTimerDisplay').textContent = getElapsedTime();
+
+            renderFreestyleWorkout();
+
+            if (!workoutTimer) {
+                startTimerUpdate();
+            }
+        }
+
+        function renderFreestyleWorkout() {
+            const container = document.getElementById('workoutContent');
+            const tabsContainer = document.getElementById('workoutTabs');
+
+            document.getElementById('workoutHeaderTitle').textContent = 'Quick Workout';
+
+            // No tabs for freestyle
+            tabsContainer.innerHTML = '';
+
+            let html = '<div class="freestyle-workout-container" style="padding: 0 16px 100px 16px;">';
+
+            if (freestyleExercises.length === 0) {
+                html += `
+                    <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; opacity: 0.5;">
+                            <rect x="2" y="6" width="20" height="12" rx="2"/>
+                            <line x1="6" y1="10" x2="6" y2="14"/>
+                            <line x1="18" y1="10" x2="18" y2="14"/>
+                        </svg>
+                        <p style="margin: 0;">Add exercises to start your workout</p>
+                    </div>
+                `;
+            }
+
+            freestyleExercises.forEach((exercise, exIdx) => {
+                html += `
+                    <div class="freestyle-exercise-card" id="freestyle-ex-${exIdx}">
+                        <div class="freestyle-exercise-header">
+                            <span class="freestyle-exercise-name">${escapeHtml(exercise.name)}</span>
+                            <button class="freestyle-remove-btn" onclick="removeFreestyleExercise(${exIdx})">Remove</button>
+                        </div>
+                        <div class="set-notes-row" style="margin-bottom: 12px;">
+                            <input type="text" class="set-notes-input ${exercise.notes ? 'filled' : ''}"
+                                   placeholder="Notes for this exercise..."
+                                   value="${escapeHtml(exercise.notes || '')}"
+                                   onchange="updateFreestyleExerciseNotes(${exIdx}, this.value)">
+                        </div>
+                        <div class="freestyle-sets" id="freestyle-sets-${exIdx}">
+                `;
+
+                exercise.sets.forEach((set, setIdx) => {
+                    html += renderFreestyleSetRow(exIdx, setIdx, set);
+                });
+
+                html += `
+                        </div>
+                        <button class="freestyle-add-set-btn" onclick="addFreestyleSet(${exIdx})">+ Add Set</button>
+                    </div>
+                `;
+            });
+
+            html += `
+                <button class="freestyle-add-exercise-btn" onclick="openExercisePicker()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add Exercise
+                </button>
+
+                <div style="display: flex; gap: 12px; margin-top: 24px; padding-bottom: 20px;">
+                    <button onclick="cancelFreestyleWorkout()" style="flex: 1; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; background: var(--surface); color: var(--destructive);">
+                        Cancel Workout
+                    </button>
+                    <button onclick="endFreestyleWorkout()" style="flex: 1; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; background: var(--primary); color: white;">
+                        Finish Workout
+                    </button>
+                </div>
+            </div>`;
+
+            container.innerHTML = html;
+        }
+
+        function cancelFreestyleWorkout() {
+            if (confirm('Cancel this workout? Any logged exercises will be discarded.')) {
+                cleanupFreestyleWorkout();
+            }
+        }
+
+        function renderFreestyleSetRow(exIdx, setIdx, set) {
+            const setNum = setIdx + 1;
+            const setId = `freestyle_set_${exIdx}_${setNum}`;
+            return `
+                <div class="freestyle-set-row">
+                    <span class="freestyle-set-num">${setNum}</span>
+                    <select class="tracking-select ${set.weight ? 'filled' : ''}" style="flex: 1;"
+                            onchange="updateFreestyleSet(${exIdx}, ${setIdx}, 'weight', this.value)">
+                        <option value="">lbs</option>
+                        ${generateWeightOptions(set.weight)}
+                    </select>
+                    <select class="tracking-select ${set.reps ? 'filled' : ''}" style="flex: 1;"
+                            onchange="updateFreestyleSet(${exIdx}, ${setIdx}, 'reps', this.value)">
+                        <option value="">reps</option>
+                        ${generateRepOptions(set.reps)}
+                    </select>
+                    <button class="set-check ${set.completed ? 'checked' : ''}" id="${setId}"
+                            onclick="toggleFreestyleSetComplete(${exIdx}, ${setIdx}, '${setId}')">
+                        ${set.completed ? '✓' : ''}
+                    </button>
+                    <button class="freestyle-remove-set-btn" onclick="removeFreestyleSet(${exIdx}, ${setIdx})">−</button>
+                </div>
+            `;
+        }
+
+        function updateFreestyleExerciseNotes(exIdx, notes) {
+            freestyleExercises[exIdx].notes = notes;
+            saveFreestyleState();
+
+            // Update filled class
+            const input = event.target;
+            if (input) {
+                input.classList.toggle('filled', !!notes);
+            }
+        }
+
+        function generateWeightOptions(selectedWeight) {
+            let options = '';
+            for (let w = 5; w <= 500; w += 5) {
+                options += `<option value="${w}" ${selectedWeight == w ? 'selected' : ''}>${w}</option>`;
+            }
+            return options;
+        }
+
+        function generateRepOptions(selectedReps) {
+            let options = '';
+            for (let r = 1; r <= 100; r++) {
+                options += `<option value="${r}" ${selectedReps == r ? 'selected' : ''}>${r}</option>`;
+            }
+            return options;
+        }
+
+        // Get the last log for an exercise across ALL workout types (for freestyle workouts)
+        function getLastExerciseLog(exerciseName) {
+            const today = getLocalDateString();
+            // Find all keys that match this exercise name regardless of workout type
+            const keys = Object.keys(workoutLog).filter(key => {
+                // Check if key matches pattern: date_workoutType_exerciseName_setNum
+                const parts = key.split('_');
+                if (parts.length < 4) return false;
+                const date = parts[0];
+                const setNum = parts[parts.length - 1];
+                // The exercise name is everything between workoutType and setNum
+                // This is tricky because both workoutType and exerciseName can have underscores
+                // So we check if the key ends with _exerciseName_setNum
+                const suffix = `_${exerciseName}_${setNum}`;
+                return key.endsWith(suffix) && date !== today && !isNaN(parseInt(setNum));
+            }).sort().reverse();
+
+            if (keys.length === 0) return null;
+
+            const lastDate = keys[0].split('_')[0];
+            const lastSets = {};
+
+            keys.forEach(key => {
+                if (key.startsWith(lastDate) && key.includes(`_${exerciseName}_`)) {
+                    const setNum = parseInt(key.split('_').pop());
+                    if (!isNaN(setNum)) {
+                        lastSets[`set${setNum}`] = workoutLog[key];
+                    }
+                }
+            });
+
+            return Object.keys(lastSets).length > 0 ? lastSets : null;
+        }
+
+        function addFreestyleExercise(exerciseName) {
+            // Get last workout data for this exercise
+            const lastLog = getLastExerciseLog(exerciseName);
+            let defaultSets = [{ weight: '', reps: '', completed: false }];
+
+            if (lastLog) {
+                // Populate with last workout's sets
+                defaultSets = [];
+                let setNum = 1;
+                while (lastLog[`set${setNum}`]) {
+                    const lastSet = lastLog[`set${setNum}`];
+                    defaultSets.push({
+                        weight: lastSet.weight || '',
+                        reps: lastSet.reps || '',
+                        completed: false
+                    });
+                    setNum++;
+                }
+                if (defaultSets.length === 0) {
+                    defaultSets = [{ weight: '', reps: '', completed: false }];
+                }
+            }
+
+            freestyleExercises.push({
+                name: exerciseName,
+                sets: defaultSets,
+                notes: '' // Exercise-wide notes
+            });
+
+            saveFreestyleState();
+            closeExercisePicker();
+            renderFreestyleWorkout();
+        }
+
+        function removeFreestyleExercise(exIdx) {
+            if (confirm('Remove this exercise?')) {
+                freestyleExercises.splice(exIdx, 1);
+                saveFreestyleState();
+                renderFreestyleWorkout();
+            }
+        }
+
+        function addFreestyleSet(exIdx) {
+            const exercise = freestyleExercises[exIdx];
+            const lastSet = exercise.sets[exercise.sets.length - 1] || {};
+            exercise.sets.push({
+                weight: lastSet.weight || '',
+                reps: lastSet.reps || '',
+                completed: false
+            });
+            saveFreestyleState();
+            renderFreestyleWorkout();
+        }
+
+        function removeFreestyleSet(exIdx, setIdx) {
+            if (freestyleExercises[exIdx].sets.length > 1) {
+                freestyleExercises[exIdx].sets.splice(setIdx, 1);
+                saveFreestyleState();
+                renderFreestyleWorkout();
+            }
+        }
+
+        function updateFreestyleSet(exIdx, setIdx, field, value) {
+            freestyleExercises[exIdx].sets[setIdx][field] = value;
+            saveFreestyleState();
+
+            // Update filled class
+            const input = event.target;
+            if (input) {
+                input.classList.toggle('filled', !!value);
+            }
+        }
+
+        function toggleFreestyleSetComplete(exIdx, setIdx, setId) {
+            const set = freestyleExercises[exIdx].sets[setIdx];
+            set.completed = !set.completed;
+            saveFreestyleState();
+
+            const btn = document.getElementById(setId);
+            if (btn) {
+                btn.classList.toggle('checked', set.completed);
+                btn.textContent = set.completed ? '✓' : '';
+            }
+
+            // Start rest timer if completed
+            if (set.completed) {
+                startRestTimer(setId, 90); // Default 90 seconds rest
+            }
+        }
+
+        // Exercise Picker Functions
+        function openExercisePicker() {
+            exercisePickerCategory = 'All';
+            renderExercisePickerCategories();
+            filterExercisePicker();
+            document.getElementById('exercisePickerOverlay').classList.add('active');
+            document.getElementById('exercisePickerSearch').value = '';
+            document.getElementById('exercisePickerSearch').focus();
+        }
+
+        function closeExercisePicker(event) {
+            if (event && event.target !== document.getElementById('exercisePickerOverlay')) {
+                return;
+            }
+            document.getElementById('exercisePickerOverlay').classList.remove('active');
+        }
+
+        function renderExercisePickerCategories() {
+            const categories = ['All', ...Object.keys(EXERCISE_CATEGORIES)];
+            let html = '';
+            categories.forEach(cat => {
+                html += `<button class="exercise-picker-category ${exercisePickerCategory === cat ? 'active' : ''}"
+                                 onclick="selectExercisePickerCategory('${cat}')">${cat}</button>`;
+            });
+            document.getElementById('exercisePickerCategories').innerHTML = html;
+        }
+
+        function selectExercisePickerCategory(category) {
+            exercisePickerCategory = category;
+            renderExercisePickerCategories();
+            filterExercisePicker();
+        }
+
+        function filterExercisePicker() {
+            const search = document.getElementById('exercisePickerSearch').value.toLowerCase();
+            let exercises = [];
+
+            if (exercisePickerCategory === 'All') {
+                Object.values(EXERCISE_CATEGORIES).forEach(cat => {
+                    exercises = exercises.concat(cat);
+                });
+            } else {
+                exercises = EXERCISE_CATEGORIES[exercisePickerCategory] || [];
+            }
+
+            if (search) {
+                exercises = exercises.filter(ex => ex.toLowerCase().includes(search));
+            }
+
+            // Sort alphabetically
+            exercises.sort();
+
+            // Store exercises in a temporary array for click handling
+            window._pickerExercises = exercises.slice(0, 50);
+
+            let html = '';
+            window._pickerExercises.forEach((ex, idx) => {
+                html += `
+                    <div class="exercise-picker-item" onclick="selectPickerExercise(${idx})">
+                        <span class="exercise-picker-item-name">${escapeHtml(ex)}</span>
+                        <span class="exercise-picker-item-add">+</span>
+                    </div>
+                `;
+            });
+
+            if (exercises.length > 50) {
+                html += `<div style="text-align: center; padding: 12px; color: var(--text-secondary);">
+                    Showing first 50 results. Type to search more.
+                </div>`;
+            }
+
+            if (exercises.length === 0) {
+                html = `<div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                    No exercises found
+                </div>`;
+            }
+
+            document.getElementById('exercisePickerList').innerHTML = html;
+        }
+
+        function selectPickerExercise(idx) {
+            const exerciseName = window._pickerExercises[idx];
+            if (exerciseName) {
+                addFreestyleExercise(exerciseName);
+            }
+        }
+
+        // Override endWorkout for freestyle
+        const originalEndWorkout = typeof endWorkout === 'function' ? endWorkout : null;
+
+        function endWorkout() {
+            if (isFreestyleWorkout) {
+                endFreestyleWorkout();
+                return;
+            }
+
+            // Call original end workout logic
+            if (workoutStartTime) {
+                const elapsed = getElapsedTime();
+                alert(`Workout completed in ${elapsed}!`);
+            }
+
+            // Stop timer
+            clearInterval(workoutTimer);
+            workoutTimer = null;
+            workoutStartTime = null;
+            currentWorkoutType = null;
+            isDeloadWorkout = false;
+            clearSessionState();
+            clearPersistedWorkoutTimer();
+            goHome();
+        }
+
+        function endFreestyleWorkout() {
+            if (freestyleExercises.length === 0) {
+                if (confirm('No exercises logged. Discard this workout?')) {
+                    cleanupFreestyleWorkout();
+                }
+                return;
+            }
+
+            // Calculate duration
+            const endTime = new Date();
+            const durationMs = endTime - workoutStartTime;
+            const durationMinutes = Math.round(durationMs / 60000);
+
+            // Save the workout data to history
+            saveFreestyleWorkoutData(durationMinutes);
+
+            // Show completion message with options
+            const exerciseCount = freestyleExercises.length;
+            const totalSets = freestyleExercises.reduce((sum, ex) => sum + ex.sets.filter(s => s.completed).length, 0);
+
+            const saveTemplate = confirm(
+                `Workout Complete!\n\n` +
+                `Duration: ${durationMinutes} minutes\n` +
+                `Exercises: ${exerciseCount}\n` +
+                `Sets completed: ${totalSets}\n\n` +
+                `Your workout has been saved to history.\n\n` +
+                `Would you also like to save this as a reusable template?`
+            );
+
+            if (saveTemplate) {
+                promptSaveAsTemplate();
+            } else {
+                cleanupFreestyleWorkout();
+            }
+        }
+
+        function saveFreestyleWorkoutData(durationMinutes) {
+            const today = getLocalDateString();
+            const endTime = new Date();
+
+            // Create workout session entry (like regular workouts)
+            const sessionKey = `session_${today}_Freestyle_${Date.now()}`;
+            const exercises = {};
+
+            freestyleExercises.forEach(exercise => {
+                exercises[exercise.name] = {
+                    notes: exercise.notes || '',
+                    sets: exercise.sets.length,
+                    completedSets: exercise.sets.filter(s => s.completed).length
+                };
+            });
+
+            workoutLog[sessionKey] = {
+                workoutType: 'Quick Workout',
+                date: today,
+                startTime: workoutStartTime.toISOString(),
+                endTime: endTime.toISOString(),
+                durationMinutes: durationMinutes,
+                exercises: exercises,
+                isFreestyle: true
+            };
+
+            // Save each exercise's set data
+            freestyleExercises.forEach(exercise => {
+                const historyKey = `${today}_Freestyle`;
+                if (!workoutLog[historyKey]) {
+                    workoutLog[historyKey] = { date: today, type: 'Freestyle', exercises: {} };
+                }
+                if (!workoutLog[historyKey].exercises[exercise.name]) {
+                    workoutLog[historyKey].exercises[exercise.name] = {
+                        notes: exercise.notes || ''
+                    };
+                }
+
+                exercise.sets.forEach((set, idx) => {
+                    const setNum = idx + 1;
+                    const logKey = `${today}_Freestyle_${exercise.name}_${setNum}`;
+                    workoutLog[logKey] = {
+                        weight: set.weight,
+                        reps: set.reps
+                    };
+                    workoutLog[historyKey].exercises[exercise.name][`set${setNum}`] = workoutLog[logKey];
+                });
+            });
+
+            saveData();
+
+            // Refresh displays
+            refreshAllWorkoutDisplays();
+        }
+
+        function promptSaveAsTemplate() {
+            const templateName = prompt('Enter a name for this workout template:');
+            if (!templateName || !templateName.trim()) {
+                cleanupFreestyleWorkout();
+                return;
+            }
+
+            // Create workout template
+            const workoutKey = templateName.trim().replace(/\s+/g, '_');
+            const sections = [{
+                title: 'Exercises',
+                exercises: freestyleExercises.map(ex => ({
+                    name: ex.name,
+                    sets: ex.sets.length,
+                    reps: '8-12',
+                    rest: '90s'
+                }))
+            }];
+
+            const newWorkout = {
+                title: templateName.trim(),
+                duration: '~' + Math.ceil((Date.now() - workoutStartTime) / 60000) + ' min',
+                focus: 'Custom',
+                sections: sections
+            };
+
+            // Save to customWorkouts
+            customWorkouts[workoutKey] = newWorkout;
+            saveData();
+
+            alert(`"${templateName.trim()}" saved as a template!`);
+            cleanupFreestyleWorkout();
+        }
+
+        function cleanupFreestyleWorkout() {
+            clearInterval(workoutTimer);
+            workoutTimer = null;
+            workoutStartTime = null;
+            currentWorkoutType = null;
+            isFreestyleWorkout = false;
+            freestyleExercises = [];
+            clearSessionState();
+            clearPersistedWorkoutTimer();
+            document.getElementById('headerTimer').style.display = 'none';
+            hideWorkoutBottomControls();
+            goHome();
+        }
+
         function startWorkoutTimer() {
             if (workoutStartTime) return;
-            
+
             workoutStartTime = new Date();
+            // Persist workout start time
+            localStorage.setItem('workoutStartTime', workoutStartTime.toISOString());
+            localStorage.setItem('workoutType', currentWorkoutType);
+            localStorage.setItem('isFreestyleWorkout', isFreestyleWorkout ? 'true' : 'false');
+            if (isFreestyleWorkout) {
+                saveFreestyleState();
+            }
             startTimerUpdate();
-            
+
             const startBtn = document.getElementById('startBtn');
             const endBtn = document.getElementById('endBtn');
             if (startBtn) {
@@ -11831,6 +13112,51 @@
             if (endBtn) {
                 endBtn.disabled = false;
             }
+        }
+
+        // Save freestyle workout state for persistence
+        function saveFreestyleState() {
+            localStorage.setItem('freestyleExercises', JSON.stringify(freestyleExercises));
+        }
+
+        // Restore workout timer on page load
+        function restoreWorkoutTimer() {
+            const savedStartTime = localStorage.getItem('workoutStartTime');
+            const savedWorkoutType = localStorage.getItem('workoutType');
+            const savedIsFreestyle = localStorage.getItem('isFreestyleWorkout') === 'true';
+
+            if (savedStartTime && savedWorkoutType) {
+                workoutStartTime = new Date(savedStartTime);
+                currentWorkoutType = savedWorkoutType;
+                isFreestyleWorkout = savedIsFreestyle;
+
+                if (isFreestyleWorkout) {
+                    const savedExercises = localStorage.getItem('freestyleExercises');
+                    if (savedExercises) {
+                        try {
+                            freestyleExercises = JSON.parse(savedExercises);
+                        } catch (e) {
+                            freestyleExercises = [];
+                        }
+                    }
+                }
+
+                startTimerUpdate();
+
+                // Show the timer in header
+                const headerTimer = document.getElementById('headerTimer');
+                if (headerTimer) {
+                    headerTimer.style.display = 'flex';
+                }
+            }
+        }
+
+        // Clear persisted workout timer
+        function clearPersistedWorkoutTimer() {
+            localStorage.removeItem('workoutStartTime');
+            localStorage.removeItem('workoutType');
+            localStorage.removeItem('isFreestyleWorkout');
+            localStorage.removeItem('freestyleExercises');
         }
 
         function startTimerUpdate() {
@@ -11938,13 +13264,19 @@
 
             currentWorkoutType = null;
             isDeloadWorkout = false;
+            clearSessionState(); // Clear checked sets and notes for this session
+            clearPersistedWorkoutTimer(); // Clear persisted timer
             goHome();
         }
 
         function startWorkout(workoutType) {
+            // Request notification permission for rest timer alerts
+            requestNotificationPermission();
+
             // Check if there's an active workout and it's a different workout
             if (workoutStartTime && currentWorkoutType && currentWorkoutType !== workoutType) {
-                if (!confirm(`You have an active "${currentWorkoutType}" workout. Cancel it and start "${workoutType}"?`)) {
+                const displayName = isFreestyleWorkout ? 'Quick Workout' : currentWorkoutType;
+                if (!confirm(`You have an active "${displayName}" workout. Cancel it and start "${workoutType}"?`)) {
                     return;
                 }
                 // Cancel the current workout
@@ -11953,6 +13285,14 @@
                 workoutStartTime = null;
                 document.getElementById('headerTimer').style.display = 'none';
                 hideWorkoutBottomControls();
+
+                // Reset freestyle state if it was a freestyle workout
+                if (isFreestyleWorkout) {
+                    isFreestyleWorkout = false;
+                    freestyleExercises = [];
+                    clearPersistedWorkoutTimer();
+                }
+                clearSessionState();
             }
 
             currentWorkoutType = workoutType;
@@ -11962,6 +13302,9 @@
 
             // Reset deload mode for new workout
             isDeloadWorkout = false;
+
+            // Ensure freestyle mode is off for template workouts
+            isFreestyleWorkout = false;
 
             // Show the workout screen
             showScreen('workout');
@@ -11987,6 +13330,12 @@
         let currentSectionIdx = 0;
 
         function renderWorkoutContent(workoutType) {
+            // Handle freestyle workout separately
+            if (isFreestyleWorkout) {
+                renderFreestyleWorkout();
+                return;
+            }
+
             const effectiveWorkouts = getEffectiveWorkouts();
             const workout = effectiveWorkouts[workoutType];
             const container = document.getElementById('workoutContent');
@@ -12038,6 +13387,11 @@
 
             container.innerHTML = sectionsHtml;
 
+            // Restore checked states for all sets
+            Object.keys(sessionState.completedSets).forEach(setId => {
+                restoreSetState(setId);
+            });
+
             // Show bottom controls and update deload UI
             const bottomControls = document.getElementById('workoutBottomControls');
             if (bottomControls) {
@@ -12076,6 +13430,8 @@
             isDeloadWorkout = false;
             document.getElementById('headerTimer').style.display = 'none';
             hideWorkoutBottomControls();
+            clearSessionState(); // Clear checked sets and notes
+            clearPersistedWorkoutTimer(); // Clear persisted timer
             goHome();
         }
 
@@ -12130,6 +13486,7 @@
             const today = getLocalDateString();
             const lastLog = getLastLog(workoutType, ex.name);
             const safeExName = ex.name.replace(/'/g, "\\'");
+            const notesKey = `${workoutType}_${ex.name}_notes`;
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
             // Use current session's set count, or last workout's set count, or default
             let baseSets = workoutLog[setCountKey] !== undefined
@@ -12164,6 +13521,12 @@
                         </div>
                     </div>
                     ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 13px; text-align: center; margin-bottom: 12px;">${ex.notes}</div>` : ''}
+                    <div class="set-notes-row" style="margin-bottom: 12px;">
+                        <input type="text" class="set-notes-input ${workoutLog[notesKey] ? 'filled' : ''}"
+                               placeholder="Notes for this exercise..."
+                               value="${escapeHtml(workoutLog[notesKey] || '')}"
+                               onchange="saveExerciseNotes('${workoutType}', '${safeExName}', this.value)">
+                    </div>
                     <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
             `;
 
@@ -12346,6 +13709,7 @@
             const today = getLocalDateString();
             const lastLog = getLastLog(workoutType, ex.name);
             const safeExName = ex.name.replace(/'/g, "\\'");
+            const notesKey = `${workoutType}_${ex.name}_notes`;
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
             // Use current session's set count, or last workout's set count, or default
             let baseSets = workoutLog[setCountKey] !== undefined
@@ -12381,6 +13745,12 @@
                         </div>
                     </div>
                     ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 13px; text-align: center; margin-bottom: 12px;">${ex.notes}</div>` : ''}
+                    <div class="set-notes-row" style="margin-bottom: 12px;">
+                        <input type="text" class="set-notes-input ${workoutLog[notesKey] ? 'filled' : ''}"
+                               placeholder="Notes for this exercise..."
+                               value="${escapeHtml(workoutLog[notesKey] || '')}"
+                               onchange="saveExerciseNotes('${workoutType}', '${safeExName}', this.value)">
+                    </div>
                     <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
             `;
 
@@ -12566,6 +13936,7 @@
             const safeExName = currentEx.name.replace(/'/g, "\\'");
             const safeBaseExName = ex.name.replace(/'/g, "\\'");
             const lastLog = getLastLog(workoutType, currentEx.name);
+            const notesKey = `${workoutType}_${currentEx.name}_notes`;
             const setCountKey = `${workoutType}_${currentEx.name}_setCount`;
             // Use current session's set count, or last workout's set count, or default
             let baseSets = workoutLog[setCountKey] !== undefined
@@ -12584,8 +13955,10 @@
                 dropdownOptions += `<option value="${idx}" ${idx === selectedRotation ? 'selected' : ''}>${rotation.name}${dayLabel}</option>`;
             });
 
+            const cardId = `card_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
             let html = `
-                <div class="exercise-card" id="card_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
+                <div class="exercise-card" id="${cardId}">
                     <div class="exercise-header">
                         <select class="exercise-name-select" onchange="selectRotation('${workoutType}', '${safeBaseExName}', this.value, '${sectionTitle}')">
                             ${dropdownOptions}
@@ -12598,6 +13971,12 @@
                         </div>
                     </div>
                     ${currentEx.notes ? `<div style="color: var(--text-secondary); font-size: 13px; text-align: center; margin-bottom: 12px;">${currentEx.notes}</div>` : ''}
+                    <div class="set-notes-row" style="margin-bottom: 12px;">
+                        <input type="text" class="set-notes-input ${workoutLog[notesKey] ? 'filled' : ''}"
+                               placeholder="Notes for this exercise..."
+                               value="${escapeHtml(workoutLog[notesKey] || '')}"
+                               onchange="saveExerciseNotes('${workoutType}', '${safeExName}', this.value)">
+                    </div>
                     <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
             `;
 
@@ -12664,6 +14043,7 @@
             const today = getLocalDateString();
             const lastLog = getLastLog(workoutType, ex.name);
             const safeExName = ex.name.replace(/'/g, "\\'");
+            const notesKey = `${workoutType}_${ex.name}_notes`;
             const setCountKey = `${workoutType}_${ex.name}_setCount`;
             // Use current session's set count, or last workout's set count, or default
             let baseSets = workoutLog[setCountKey] !== undefined
@@ -12680,8 +14060,10 @@
             // Get display name (custom name if set)
             const displayName = getExerciseDisplayName(ex.name);
 
+            const cardId = `card_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
             let html = `
-                <div class="exercise-card" id="card_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
+                <div class="exercise-card" id="${cardId}">
                     <div class="exercise-header">
                         <div class="exercise-name">${displayName}</div>
                         <div class="exercise-meta">
@@ -12692,6 +14074,12 @@
                         </div>
                     </div>
                     ${ex.notes ? `<div style="color: var(--text-secondary); font-size: 13px; text-align: center; margin-bottom: 12px;">${ex.notes}</div>` : ''}
+                    <div class="set-notes-row" style="margin-bottom: 12px;">
+                        <input type="text" class="set-notes-input ${workoutLog[notesKey] ? 'filled' : ''}"
+                               placeholder="Notes for this exercise..."
+                               value="${escapeHtml(workoutLog[notesKey] || '')}"
+                               onchange="saveExerciseNotes('${workoutType}', '${safeExName}', this.value)">
+                    </div>
                     <div class="set-tracker" id="tracker_${safeExName.replace(/[^a-zA-Z0-9]/g, '_')}">
             `;
 
@@ -12984,12 +14372,12 @@
         function logSet(workoutType, exerciseName, setNum, field, value) {
             const today = getLocalDateString();
             const logKey = `${today}_${workoutType}_${exerciseName}_${setNum}`;
-            
+
             if (!workoutLog[logKey]) {
-                workoutLog[logKey] = { weight: '', reps: '' };
+                workoutLog[logKey] = { weight: '', reps: '', notes: '' };
             }
             workoutLog[logKey][field] = value;
-            
+
             const historyKey = `${today}_${workoutType}`;
             if (!workoutLog[historyKey]) {
                 workoutLog[historyKey] = { date: today, type: workoutType, exercises: {} };
@@ -13001,10 +14389,35 @@
 
             saveData();
 
+            // Update filled state for selects
             const selects = document.querySelectorAll('.tracking-select');
             selects.forEach(s => {
                 if (s.value) s.classList.add('filled');
             });
+
+            // Update filled state for notes input
+            if (field === 'notes') {
+                const notesInput = document.querySelector(`input[data-notes-set="${logKey}"]`);
+                if (notesInput) {
+                    notesInput.classList.toggle('filled', !!value);
+                }
+            }
+        }
+
+        // Save exercise-wide notes (not per-set)
+        function saveExerciseNotes(workoutType, exerciseName, notes) {
+            const notesKey = `${workoutType}_${exerciseName}_notes`;
+            if (notes && notes.trim()) {
+                workoutLog[notesKey] = notes.trim();
+            } else {
+                delete workoutLog[notesKey];
+            }
+            saveData();
+
+            // Update filled class on the input
+            if (event && event.target) {
+                event.target.classList.toggle('filled', !!notes && !!notes.trim());
+            }
         }
 
         function showExerciseInfo(exerciseName) {
