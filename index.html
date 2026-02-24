@@ -2152,6 +2152,9 @@
         .workout-meta {
             font-size: 11px;
             color: var(--text-secondary);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
 
         .last-workout {
@@ -9066,6 +9069,12 @@
                 // Delete old key if it was in customWorkouts
                 if (customWorkouts[editingWorkout.originalKey]) {
                     delete customWorkouts[editingWorkout.originalKey];
+                }
+                // If it was a default workout, hide the original key so it doesn't still appear
+                if (defaultWorkoutsBackup[editingWorkout.originalKey]) {
+                    if (!hiddenWorkouts.includes(editingWorkout.originalKey)) {
+                        hiddenWorkouts.push(editingWorkout.originalKey);
+                    }
                 }
                 // Also move custom icon to new key
                 if (customWorkoutIcons[editingWorkout.originalKey]) {
